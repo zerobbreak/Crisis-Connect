@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, model_validator
 from typing import List, Optional
 
 class AlertModel(BaseModel):
@@ -6,14 +6,25 @@ class AlertModel(BaseModel):
     risk_level: str
     message: str
     language: str
-    timestamp: str  # Changed from datetime to str to match Prisma schema
+    timestamp: str
+
+from typing import Optional
+from pydantic import BaseModel, field_validator, model_validator
 
 class LocationRequest(BaseModel):
+    place_name: Optional[str] = None
+    district: Optional[str] = None
     lat: Optional[float] = None
     lon: Optional[float] = None
-    district: str = "Unknown"
-    place_name: Optional[str] = None
-    is_coastal: bool = False
+    is_coastal: Optional[bool] = False
+
+    # ✅ Use model_validator for cross-field checks
+    @model_validator(mode="after")
+    def check_at_least_one_location(self):
+        if not self.place_name and not self.district:
+            raise ValueError("At least one of place_name or district must be provided")
+        return self
+
 
 class WeatherEntry(BaseModel):
     temperature: Optional[float] = None

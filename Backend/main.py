@@ -13,6 +13,8 @@ from geopy.extra.rate_limiter import RateLimiter
 import os
 import logging
 from models.model import AlertModel, LocationRequest
+from fuzzywuzzy import process
+from pymongo.collection import Collection
 from collections import defaultdict
 from datetime import datetime
 from utils.db import init_mongo, close_mongo, get_db, ensure_indexes
@@ -271,14 +273,28 @@ async def predict_risk(generate_alerts: bool = False):
         "alerts_generated": len(alerts_generated),
     }
 
+from fastapi import Request
+
 @app.post("/alerts", summary="Create a new flood alert")
-async def create_alert(alert: AlertModel):
-    logger.info(f"Received alert creation request: {alert}")
-    db = get_db(app)
-    doc = alert.dict()
-    await db["alerts"].insert_one(doc)
-    doc.pop("_id", None)
-    return {"message": "Alert stored", "alert": doc}
+async def create_alert(request: Request):
+    try:
+        raw_body = await request.body()
+        logger.info(f"Raw request body: {raw_body}")
+        alert_data = await request.json()
+        logger.info(f"Parsed JSON: {alert_data}")
+        alert = AlertModel(**alert_data)
+        logger.info(f"Validated alert: {alert}")
+        db = get_db(app)
+        doc = alert.dict()
+        await db["alerts"].insert_one(doc)
+        doc.pop("_id", None)
+        return {"message": "Alert stored", "alert": doc}
+    except ValueError as e:
+        logger.error(f"Invalid JSON or missing fields: {e}")
+        raise HTTPException(status_code=422, detail=f"Invalid or missing request body: {e}")
+    except Exception as e:
+        logger.error(f"Error processing request: {e}")
+        raise HTTPException(status_code=500, detail=f"Server error: {e}")
 
 @app.get("/alerts/history", summary="Retrieve alert history with optional filters")
 async def get_alerts(
@@ -491,132 +507,61 @@ async def trigger_alert_generation(limit: int = Query(500, ge=1, le=5000)):
         raise HTTPException(status_code=500, detail=f"Alert generation failed: {e}")
 
 @app.post("/risk/location", description="Assess risk for a specific location")
-async def location_risk(data: LocationRequest):
-    geolocator = Nominatim(user_agent="crisis-connect")
-    reverse = RateLimiter(geolocator.reverse, min_delay_seconds=2)
-
-    # Get coordinates if not provided
-    if (data.lat is None or data.lon is None) and (data.place_name or data.district):
-        location_query = data.place_name if data.place_name else data.district
-        try:
-            location = geolocator.geocode(location_query)
-            if not location:
-                logger.warning(f"Could not geocode location: {location_query}")
-                raise HTTPException(status_code=400, detail=f"Could not geocode location: {location_query}")
-            data.lat = location.latitude
-            data.lon = location.longitude
-            if not data.district or data.district == "Unknown":
-                data.district = location.address.split(",")[0].strip()
-            logger.info(f"Geocoded {location_query} to ({data.lat}, {data.lon})")
-        except Exception as e:
-            logger.error(f"Geocoding failed: {e}")
-            raise HTTPException(status_code=429, detail=f"Geocoding failed: {e}")
-
-    if data.lat is None or data.lon is None:
-        logger.warning("Latitude and longitude required")
-        raise HTTPException(status_code=400, detail="Latitude and longitude are required")
-
-    # Fetch weather/marine data
+async def location_risk(request: Request):
     try:
-        weather_hourly, marine_hourly = fetch_weather_and_marine_data(data.lat, data.lon, is_coastal=data.is_coastal)
-        if not weather_hourly:
-            logger.error("Failed to fetch weather data")
-            raise HTTPException(status_code=500, detail="Failed to fetch weather data")
-    except Exception as e:
-        logger.error(f"Weather fetch failed: {e}")
-        raise HTTPException(status_code=500, detail=f"Weather fetch failed: {e}")
+        raw_body = await request.body()
+        logger.info(f"Raw request body: {raw_body}")
+        data = await request.json()
+        logger.info(f"Parsed JSON: {data}")
+        location_data = LocationRequest(**data)
+        logger.info(f"Validated location request: {location_data}")
 
-    # Extract features and predict risk
-    try:
-        features = extract_features(data.district or "Unknown", data.lat, data.lon, weather_hourly, marine_hourly)
-        if not features:
-            logger.error("Feature extraction failed")
-            raise HTTPException(status_code=500, detail="Feature extraction failed")
-        df = pd.DataFrame([features])
-        df = generate_risk_scores(model, df)
-        df = df.replace([float("inf"), float("-inf")], pd.NA).where(pd.notnull(df), None)
-        location_risk = df.to_dict(orient="records")[0]
-        logger.info(f"Generated risk for {data.district}: {location_risk['risk_score']}%")
-    except Exception as e:
-        logger.error(f"Model prediction failed: {e}")
-        raise HTTPException(status_code=500, detail=f"Model prediction failed: {e}")
-
-    # Analyze nearby locations
-    nearby_predictions = []
-    try:
-        result = reverse((data.lat, data.lon), exactly_one=True, language="en")
-        address = result.raw.get("address", {})
-        possible_places = []
-        for key in ["suburb", "town", "village", "city", "county"]:
-            if address.get(key) and address.get(key) != data.district:
-                possible_places.append(address[key])
-        possible_places = list(dict.fromkeys(possible_places))[:3]
-
-        for place in possible_places:
-            try:
-                place_location = geolocator.geocode(place)
-                if place_location:
-                    weather_hourly_n, marine_hourly_n = fetch_weather_and_marine_data(
-                        place_location.latitude, place_location.longitude, is_coastal=data.is_coastal
-                    )
-                    features_n = extract_features(
-                        place, place_location.latitude, place_location.longitude, weather_hourly_n, marine_hourly_n
-                    )
-                    if features_n:
-                        df_n = pd.DataFrame([features_n])
-                        df_n = generate_risk_scores(model, df_n)
-                        df_n = df_n.replace([float("inf"), float("-inf")], pd.NA).where(pd.notnull(df_n), None)
-                        risk_n = df_n.to_dict(orient="records")[0]
-                        risk_n["analyzed_place"] = place
-                        risk_n["timestamp"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                        nearby_predictions.append(risk_n)
-                        logger.info(f"Generated risk for nearby {place}: {risk_n['risk_score']}%")
-            except Exception as e:
-                logger.warning(f"Failed to analyze nearby {place}: {e}")
-                nearby_predictions.append({"analyzed_place": place, "error": f"Could not analyze: {e}"})
-    except Exception as e:
-        logger.warning(f"Failed to analyze nearby locations: {e}")
-        nearby_predictions = [{"error": f"Could not analyze nearby locations: {e}"}]
-
-    # Get nearest location metadata
-    try:
-        nearest_location = {
-            "town": address.get("town"),
-            "suburb": address.get("suburb"),
-            "county": address.get("county"),
-            "district": address.get("state_district"),
-            "province": address.get("state"),
-            "country": address.get("country"),
-        }
-        nearest_location = {k: v for k, v in nearest_location.items() if v is not None}
-    except Exception as e:
-        logger.warning(f"Could not reverse geocode: {e}")
-        nearest_location = {"error": f"Could not reverse geocode: {e}"}
-
-    result_payload = {
-        "location_input": {
-            "district": data.district,
-            "lat": data.lat,
-            "lon": data.lon,
-            "is_coastal": data.is_coastal
-        },
-        "location_risk": location_risk,
-        "nearest_location": nearest_location,
-        "nearby_locations_risk": nearby_predictions
-    }
-
-    # Save to DB
-    try:
         db = get_db(app)
-        to_store = dict(result_payload)
-        to_store["created_at"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        await db["location_risks"].insert_one(to_store)
+        query = {}
+        search_term = location_data.place_name or location_data.district
+        if not search_term:
+            if location_data.lat and location_data.lon:
+                # Optional: Add geocoding reverse lookup if lat/lon provided
+                raise HTTPException(status_code=501, detail="Lat/lon lookup not implemented")
+            raise HTTPException(status_code=400, detail="Either place_name or district must be provided")
+
+        # Query MongoDB with case-insensitive regex
+        docs = await db["historical_events"].find({
+            "location": {"$regex": f"^{search_term}$", "$options": "i"}
+        }).to_list(length=10000)
+
+        if not docs:
+            # Fallback to CSV and use fuzzy matching
+            df = load_historical_data()
+            all_locations = df["location"].dropna().unique()
+            best_match, score = process.extractOne(search_term.lower(), [loc.lower() for loc in all_locations])
+            if score < 80:  # Adjust threshold as needed
+                logger.warning(f"No historical data for location: {search_term}")
+                raise HTTPException(status_code=404, detail=f"No historical data for location: {search_term}")
+            filtered = df[df["location"].str.lower() == best_match]
+            if filtered.empty:
+                logger.warning(f"No historical data for matched location: {best_match}")
+                raise HTTPException(status_code=404, detail=f"No historical data for matched location: {best_match}")
+            severity_count = filtered["severity"].value_counts().to_dict()
+            total = len(filtered)
+        else:
+            df = pd.DataFrame(_strip_mongo_ids(docs))
+            severity_count = df["severity"].value_counts().to_dict()
+            total = len(df)
+
+        logger.info(f"Assessed risk for {search_term}: {total} events")
+        return {
+            "location": search_term,
+            "total_events": total,
+            "risk_profile": severity_count,
+            "is_coastal": location_data.is_coastal
+        }
+    except ValueError as e:
+        logger.error(f"Invalid JSON or missing fields: {e}")
+        raise HTTPException(status_code=422, detail=f"Invalid or missing request body: {e}")
     except Exception as e:
-        logger.warning(f"Failed to store location risk: {e}")
-
-    return result_payload
-
-
+        logger.error(f"Error processing request: {e}")
+        raise HTTPException(status_code=500, detail=f"Server error: {e}")
 # Load ML model on startup
 try:
     model = joblib.load("rf_model.pkl")
