@@ -4,9 +4,9 @@ from fastapi.middleware.cors import CORSMiddleware
 import pandas as pd
 import numpy as np
 import joblib
-from typing import List, Optional, Any, Dict, Tuple
+from typing import List, Optional, Any, Dict
 from pydantic import BaseModel
-from services.predict import collect_all_data, generate_risk_scores, fetch_weather_and_marine_data, extract_features
+from services.predict import collect_all_data, generate_risk_scores, calculate_household_resources
 from services.alert_generate import generate_alerts_from_db
 from geopy.geocoders import Nominatim
 from geopy.extra.rate_limiter import RateLimiter
@@ -15,7 +15,6 @@ import logging
 from models.model import AlertModel, LocationRequest
 from fuzzywuzzy import process
 from pymongo.collection import Collection
-from collections import defaultdict
 from datetime import datetime
 from utils.db import init_mongo, close_mongo, get_db, ensure_indexes
 import math
@@ -35,8 +34,12 @@ app.add_middleware(
 )
 
 HISTORICAL_XLSX = "data_disaster.xlsx"
-WEATHER_CSV = "latest_data.csv"  # Assumed CSV path for weather data
-ALERTS_CSV = "alerts.csv"  # If alerts history is stored in CSV
+WEATHER_CSV = "latest_data.csv"
+ALERTS_CSV = "alerts.csv"
+
+# Geocoder
+_geolocator = Nominatim(user_agent="crisis-connect")
+_geocode = RateLimiter(_geolocator.geocode, min_delay_seconds=1)
 
 # --- Helper functions to load data from files ---
 from bson import ObjectId
@@ -44,6 +47,7 @@ from bson import ObjectId
 def serialize_doc(doc):
     doc["_id"] = str(doc["_id"])
     return doc
+
 def load_historical_data() -> pd.DataFrame:
     if not os.path.exists(HISTORICAL_XLSX):
         logger.error(f"Historical data file {HISTORICAL_XLSX} not found")
@@ -51,7 +55,6 @@ def load_historical_data() -> pd.DataFrame:
     try:
         df = pd.read_excel(HISTORICAL_XLSX)
         df.columns = df.columns.str.strip().str.lower()
-        # Standardize columns if needed
         df.rename(columns={
             'location': 'location',
             'latitude': 'latitude',
@@ -96,7 +99,7 @@ def load_weather_data() -> pd.DataFrame:
 def load_alerts_data() -> pd.DataFrame:
     if not os.path.exists(ALERTS_CSV):
         logger.warning(f"Alerts data file {ALERTS_CSV} not found, returning empty list")
-        return pd.DataFrame()  # Return empty if no alerts file
+        return pd.DataFrame()
     try:
         df = pd.read_csv(ALERTS_CSV)
         logger.info(f"Loaded {len(df)} alert records from {ALERTS_CSV}")
@@ -108,7 +111,6 @@ def load_alerts_data() -> pd.DataFrame:
 # --- API Endpoints ---
 
 def _json_safe(value):
-    # Normalize numpy scalars and guard against NaN/Inf
     if isinstance(value, (np.floating, float)):
         try:
             f = float(value)
@@ -140,11 +142,9 @@ def _strip_mongo_ids(records: List[dict]) -> List[dict]:
         r.pop("_id", None)
     return records
 
-
 @app.on_event("startup")
 async def startup_event():
     await init_mongo(app)
-    # Ensure indexes for efficient queries and deduplication
     try:
         db = get_db(app)
         await ensure_indexes(db)
@@ -152,11 +152,9 @@ async def startup_event():
     except Exception as e:
         logger.warning(f"Failed to ensure MongoDB indexes: {e}")
 
-
 @app.exception_handler(RuntimeError)
 async def runtime_error_handler(request: Request, exc: RuntimeError):
     return JSONResponse(status_code=503, content={"detail": str(exc)})
-
 
 @app.get("/health", summary="Service health check")
 async def health():
@@ -167,19 +165,15 @@ async def health():
     except Exception as e:
         return JSONResponse(status_code=503, content={"status": "error", "detail": str(e)})
 
-
 @app.on_event("shutdown")
 async def shutdown_event():
     await close_mongo(app)
 
-
 @app.get("/weather", summary="Retrieve all weather data")
 async def get_weather():
-    # Prefer DB, fallback to CSV
     db = get_db(app)
     records = await db["weather_data"].find().sort("timestamp", -1).to_list(length=10000)
     if not records:
-        # Collect fresh data instead of reading CSV
         try:
             df = collect_all_data()
         except Exception as e:
@@ -208,7 +202,6 @@ async def predict_risk(generate_alerts: bool = False):
     db = get_db(app)
     records = await db["weather_data"].find().to_list(length=10000)
     if not records:
-        # Collect fresh data from services instead of CSV
         try:
             df = collect_all_data()
         except Exception as e:
@@ -233,7 +226,6 @@ async def predict_risk(generate_alerts: bool = False):
     df = df.replace([float('inf'), float('-inf')], pd.NA)
     df = df.where(pd.notnull(df), None)
     predictions = df.to_dict(orient="records")
-    # Enrich with historical summary for quick reference
     try:
         hist_summary = await db["historical_summary"].find({}, {"_id": 0}).to_list(length=100000)
         if hist_summary:
@@ -244,7 +236,6 @@ async def predict_risk(generate_alerts: bool = False):
                     p["historical_profile"] = loc_to_summary[loc]
     except Exception as e:
         logger.warning(f"Failed to enrich predictions with historical summary: {e}")
-    # Save predictions with upsert-like behavior using bulk_write
     if predictions:
         now_ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         from pymongo import UpdateOne
@@ -258,22 +249,18 @@ async def predict_risk(generate_alerts: bool = False):
             ops.append(UpdateOne(key, {"$set": p}, upsert=True))
         if ops:
             await db["predictions"].bulk_write(ops)
-    # Optionally generate alerts right after scoring
     alerts_generated = []
     if generate_alerts:
         try:
             alerts_generated = await generate_alerts_from_db(db)
         except Exception as e:
             logger.warning(f"Failed to generate alerts: {e}")
-
     logger.info(f"Scored {len(predictions)} weather records")
     return {
         "message": f"{len(predictions)} records scored.",
         "predictions": predictions,
         "alerts_generated": len(alerts_generated),
     }
-
-from fastapi import Request
 
 @app.post("/alerts", summary="Create a new flood alert")
 async def create_alert(request: Request):
@@ -311,7 +298,6 @@ async def get_alerts(
     cursor = db["alerts"].find(query).sort("timestamp", -1).limit(limit)
     alerts = await cursor.to_list(length=limit)
     if not alerts:
-        # fallback to CSV
         df = load_alerts_data()
         if df.empty:
             return {"count": 0, "alerts": []}
@@ -335,7 +321,6 @@ async def get_historical_data():
         records = df.to_dict(orient="records")
         if records:
             await db["historical_events"].insert_many(records)
-            # Also compute and store a summary per location for quick joins
             summary = (
                 df.groupby("location")["severity"].value_counts().unstack(fill_value=0).reset_index()
             )
@@ -377,6 +362,109 @@ async def assess_risk_by_location(location: str):
     logger.info(f"Assessed risk for {location}: {total} events")
     return {"location": location, "total_events": total, "risk_profile": severity_count}
 
+# New route for household resource calculation
+class ResourceRequest(BaseModel):
+    place_name: Optional[str] = None
+    lat: Optional[float] = None
+    lon: Optional[float] = None
+    household_size: int = 4
+
+@app.post("/resources", summary="Calculate household resource needs for a location")
+async def calculate_resources(request: ResourceRequest):
+    db = get_db(app)
+    location = request.place_name
+    lat = request.lat
+    lon = request.lon
+    household_size = request.household_size
+
+    if not location and not (lat and lon):
+        raise HTTPException(status_code=400, detail="Either place_name or lat/lon must be provided")
+    
+    if household_size < 1:
+        raise HTTPException(status_code=400, detail="Household size must be at least 1")
+
+    # Resolve place_name to coordinates if lat/lon not provided
+    if location and not (lat and lon):
+        try:
+            geocode_result = _geocode(location)
+            if geocode_result:
+                lat, lon = geocode_result.latitude, geocode_result.longitude
+                logger.info(f"Resolved {location} to lat={lat}, lon={lon}")
+            else:
+                logger.warning(f"Geocoding failed for location: {location}")
+                raise HTTPException(status_code=404, detail=f"Could not resolve location: {location}")
+        except Exception as e:
+            logger.error(f"Geocoding error: {e}")
+            raise HTTPException(status_code=400, detail=f"Geocoding error for location: {str(e)}")
+
+    # Query the latest prediction for the location
+    query = {}
+    if location:
+        query["location"] = {"$regex": f"^{location}$", "$options": "i"}
+    if lat and lon:
+        query["$or"] = [
+            {"lat": {"$gte": lat - 0.1, "$lte": lat + 0.1}, "lon": {"$gte": lon - 0.1, "$lte": lon + 0.1}}
+        ]
+
+    prediction = await db["predictions"].find(query).sort("timestamp", -1).limit(1).to_list(length=1)
+    
+    if not prediction:
+        # Fallback to fresh data collection
+        logger.warning(f"No recent prediction for location: {location or f'lat={lat}, lon={lon}'}")
+        try:
+            if not (lat and lon):
+                raise HTTPException(status_code=400, detail="Coordinates required for fresh data collection")
+            df = collect_all_data({"custom_location": (lat, lon)})
+            if df.empty:
+                logger.warning(f"No data collected for location: {location or f'lat={lat}, lon={lon}'}")
+                # Fallback to Low risk if no data is available
+                resources = calculate_household_resources("Low", household_size=household_size)
+                return {
+                    "location": location or "Custom Location",
+                    "risk_category": "Low",
+                    "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    "household_size": household_size,
+                    "resources": resources,
+                    "message": "No recent prediction available; assuming Low risk."
+                }
+            df = generate_risk_scores(model, df)
+            if not df.empty:
+                from pymongo import UpdateOne
+                now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                ops = []
+                for r in df.to_dict(orient="records"):
+                    key = {"location": r.get("location"), "timestamp": r.get("timestamp") or now}
+                    r["timestamp"] = key["timestamp"]
+                    ops.append(UpdateOne(key, {"$set": r}, upsert=True))
+                if ops:
+                    await db["predictions"].bulk_write(ops)
+                prediction = df.to_dict(orient="records")[:1]
+            else:
+                raise HTTPException(status_code=404, detail="No prediction data available for this location")
+        except Exception as e:
+            logger.error(f"Failed to collect fresh data: {e}")
+            raise HTTPException(status_code=502, detail=f"Failed to collect fresh data: {str(e)}")
+
+    prediction = prediction[0] if isinstance(prediction, list) else prediction
+    risk_category = prediction.get("risk_category", "Low")
+    
+    try:
+        resources = calculate_household_resources(risk_category, household_size=household_size)
+    except ValueError as e:
+        logger.error(f"Error calculating resources: {e}")
+        raise HTTPException(status_code=400, detail=str(e))
+
+    response = {
+        "location": prediction.get("location", location or "Custom Location"),
+        "risk_category": risk_category,
+        "timestamp": prediction.get("timestamp"),
+        "household_size": household_size,
+        "resources": resources
+    }
+    
+    logger.info(f"Calculated resources for {response['location']}: {resources}")
+    return response
+
 @app.get("/", description="API root endpoint")
 def root():
     return {"message": "Welcome to the Crisis Connect API"}
@@ -386,7 +474,6 @@ async def collect_data():
     try:
         df = collect_all_data()
         count = len(df)
-        # Save to DB
         if count > 0:
             db = get_db(app)
             records = df.to_dict(orient="records")
@@ -408,12 +495,10 @@ async def collect_data():
         logger.error(f"Error collecting data: {e}")
         raise HTTPException(status_code=500, detail=f"Error collecting data: {e}")
 
-
 class CollectRequest(BaseModel):
     locations: Optional[Any] = None
 
-
-@app.post("/collect", description="Collect weather/marine data for provided locations (names, coords, or mapping)")
+@app.post("/collect", description="Collect weather/marine data for provided locations")
 async def collect_data_custom(payload: CollectRequest):
     try:
         records = []
@@ -442,7 +527,6 @@ async def assess_risk():
     db = get_db(app)
     records = await db["weather_data"].find().to_list(length=10000)
     if not records:
-        # Collect fresh data from services instead of CSV
         try:
             df = collect_all_data()
         except Exception as e:
@@ -467,7 +551,6 @@ async def assess_risk():
     df = df.replace([float('inf'), float('-inf')], pd.NA)
     df = df.where(pd.notnull(df), None)
     predictions = df.to_dict(orient="records")
-    # Enrich with historical summary
     try:
         hist_summary = await db["historical_summary"].find({}, {"_id": 0}).to_list(length=100000)
         if hist_summary:
@@ -478,7 +561,6 @@ async def assess_risk():
                     p["historical_profile"] = loc_to_summary[loc]
     except Exception as e:
         logger.warning(f"Failed to enrich predictions with historical summary: {e}")
-    # Save with upsert to avoid duplicates
     if predictions:
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         from pymongo import UpdateOne
@@ -494,7 +576,6 @@ async def assess_risk():
             await db["predictions"].bulk_write(ops)
     logger.info(f"Generated risk scores for {len(predictions)} records")
     return predictions
-
 
 @app.post("/alerts/generate", summary="Generate alerts from recent predictions and store them")
 async def trigger_alert_generation(limit: int = Query(500, ge=1, le=5000)):
@@ -521,21 +602,18 @@ async def location_risk(request: Request):
         search_term = location_data.place_name or location_data.district
         if not search_term:
             if location_data.lat and location_data.lon:
-                # Optional: Add geocoding reverse lookup if lat/lon provided
                 raise HTTPException(status_code=501, detail="Lat/lon lookup not implemented")
             raise HTTPException(status_code=400, detail="Either place_name or district must be provided")
 
-        # Query MongoDB with case-insensitive regex
         docs = await db["historical_events"].find({
             "location": {"$regex": f"^{search_term}$", "$options": "i"}
         }).to_list(length=10000)
 
         if not docs:
-            # Fallback to CSV and use fuzzy matching
             df = load_historical_data()
             all_locations = df["location"].dropna().unique()
             best_match, score = process.extractOne(search_term.lower(), [loc.lower() for loc in all_locations])
-            if score < 80:  # Adjust threshold as needed
+            if score < 80:
                 logger.warning(f"No historical data for location: {search_term}")
                 raise HTTPException(status_code=404, detail=f"No historical data for location: {search_term}")
             filtered = df[df["location"].str.lower() == best_match]
@@ -562,6 +640,7 @@ async def location_risk(request: Request):
     except Exception as e:
         logger.error(f"Error processing request: {e}")
         raise HTTPException(status_code=500, detail=f"Server error: {e}")
+
 # Load ML model on startup
 try:
     model = joblib.load("rf_model.pkl")

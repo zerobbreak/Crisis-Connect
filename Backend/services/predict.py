@@ -1,4 +1,6 @@
+from typing import Dict, Tuple, List, Union, Optional
 import pandas as pd
+import numpy as np
 import openmeteo_requests
 import requests_cache
 from retry_requests import retry
@@ -7,14 +9,11 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import folium
 import branca.colormap as cm
-from typing import Dict, Tuple, List, Union, Optional
 from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report
 from datetime import datetime
-import numpy as np
-from functools import lru_cache
 from geopy.geocoders import Nominatim
 from geopy.extra.rate_limiter import RateLimiter
 
@@ -23,7 +22,6 @@ WEATHER_URL = "https://api.open-meteo.com/v1/forecast"
 MARINE_URL = "https://marine-api.open-meteo.com/v1/marine"
 
 DISTRICT_COORDS: Dict[str, Tuple[float, float]] = {
-    # Same as original
     "eThekwini (Durban)": (-29.8587, 31.0218),
     "King Cetshwayo (Richards Bay)": (-28.7807, 32.0383),
     "Ugu (Port Shepstone)": (-30.7414, 30.4540),
@@ -167,21 +165,40 @@ def extract_features(district, lat, lon, weather_hourly, marine_hourly=None):
     features['anomaly_score'] = compute_anomaly_score(features, district)
     return features
 
-def collect_all_data(locations: Optional[Union[Dict[str, Tuple[float, float]], List[Union[str, Tuple[float, float], Dict[str, float]]]]] = None):
+def collect_all_data(locations: Optional[Union[Dict[str, Tuple[float, float]], List[Union[str, Tuple[float, float], Dict[str, float]]]]] = None) -> pd.DataFrame:
     data: List[Dict[str, float]] = []
-    target_locations = (
-        {str(k): (float(v[0]), float(v[1])) for k, v in locations.items()} if isinstance(locations, dict)
-        else DISTRICT_COORDS if locations is None
-        else {
-            (str(item) if isinstance(item, str) else item.get('name', f'place_{idx}') if isinstance(item, dict) else f'place_{idx}'): (
-                float(item[0]), float(item[1])
-            ) if isinstance(item, tuple) else (
-                float(item.get('lat')), float(item.get('lon'))
-            ) if isinstance(item, dict) and item.get('lat') is not None and item.get('lon') is not None else None
-            for idx, item in enumerate(locations)
-        }
-    )
-    target_locations = {k: v for k, v in target_locations.items() if v is not None}
+    
+    # Handle different input types for locations
+    if locations is None:
+        target_locations = DISTRICT_COORDS
+    elif isinstance(locations, dict):
+        target_locations = {str(k): (float(v[0]), float(v[1])) for k, v in locations.items() if v is not None}
+    else:
+        target_locations = {}
+        for idx, item in enumerate(locations):
+            if isinstance(item, str):
+                # Geocode string to coordinates
+                try:
+                    geocode_result = _geocode(item)
+                    if geocode_result:
+                        target_locations[item] = (geocode_result.latitude, geocode_result.longitude)
+                    else:
+                        print(f"⚠️ Geocoding failed for location: {item}")
+                        continue
+                except Exception as e:
+                    print(f"⚠️ Geocoding error for {item}: {e}")
+                    continue
+            elif isinstance(item, tuple) and len(item) == 2:
+                target_locations[f"place_{idx}"] = (float(item[0]), float(item[1]))
+            elif isinstance(item, dict) and item.get('lat') is not None and item.get('lon') is not None:
+                target_locations[item.get('name', f'place_{idx}')] = (float(item['lat']), float(item['lon']))
+            else:
+                print(f"⚠️ Invalid location format at index {idx}: {item}")
+                continue
+
+    if not target_locations:
+        print("⚠️ No valid locations provided")
+        return pd.DataFrame()
 
     coastal_keywords = [
         "Durban", "Richards Bay", "Port Shepstone", "Ballito", "Cape Town",
@@ -199,10 +216,14 @@ def collect_all_data(locations: Optional[Union[Dict[str, Tuple[float, float]], L
                 print(f"✅ Collected data for {district}: {features}")
         else:
             print(f"❌ Failed to fetch data for {district}")
-    
+
     df = pd.DataFrame(data)
     
-    if len(df) > 0 and df['is_severe'].nunique() < 2:
+    if df.empty:
+        print("⚠️ No data collected for any location")
+        return df
+
+    if df['is_severe'].nunique() < 2:
         print("⚠️ Only one class detected, adding synthetic negative samples")
         synthetic_data = []
         for district, (lat, lon) in DISTRICT_COORDS.items():
@@ -259,6 +280,62 @@ def train_model(df):
     print("💾 Random Forest model saved as 'rf_model.pkl'")
     return rf_model
 
+def calculate_household_resources(
+    severity: str,
+    household_size: int = 4,
+    days_low: int = 3,
+    days_medium: int = 7,
+    days_high: int = 14
+) -> Dict[str, float]:
+    """
+    Calculate estimated resources needed for a household based on flood severity.
+    
+    Args:
+        severity (str): Disaster severity level ('Low', 'Medium', 'High', or 'Moderate').
+        household_size (int): Number of people in the household.
+        days_low/medium/high (int): Days of supply for each severity level.
+    
+    Returns:
+        Dict[str, float]: Dictionary of resource estimates.
+    
+    Raises:
+        ValueError: If invalid severity provided.
+    """
+    if severity not in ['Low', 'Medium', 'High', 'Moderate']:
+        raise ValueError("Severity must be 'Low', 'Medium', 'High', or 'Moderate'.")
+    
+    # Map 'Moderate' to 'Medium' for consistency
+    if severity == 'Moderate':
+        severity = 'Medium'
+    
+    # Base multipliers per person
+    water_per_person_day = 1.0  # Gallons
+    food_packs_per_person_day = 1.0  # Assuming 1 pack = 3 meals/day
+    
+    if severity == 'Low':
+        days_supply = days_low
+        shelter_needed = 0
+        boats_needed = 0.0
+    elif severity == 'Medium':
+        days_supply = days_medium
+        shelter_needed = 1
+        boats_needed = 0.0
+    else:  # High
+        days_supply = days_high
+        shelter_needed = 1
+        boats_needed = 0.1
+    
+    # Calculations
+    water_gallons = household_size * water_per_person_day * days_supply
+    food_packs = household_size * food_packs_per_person_day * days_supply
+    
+    return {
+        'food_packs': round(food_packs, 1),
+        'water_gallons': round(water_gallons, 1),
+        'shelter_needed': bool(shelter_needed),
+        'boats_needed': round(boats_needed, 2)
+    }
+
 def generate_risk_scores(model, df):
     X = df[FEATURE_COLS]
     df['model_risk_score'] = model.predict_proba(X)[:, 1] * 100
@@ -274,16 +351,19 @@ def generate_risk_scores(model, df):
             composite_score = min(max(model_score, 80), 100)
             risk_category = "High"
         else:
-            composite_score = 0.8 * model_score + 0.2 * anomaly_score  # Adjusted weights
+            composite_score = 0.8 * model_score + 0.2 * anomaly_score
             if composite_score > 70 or (model_score > 40 and anomaly_score > 50):
                 risk_category = "High"
             elif composite_score > 40 or (model_score > 20 and anomaly_score > 30):
-                risk_category = "Moderate"
+                risk_category = "Medium"
             else:
                 risk_category = "Low"
         
         df.at[idx, 'composite_risk_score'] = composite_score
         df.at[idx, 'risk_category'] = risk_category
+
+    # Add household resources calculation
+    df['household_resources'] = df['risk_category'].apply(lambda s: calculate_household_resources(s))
     
     return df
 
