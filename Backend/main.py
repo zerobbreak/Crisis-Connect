@@ -35,7 +35,7 @@ app = FastAPI(
 )
 
 # --- CORS Middleware ---
-origins = os.getenv("CORS_ORIGINS", "http://localhost:3000,https://crisisconnect.streamlit.app").split(",")
+origins = os.getenv("CORS_ORIGINS", "http://localhost:3000, https://crisisconnect.streamlit.app. http://localhost:5173").split(",")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -221,43 +221,81 @@ async def assess_risk():
 
 @app.post("/predict", summary="Score weather data using ML models")
 async def predict_risk(generate_alerts: bool = False):
-    db = get_db(app)
-    records = await db["weather_data"].find().to_list(length=10000)
-    
-    if not records:
-        try:
-            df = collect_all_data()
-        except Exception as e:
-            logger.error(f"Collect failed: {e}")
-            raise HTTPException(status_code=502, detail=f"Failed to collect live weather data: {e}")
-        if not df.empty:
-            # ✅ Save raw weather data
-            from pymongo import UpdateOne
-            now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            ops = [
-                UpdateOne(
-                    {"location": r["location"], "timestamp": r.get("timestamp") or now},
-                    {"$set": r},
-                    upsert=True
-                )
-                for r in _df_to_json_records(df)
-            ]
-            await db["weather_data"].bulk_write(ops)
-    else:
-        df = pd.DataFrame(_strip_mongo_ids(records))
-
-    if df.empty:
-        raise HTTPException(status_code=404, detail="No weather data to score")
-
-    # ✅ CRITICAL: Run generate_risk_scores() to add composite_risk_score
     global model
     if model is None:
-        raise HTTPException(status_code=503, detail="ML model not loaded")
-        
-    df = generate_risk_scores(model, df)  # ← This adds composite_risk_score!
+        raise HTTPException(status_code=503, detail="Model not loaded")
 
-    # ✅ Save predictions WITH composite_risk_score
-    predictions = _df_to_json_records(df)
+    db = get_db(app)
+
+    # --- Step 1: Load existing predictions (e.g., from simulation) ---
+    existing_predictions = await db["predictions"].find(
+        {"composite_risk_score": {"$exists": True}},
+        {"location": 1, "composite_risk_score": 1, "scenario": 1}
+    ).to_list(length=10000)
+
+    # Identify protected locations: simulated or high-risk (>= 70)
+    protected_locations = {
+        p["location"]: p
+        for p in existing_predictions
+        if p.get("scenario") and p["scenario"] != "real-time"
+        or p.get("composite_risk_score", 0) >= 70
+    }
+
+    logger.info(f"🛡️ Protected {len(protected_locations)} locations from overwrite: {list(protected_locations.keys())}")
+
+    # --- Step 2: Collect data only for unprotected locations ---
+    locations_to_collect = {
+        loc: coords for loc, coords in DISTRICT_COORDS.items()
+        if loc not in protected_locations
+    }
+
+    logger.info(f"📡 Collecting real-time data for {len(locations_to_collect)} locations")
+
+    try:
+        df_new = collect_all_data(locations_to_collect) if locations_to_collect else pd.DataFrame()
+    except Exception as e:
+        logger.error(f"❌ collect_all_data failed: {e}")
+        df_new = pd.DataFrame()
+
+    # Add 'scenario' to distinguish real-time data
+    if not df_new.empty:
+        df_new["scenario"] = "real-time"
+
+    # --- Step 3: Load simulated/high-risk data ---
+    df_protected = pd.DataFrame([
+        {k: v for k, v in doc.items() if k != "_id"}
+        for doc in protected_locations.values()
+    ])
+
+    # --- Step 4: Combine datasets ---
+    if df_protected.empty:
+        df = df_new
+    elif df_new.empty:
+        df = df_protected
+    else:
+        df = pd.concat([df_new, df_protected], ignore_index=True)
+
+    if df.empty:
+        logger.warning("No data to score")
+        raise HTTPException(status_code=404, detail="No weather data to score")
+
+    # --- Step 5: Run risk scoring only on new data (protected already scored) ---
+    # But re-score real-time data
+    df_new_risk = generate_risk_scores(model, df_new) if not df_new.empty else pd.DataFrame()
+    df_final = df_new_risk.copy()
+
+    # Append protected (already scored) data
+    if not df_protected.empty:
+        df_final = pd.concat([df_final, df_protected], ignore_index=True)
+
+    # Ensure household_resources is dict
+    df_final['household_resources'] = df_final['household_resources'].apply(
+        lambda x: x if isinstance(x, dict) else {}
+    )
+
+    predictions = _df_to_json_records(df_final)
+
+    # --- Step 6: Save predictions to MongoDB ---
     if predictions:
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         from pymongo import UpdateOne
@@ -270,21 +308,27 @@ async def predict_risk(generate_alerts: bool = False):
             for p in predictions
         ]
         await db["predictions"].bulk_write(ops)
+        logger.info(f"✅ Saved {len(predictions)} predictions to MongoDB")
+    else:
+        logger.warning("No predictions to save")
+        return {"message": "No predictions to save", "predictions": [], "alerts_generated": 0}
 
-    # ✅ Enrich with historical data (optional)
+    # --- Step 7: Enrich with historical data (optional) ---
     try:
         hist_summary = await db["historical_summary"].find({}, {"_id": 0}).to_list(100000)
         if hist_summary:
-            loc_to_summary = {h["location"].lower(): {k: v for k, v in h.items() if k != "location"} for h in hist_summary}
+            loc_to_summary = {
+                h["location"].lower(): {k: v for k, v in h.items() if k != "location"}
+                for h in hist_summary
+            }
             for p in predictions:
-                if p.get("location"):
-                    loc = p["location"].lower()
-                    if loc in loc_to_summary:
-                        p["historical_profile"] = loc_to_summary[loc]
+                loc = str(p.get("location", "")).lower()
+                if loc in loc_to_summary:
+                    p["historical_profile"] = loc_to_summary[loc]
     except Exception as e:
         logger.warning(f"Failed to enrich with historical profile: {e}")
 
-    # ✅ Generate alerts if requested
+    # --- Step 8: Generate alerts if requested ---
     alerts_generated = []
     if generate_alerts:
         try:
@@ -292,7 +336,7 @@ async def predict_risk(generate_alerts: bool = False):
         except Exception as e:
             logger.warning(f"Failed to generate alerts: {e}")
 
-    logger.info(f"✅ Scored {len(predictions)} records. Alerts generated: {len(alerts_generated)}")
+    logger.info(f"📊 Scored {len(predictions)} records. Alerts generated: {len(alerts_generated)}")
     return {
         "message": f"{len(predictions)} records scored.",
         "predictions": predictions,

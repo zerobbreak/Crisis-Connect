@@ -207,8 +207,8 @@ with tab2:
     if alerts_data and alerts_data.get("alerts"):
         alerts_df = pd.DataFrame(alerts_data["alerts"])
         if 'timestamp' in alerts_df.columns:
-            alerts_df['timestamp'] = pd.to_datetime(alerts_df['timestamp']).dt.strftime('%Y-%m-%d %H:%M')
-        
+            # Handle ISO 8601 timestamps like "2025-08-18T16:23:00"
+            alerts_df['timestamp'] = pd.to_datetime(alerts_df['timestamp'], format='mixed').dt.strftime('%Y-%m-%d %H:%M')       
         def highlight_risk(row):
             color = "red" if row['risk_level'] == 'HIGH' else "orange" if row['risk_level'] == 'MODERATE' else "green"
             return [f'color: {color}; font-weight: bold'] * len(row)

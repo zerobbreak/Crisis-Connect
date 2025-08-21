@@ -30,7 +30,7 @@ TEMPLATES = {
         "Risk Score: {risk_score}%.\n"
         "Wave Height: {wave_height}m.\n"
         "For a family of 4: {food_packs} food packs, {water_gallons} gallons of water needed.\n"
-        "Shelter: {'Required' if shelter_needed else 'Not required'}.\n"
+        "Shelter: {shelter_status}.\n"
         "Boats: {boats_needed} (shared).\n"
         "Move to higher ground and follow local updates."
     ),
@@ -39,7 +39,7 @@ TEMPLATES = {
         "Risk Score: {risk_score}%.\n"
         "Wave Height: {wave_height}m.\n"
         "For a family of 4: {food_packs} food packs, {water_gallons} gallons of water needed.\n"
-        "Shelter: {'Required' if shelter_needed else 'Not required'}.\n"
+        "Shelter: {shelter_status}.\n"
         "Boats: {boats_needed} (shared).\n"
         "Monitor updates and stay cautious."
     ),
@@ -65,7 +65,6 @@ def translate_with_gemini(text: str, target_language: str) -> str:
         return content_obj.text.strip()
     return str(content_obj)
 
-# services/alert_generate.py
 def generate_alerts(data: pd.DataFrame) -> List[dict]:
     alerts = []
     translation_cache = {}
@@ -75,21 +74,17 @@ def generate_alerts(data: pd.DataFrame) -> List[dict]:
         return alerts
 
     for _, row in data.iterrows():
-        # ✅ Safely extract composite_risk_score
         try:
             risk_score = float(row.get("composite_risk_score", 0))
         except (TypeError, ValueError):
             risk_score = 0.0
 
-        # ✅ Only alert if above threshold
         if risk_score < 70.0:
-            logger.debug(f"Skipped {row.get('location')}: risk_score={risk_score}")
             continue
 
         location = str(row.get("location", "Unknown"))
         wave_height = float(row.get("wave_height", 0) or 0)
 
-        # ✅ Safely get household_resources
         hr = row.get("household_resources")
         if not isinstance(hr, dict):
             hr = {}
@@ -98,15 +93,19 @@ def generate_alerts(data: pd.DataFrame) -> List[dict]:
         shelter_needed = hr.get("shelter_needed", False)
         boats_needed = hr.get("boats_needed", 0.0)
 
+        # ✅ Compute shelter_status here
+        shelter_status = "Required" if shelter_needed else "Not required"
+
         level = "SEVERE" if risk_score >= 85 else "HIGH"
 
+        # ✅ Now format with shelter_status
         message_en = TEMPLATES["high"].format(
             location=location,
             risk_score=int(risk_score),
             wave_height=round(wave_height, 1),
             food_packs=food_packs,
             water_gallons=water_gallons,
-            shelter_needed=shelter_needed,
+            shelter_status=shelter_status,  # ← Use pre-computed value
             boats_needed=round(boats_needed, 2),
         )
 
@@ -132,7 +131,6 @@ def generate_alerts(data: pd.DataFrame) -> List[dict]:
         logger.info(f"✅ Alert generated for {location} (score: {risk_score:.1f})")
 
     return alerts
-
 async def generate_alerts_from_db(db: AsyncIOMotorDatabase, limit: int = 1000):
     cursor = (
         db["predictions"]
