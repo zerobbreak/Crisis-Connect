@@ -22,8 +22,29 @@ from datetime import timedelta, datetime
 from pydantic import BaseModel, model_validator, field_validator, constr, confloat,Field, ConfigDict
 from typing import List, Optional, Literal
 
-from models.model import WeatherBatch, WeatherEntry
+# from models.model import WeatherBatch, WeatherEntry
 
+class WeatherEntry(BaseModel):
+    temperature: Optional[confloat(ge=-100.0, le=100.0)] = None
+    humidity: Optional[confloat(ge=0.0, le=100.0)] = None
+    rainfall: Optional[confloat(ge=0.0, le=5000.0)] = None
+    wind_speed: Optional[confloat(ge=0.0, le=500.0)] = None
+    wave_height: Optional[confloat(ge=0.0, le=50.0)] = None
+    location: constr(min_length=1, max_length=100, strip_whitespace=True)
+    timestamp: str
+    latitude: Optional[confloat(ge=-90.0, le=90.0)] = None
+    longitude: Optional[confloat(ge=-180.0, le=180.0)] = None
+    
+    @field_validator('timestamp')
+    def validate_timestamp(cls, v):
+        try:
+            datetime.strptime(v, "%Y-%m-%d %H:%M:%S")
+            return v
+        except ValueError:
+            raise ValueError("Timestamp must be in format YYYY-MM-DD HH:MM:SS")
+
+class WeatherBatch(BaseModel):
+    data: List[WeatherEntry]
 # Configuration
 logger = logging.getLogger("crisisconnect.predict")
 logger.setLevel(logging.INFO)
