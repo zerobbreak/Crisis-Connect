@@ -48,8 +48,8 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # --- Title & Description ---
-st.title("🌊 Crisis Connect Flood Risk Dashboard")
-st.markdown("Real-time flood risk monitoring, alerts, and emergency resource planning for South Africa.")
+st.title("🌊 Crisis Connect Dashviard")
+st.markdown("Early natural disaster warning system")
 
 # --- Data Fetching with Caching ---
 @st.cache_data(ttl=300)
