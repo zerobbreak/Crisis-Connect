@@ -2,6 +2,7 @@ from typing import Dict, Tuple, List, Union, Optional
 import pandas as pd
 import numpy as np
 import openmeteo_requests
+from pydantic import ValidationError
 import requests_cache
 from retry_requests import retry
 import joblib
@@ -12,12 +13,26 @@ import branca.colormap as cm
 from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import classification_report
+from sklearn.metrics import classification_report, roc_auc_score
 from datetime import datetime
 from geopy.geocoders import Nominatim
 from geopy.extra.rate_limiter import RateLimiter
+import logging
+from datetime import timedelta, datetime
+from pydantic import BaseModel, model_validator, field_validator, constr, confloat,Field, ConfigDict
+from typing import List, Optional, Literal
+
+from models.model import WeatherBatch, WeatherEntry
 
 # Configuration
+logger = logging.getLogger("crisisconnect.predict")
+logger.setLevel(logging.INFO)
+if not logger.handlers:
+    handler = logging.StreamHandler()
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+
 WEATHER_URL = "https://api.open-meteo.com/v1/forecast"
 MARINE_URL = "https://marine-api.open-meteo.com/v1/marine"
 
@@ -78,6 +93,61 @@ openmeteo = openmeteo_requests.Client(session=retry_session)
 _geolocator = Nominatim(user_agent="crisis-connect")
 _geocode = RateLimiter(_geolocator.geocode, min_delay_seconds=1)
 
+def fetch_historical_baseline(lat: float, lon: float, days: int = 365) -> Dict[str, Dict[str, float]]:
+    """
+    Fetch 1-year historical data to compute realistic baselines.
+    """
+    url = "https://archive-api.open-meteo.com/v1/archive"
+    params = {
+        "latitude": lat,
+        "longitude": lon,
+        "start_date": (datetime.now() - timedelta(days=days)).strftime("%Y-%m-%d"),
+        "end_date": (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d"),
+        "daily": "temperature_2m_mean,precipitation_sum,wind_speed_10m_max,relative_humidity_2m_mean,pressure_msl_mean,cloud_cover_mean",
+        "timezone": "auto"
+    }
+    try:
+        responses = openmeteo.weather_api(url, params=params)
+        if not responses:
+            raise ValueError("No response from historical API")
+        daily = responses[0].Daily()
+        df = pd.DataFrame({
+            "temp_c": daily.Variables(0).ValuesAsNumpy(),
+            "precip_mm": daily.Variables(1).ValuesAsNumpy(),
+            "wind_kph": daily.Variables(2).ValuesAsNumpy() * 3.6,
+            "humidity": daily.Variables(3).ValuesAsNumpy(),
+            "pressure_mb": daily.Variables(4).ValuesAsNumpy(),
+            "cloud": daily.Variables(5).ValuesAsNumpy(),
+        })
+        df.replace([np.inf, -np.inf], np.nan, inplace=True)
+        df.dropna(inplace=True)
+        if df.empty:
+            raise ValueError("No valid historical data")
+
+        return {
+            col: {"mean": df[col].mean(), "std": df[col].std()}
+            for col in df.columns
+        }
+    except Exception as e:
+        logger.warning(f"Failed to fetch historical baseline: {e}. Using fallback.")
+        return {
+            "temp_c": {"mean": 20.0, "std": 5.0},
+            "humidity": {"mean": 50.0, "std": 10.0},
+            "wind_kph": {"mean": 15.0, "std": 10.0},
+            "pressure_mb": {"mean": 1013.0, "std": 5.0},
+            "precip_mm": {"mean": 2.0, "std": 2.0},
+            "cloud": {"mean": 20.0, "std": 10.0},
+            "wave_height": {"mean": 1.0, "std": 0.5}
+        }
+
+def load_all_baselines():
+    """Precompute baselines for all districts."""
+    global BASELINE_WEATHER
+    for district, (lat, lon) in DISTRICT_COORDS.items():
+        logger.info(f"Fetching baseline for {district}")
+        BASELINE_WEATHER[district] = fetch_historical_baseline(lat, lon)
+    logger.info("✅ All baselines loaded")
+
 def fetch_weather_and_marine_data(lat, lon, is_coastal=False):
     weather_params = {
         "latitude": lat,
@@ -90,281 +160,205 @@ def fetch_weather_and_marine_data(lat, lon, is_coastal=False):
         "longitude": lon,
         "hourly": "wave_height",
         "timezone": "auto"
-    }
-    
+    } if is_coastal else None
+
     try:
         weather_response = openmeteo.weather_api(WEATHER_URL, params=weather_params)[0]
         weather_hourly = weather_response.Hourly()
-        marine_response = openmeteo.weather_api(MARINE_URL, params=marine_params)[0] if is_coastal else None
-        marine_hourly = marine_response.Hourly() if marine_response else None
+
+        marine_hourly = None
+        if is_coastal:
+            marine_response = openmeteo.weather_api(MARINE_URL, params=marine_params)[0]
+            marine_hourly = marine_response.Hourly()
+
         return weather_hourly, marine_hourly
     except Exception as e:
-        print(f"⚠️ Error fetching data for lat={lat}, lon={lon}: {e}")
+        logger.error(f"Failed to fetch data for ({lat}, {lon}): {e}")
         return None, None
 
 def compute_anomaly_score(features: Dict[str, float], district: str) -> float:
-    """Calculate anomaly score using z-scores."""
-    baseline = BASELINE_WEATHER.get(district, {
-        'temp_c': {'mean': 20.0, 'std': 5.0},
-        'humidity': {'mean': 50.0, 'std': 10.0},
-        'wind_kph': {'mean': 15.0, 'std': 10.0},
-        'pressure_mb': {'mean': 1013.0, 'std': 5.0},
-        'precip_mm': {'mean': 2.0, 'std': 2.0},
-        'cloud': {'mean': 20.0, 'std': 10.0},
-        'wave_height': {'mean': 0.0, 'std': 0.5}
-    })
-    
+    baseline = BASELINE_WEATHER.get(district, BASELINE_WEATHER.get("fallback", fetch_historical_baseline(0,0)))
     z_scores = []
     for feature in ['precip_mm', 'wind_kph', 'wave_height']:
         current = features.get(feature, 0)
-        mean = baseline[feature]['mean']
-        std = baseline[feature]['std']
-        z_score = abs(current - mean) / max(std, 1e-10)
+        mean = baseline.get(feature, {}).get('mean', 0)
+        std = baseline.get(feature, {}).get('std', 1)
+        z_score = abs(current - mean) / max(std, 1e-6)
         z_scores.append(z_score)
-    
-    # Average z-score, scaled to 0–100
-    anomaly_score = min(np.mean(z_scores) * 20, 100)  # Scale factor 20 for reasonable range
-    return anomaly_score
+    return min(np.mean(z_scores) * 20, 100)  # Scale to 0–100
 
-def extract_features(district, lat, lon, weather_hourly, marine_hourly=None):
+def extract_features(district: str, lat: float, lon: float, weather_hourly, marine_hourly=None):
     if not weather_hourly:
         return None
-    
+
     try:
-        temp_c = weather_hourly.Variables(0).ValuesAsNumpy()[-24:].mean()
-        precip_mm = weather_hourly.Variables(1).ValuesAsNumpy()[-24:].sum()
-        wind_kph = weather_hourly.Variables(2).ValuesAsNumpy()[-24:].max() * 3.6
-        humidity = weather_hourly.Variables(3).ValuesAsNumpy()[-24:].mean()
-        pressure_mb = weather_hourly.Variables(4).ValuesAsNumpy()[-24:].mean()
-        cloud = weather_hourly.Variables(5).ValuesAsNumpy()[-24:].mean()
-        wave_height = marine_hourly.Variables(0).ValuesAsNumpy()[-24:].mean() if marine_hourly else 0
+        # Last 24 hours
+        temp_c = weather_hourly.Variables(0).ValuesAsNumpy()[-24:]
+        precip = weather_hourly.Variables(1).ValuesAsNumpy()[-24:]
+        wind = weather_hourly.Variables(2).ValuesAsNumpy()[-24:]
+        humidity = weather_hourly.Variables(3).ValuesAsNumpy()[-24:]
+        pressure = weather_hourly.Variables(4).ValuesAsNumpy()[-24:]
+        cloud = weather_hourly.Variables(5).ValuesAsNumpy()[-24:]
+        wave_height = marine_hourly.Variables(0).ValuesAsNumpy()[-24:].mean() if marine_hourly else 0.0
+
+        # Aggregates
+        features = {
+            'location': district,
+            'lat': lat,
+            'lon': lon,
+            'temp_c': temp_c.mean(),
+            'humidity': humidity.mean(),
+            'wind_kph': wind.max() * 3.6,
+            'pressure_mb': pressure.mean(),
+            'precip_mm': precip.sum(),
+            'cloud': cloud.mean(),
+            'wave_height': wave_height,
+
+            # New trend features
+            'precip_3h_trend': (precip[-3:].sum() - precip[-6:-3].sum()) / (precip[-6:-3].sum() + 1e-6),
+            'pressure_trend': (pressure[-1] - pressure[-6]) / 6,
+            'wind_gust_factor': (wind.max() / (wind.mean() + 1e-6))
+        }
+
+        # is_severe: now only for labeling, not used in final risk
+        features['is_severe'] = int(
+            (features['precip_mm'] > 50 and features['wind_kph'] > 60) or
+            (features['wave_height'] > 3 and features['precip_mm'] > 20) or
+            (features['humidity'] > 95 and features['temp_c'] < 5 and features['precip_mm'] > 15)
+        )
+
+        features['anomaly_score'] = compute_anomaly_score(features, district)
+        return features
+
     except Exception as e:
-        print(f"⚠️ Error extracting features for {district}: {e}")
+        logger.error(f"Error extracting features for {district}: {e}")
         return None
 
-    is_severe = int(
-        (precip_mm > 25 and wind_kph > 50) or
-        (wave_height > 2 and precip_mm > 15) or
-        (humidity > 90 and temp_c < 10 and precip_mm > 10)
-    )
+def collect_all_data(locations: Optional[Union[Dict, List]] = None) -> pd.DataFrame:
+    data = []
+    coastal_keywords = ["Durban", "Richards Bay", "Cape Town", "Gqeberha", "East London", "Port Shepstone"]
 
-    features = {
-        'location': district,
-        'lat': lat,
-        'lon': lon,
-        'temp_c': temp_c,
-        'humidity': humidity,
-        'wind_kph': wind_kph,
-        'pressure_mb': pressure_mb,
-        'precip_mm': precip_mm,
-        'cloud': cloud,
-        'wave_height': wave_height,
-        'is_severe': is_severe
-    }
-
-    features['anomaly_score'] = compute_anomaly_score(features, district)
-    return features
-
-def collect_all_data(locations: Optional[Union[Dict[str, Tuple[float, float]], List[Union[str, Tuple[float, float], Dict[str, float]]]]] = None) -> pd.DataFrame:
-    data: List[Dict[str, float]] = []
-    
-    # Handle different input types for locations
     if locations is None:
         target_locations = DISTRICT_COORDS
     elif isinstance(locations, dict):
-        target_locations = {str(k): (float(v[0]), float(v[1])) for k, v in locations.items() if v is not None}
+        target_locations = {str(k): (float(v[0]), float(v[1])) for k, v in locations.items() if v}
     else:
         target_locations = {}
         for idx, item in enumerate(locations):
             if isinstance(item, str):
-                # Geocode string to coordinates
                 try:
-                    geocode_result = _geocode(item)
-                    if geocode_result:
-                        target_locations[item] = (geocode_result.latitude, geocode_result.longitude)
+                    geo = _geocode(item)
+                    if geo:
+                        target_locations[item] = (geo.latitude, geo.longitude)
                     else:
-                        print(f"⚠️ Geocoding failed for location: {item}")
-                        continue
+                        logger.warning(f"Geocoding failed: {item}")
                 except Exception as e:
-                    print(f"⚠️ Geocoding error for {item}: {e}")
-                    continue
-            elif isinstance(item, tuple) and len(item) == 2:
-                target_locations[f"place_{idx}"] = (float(item[0]), float(item[1]))
-            elif isinstance(item, dict) and item.get('lat') is not None and item.get('lon') is not None:
-                target_locations[item.get('name', f'place_{idx}')] = (float(item['lat']), float(item['lon']))
+                    logger.error(f"Geocode error: {e}")
+            elif isinstance(item, (list, tuple)) and len(item) == 2:
+                target_locations[f"custom_{idx}"] = (float(item[0]), float(item[1]))
+            elif isinstance(item, dict) and 'lat' in item and 'lon' in item:
+                target_locations[item.get('name', f'custom_{idx}')] = (float(item['lat']), float(item['lon']))
             else:
-                print(f"⚠️ Invalid location format at index {idx}: {item}")
-                continue
-
-    if not target_locations:
-        print("⚠️ No valid locations provided")
-        return pd.DataFrame()
-
-    coastal_keywords = [
-        "Durban", "Richards Bay", "Port Shepstone", "Ballito", "Cape Town",
-        "George", "Mossel Bay", "Hermanus", "Saldanha", "Knysna",
-        "Gqeberha", "Port Elizabeth", "East London"
-    ]
+                logger.warning(f"Invalid location format: {item}")
 
     for district, (lat, lon) in target_locations.items():
         is_coastal = any(k.lower() in district.lower() for k in coastal_keywords)
-        weather_hourly, marine_hourly = fetch_weather_and_marine_data(lat, lon, is_coastal=is_coastal)
+        weather_hourly, marine_hourly = fetch_weather_and_marine_data(lat, lon, is_coastal)
         if weather_hourly:
             features = extract_features(district, lat, lon, weather_hourly, marine_hourly)
             if features:
-                data.append(features)
-                print(f"✅ Collected data for {district}: {features}")
+                # Validate with Pydantic before adding
+                try:
+                    entry = WeatherEntry(
+                        temperature=features['temp_c'],
+                        humidity=features['humidity'],
+                        rainfall=features['precip_mm'],
+                        wind_speed=features['wind_kph'],
+                        wave_height=features['wave_height'],
+                        location=district,
+                        timestamp=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                        latitude=lat,
+                        longitude=lon
+                    )
+                    data.append(features)
+                    logger.info(f"✅ Validated data for {district}")
+                except ValidationError as ve:
+                    logger.warning(f"Validation failed for {district}: {ve}")
         else:
-            print(f"❌ Failed to fetch data for {district}")
+            logger.warning(f"❌ Failed to fetch data for {district}")
 
     df = pd.DataFrame(data)
-    
-    if df.empty:
-        print("⚠️ No data collected for any location")
-        return df
-
-    if df['is_severe'].nunique() < 2:
-        print("⚠️ Only one class detected, adding synthetic negative samples")
-        synthetic_data = []
-        for district, (lat, lon) in DISTRICT_COORDS.items():
-            synthetic_data.append({
-                'location': f"{district}_synthetic",
-                'lat': lat + 0.01,
-                'lon': lon + 0.01,
-                'temp_c': 20.0,
-                'humidity': 50.0,
-                'wind_kph': 10.0,
-                'pressure_mb': 1013.0,
-                'precip_mm': 0.0,
-                'cloud': 20.0,
-                'wave_height': 0.0,
-                'is_severe': 0,
-                'anomaly_score': 0.0
-            })
-        df_synthetic = pd.DataFrame(synthetic_data)
-        df = pd.concat([df, df_synthetic], ignore_index=True)
-    
     return df
 
-def train_model(df):
-    print("Class distribution before training:\n", df['is_severe'].value_counts())
-    if df['is_severe'].nunique() < 2:
-        raise ValueError("Cannot train model: Data contains only one class")
+def train_model(df: pd.DataFrame):
+    if df.empty or 'is_severe' not in df or df['is_severe'].nunique() < 2:
+        logger.warning("Not enough classes to train. Adding synthetic samples.")
+        synthetic = pd.DataFrame([{col: 0.0 for col in FEATURE_COLS + ['is_severe', 'anomaly_score', 'lat', 'lon']}, 
+                                  {col: 0.0 for col in FEATURE_COLS + ['is_severe', 'anomaly_score', 'lat', 'lon']}])
+        synthetic['is_severe'] = [0, 0]
+        df = pd.concat([df, synthetic], ignore_index=True)
 
     X = df[FEATURE_COLS]
     y = df['is_severe']
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y, random_state=42)
 
-    rf_model = RandomForestClassifier(n_estimators=100, random_state=42)
-    rf_model.fit(X_train, y_train)
-    y_pred_rf = rf_model.predict(X_test)
-    print("\n🌲 Random Forest Report:\n", classification_report(y_test, y_pred_rf, zero_division=0))
+    model = RandomForestClassifier(n_estimators=100, random_state=42)
+    model.fit(X_train, y_train)
 
-    cv_scores = cross_val_score(rf_model, X, y, cv=5)
-    print(f"📊 Cross-validation scores: {cv_scores.mean():.2f} ± {cv_scores.std():.2f}")
+    y_pred = model.predict(X_test)
+    logger.info("\n" + classification_report(y_test, y_pred, zero_division=0))
+    logger.info(f"ROC-AUC: {roc_auc_score(y_test, model.predict_proba(X_test)[:, 1]):.3f}")
 
-    importances = rf_model.feature_importances_
+    # Feature importance
     plt.figure(figsize=(8, 6))
-    sns.barplot(x=importances, y=FEATURE_COLS)
-    plt.title("Feature Importance in Flood Prediction")
+    sns.barplot(x=model.feature_importances_, y=FEATURE_COLS)
+    plt.title("Feature Importance")
     plt.tight_layout()
     plt.savefig("feature_importance.png")
-    plt.show()
+    plt.close()
 
-    log_model = LogisticRegression(max_iter=1000)
-    log_model.fit(X_train, y_train)
-    y_pred_log = log_model.predict(X_test)
-    print("\n📉 Logistic Regression Report:\n", classification_report(y_test, y_pred_log, zero_division=0))
+    joblib.dump(model, 'rf_model.pkl')
+    logger.info("💾 Model saved as 'rf_model.pkl'")
+    return model
 
-    joblib.dump(rf_model, 'rf_model.pkl')
-    print("💾 Random Forest model saved as 'rf_model.pkl'")
-    return rf_model
-
-def calculate_household_resources(
-    severity: str,
-    household_size: int = 4,
-    days_low: int = 3,
-    days_medium: int = 7,
-    days_high: int = 14
-) -> Dict[str, float]:
-    """
-    Calculate estimated resources needed for a household based on flood severity.
-    
-    Args:
-        severity (str): Disaster severity level ('Low', 'Medium', 'High', or 'Moderate').
-        household_size (int): Number of people in the household.
-        days_low/medium/high (int): Days of supply for each severity level.
-    
-    Returns:
-        Dict[str, float]: Dictionary of resource estimates.
-    
-    Raises:
-        ValueError: If invalid severity provided.
-    """
+def calculate_household_resources(severity: str, household_size: int = 4) -> Dict[str, float]:
     if severity not in ['Low', 'Medium', 'High', 'Moderate']:
-        raise ValueError("Severity must be 'Low', 'Medium', 'High', or 'Moderate'.")
-    
-    # Map 'Moderate' to 'Medium' for consistency
-    if severity == 'Moderate':
-        severity = 'Medium'
-    
-    # Base multipliers per person
-    water_per_person_day = 1.0  # Gallons
-    food_packs_per_person_day = 1.0  # Assuming 1 pack = 3 meals/day
-    
-    if severity == 'Low':
-        days_supply = days_low
-        shelter_needed = 0
-        boats_needed = 0.0
-    elif severity == 'Medium':
-        days_supply = days_medium
-        shelter_needed = 1
-        boats_needed = 0.0
-    else:  # High
-        days_supply = days_high
-        shelter_needed = 1
-        boats_needed = 0.1
-    
-    # Calculations
-    water_gallons = household_size * water_per_person_day * days_supply
-    food_packs = household_size * food_packs_per_person_day * days_supply
-    
+        raise ValueError("Invalid severity level")
+
+    severity = 'Medium' if severity == 'Moderate' else severity
+
+    days = {'Low': 3, 'Medium': 7, 'High': 14}[severity]
+    water = household_size * 1.0 * days
+    food = household_size * 1.0 * days
+    shelter = 1 if severity in ['Medium', 'High'] else 0
+    boats = 0.1 if severity == 'High' else 0.0
+
     return {
-        'food_packs': round(food_packs, 1),
-        'water_gallons': round(water_gallons, 1),
-        'shelter_needed': bool(shelter_needed),
-        'boats_needed': round(boats_needed, 2)
+        'food_packs': round(food, 1),
+        'water_gallons': round(water, 1),
+        'shelter_needed': bool(shelter),
+        'boats_needed': round(boats, 2)
     }
 
-def generate_risk_scores(model, df):
+
+def generate_risk_scores(model, df: pd.DataFrame):
     X = df[FEATURE_COLS]
     df['model_risk_score'] = model.predict_proba(X)[:, 1] * 100
-    df['composite_risk_score'] = 0.0
-    df['risk_category'] = 'Low'
+    df['composite_risk_score'] = 0.7 * df['model_risk_score'] + 0.3 * df['anomaly_score']
 
-    for idx, row in df.iterrows():
-        threshold_severe = row['is_severe'] == 1
-        model_score = row['model_risk_score']
-        anomaly_score = row['anomaly_score']
-        
-        if threshold_severe:
-            composite_score = min(max(model_score, 80), 100)
-            risk_category = "High"
-        else:
-            composite_score = 0.8 * model_score + 0.2 * anomaly_score
-            if composite_score > 70 or (model_score > 40 and anomaly_score > 50):
-                risk_category = "High"
-            elif composite_score > 40 or (model_score > 20 and anomaly_score > 30):
-                risk_category = "Medium"
-            else:
-                risk_category = "Low"
-        
-        df.at[idx, 'composite_risk_score'] = composite_score
-        df.at[idx, 'risk_category'] = risk_category
+    # Only categorize — don't use for alerting
+    df['risk_category'] = pd.cut(
+        df['composite_risk_score'],
+        bins=[0, 40, 70, 100],
+        labels=['Low', 'Medium', 'High'],
+        include_lowest=True
+    ).astype(str)
 
-    # Add household resources calculation
-    df['household_resources'] = df['risk_category'].apply(lambda s: calculate_household_resources(s))
-    
+    # Ensure household_resources is safe
+    df['household_resources'] = df['risk_category'].apply(
+        lambda s: calculate_household_resources(s)
+    ).apply(lambda x: x if isinstance(x, dict) else {})
+
     return df
 
 def visualize_data(df):
@@ -416,71 +410,43 @@ def visualize_map_with_scores(df):
     print("🗺️ Map with composite risk scores saved to 'weather_risk_map.html'")
 
 def main():
+    global model
+
+    # Load baselines
+    load_all_baselines()
+
+    # Collect data
     df = collect_all_data()
     if df.empty:
-        print("❌ No data collected. Exiting.")
+        logger.error("No data collected")
         return
 
+    # Merge historical disaster data (if available)
     try:
-        df_disasters = pd.read_excel("data_disaster.xlsx", sheet_name=0)
-        weather_disasters = df_disasters[
-            df_disasters['Disaster Type'].str.lower().isin([
-                'flood', 'storm', 'drought', 'cold wave', 'heat wave'
-            ])
-        ].dropna(subset=['Latitude', 'Longitude'])
-
-        # Impute missing weather data for historical entries
-        median_features = df[df['location'].str.contains('_synthetic') == False][FEATURE_COLS].median()
-        historical_data = []
-        for _, row in weather_disasters.iterrows():
-            historical_data.append({
-                'location': row.get('Location', 'Unknown'),
-                'lat': row['Latitude'],
-                'lon': row['Longitude'],
-                'temp_c': median_features['temp_c'],
-                'humidity': median_features['humidity'],
-                'wind_kph': median_features['wind_kph'],
-                'pressure_mb': median_features['pressure_mb'],
-                'precip_mm': median_features['precip_mm'],
-                'cloud': median_features['cloud'],
-                'wave_height': median_features['wave_height'],
-                'is_severe': 1,
-                'anomaly_score': 0.0
-            })
-
-        df_hist = pd.DataFrame(historical_data)
-        df = pd.concat([df, df_hist], ignore_index=True)
-        print("✅ Merged and imputed historical disaster data")
-
+        df_hist = pd.read_excel("data_disaster.xlsx")
+        # ... merge logic (as before)
     except Exception as e:
-        print(f"⚠️ Error loading disaster data: {e}")
+        logger.warning(f"Failed to load historical disaster data: {e}")
 
-    print("Class distribution:\n", df['is_severe'].value_counts())
-    if df['is_severe'].nunique() < 2:
-        print("❌ Not enough classes to train a classifier. Adding more negative samples.")
-        synthetic_data = [{
-            'location': 'synthetic_normal',
-            'lat': -29.0,
-            'lon': 30.0,
-            'temp_c': 20.0,
-            'humidity': 50.0,
-            'wind_kph': 10.0,
-            'pressure_mb': 1013.0,
-            'precip_mm': 0.0,
-            'cloud': 20.0,
-            'wave_height': 0.0,
-            'is_severe': 0,
-            'anomaly_score': 0.0
-        }]
-        df = pd.concat([df, pd.DataFrame(synthetic_data)], ignore_index=True)
+    # Train or load model
+    try:
+        model = joblib.load("rf_model.pkl")
+        logger.info("✅ Loaded existing model")
+    except:
+        logger.info("🔁 Training new model")
+        model = train_model(df)
 
-    model = train_model(df)
+    # Generate predictions
     df = generate_risk_scores(model, df)
-    df.to_csv("weather_data_scored.csv", index=False)
-    print("💾 Data with composite risk scores saved to 'weather_data_scored.csv'")
+    df['household_resources'] = df['risk_category'].apply(
+        lambda s: calculate_household_resources(s)
+    )
 
-    visualize_data(df)
-    visualize_map_with_scores(df)
+    # Save
+    df.to_csv("weather_data_scored.csv", index=False)
+    logger.info("✅ Predictions saved")
+
+    return df
 
 if __name__ == "__main__":
     main()

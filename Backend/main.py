@@ -1,114 +1,68 @@
-from fastapi import FastAPI, HTTPException, Query, Request
+# main.py - Crisis Connect API
+from fastapi import FastAPI, HTTPException, Query, Request, BackgroundTasks
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 import pandas as pd
 import numpy as np
 import joblib
-from typing import List, Optional, Any, Dict
+from typing import List, Optional, Any
 from pydantic import BaseModel
-from services.predict import collect_all_data, generate_risk_scores, calculate_household_resources
+from services.predict import collect_all_data, generate_risk_scores, calculate_household_resources, DISTRICT_COORDS
 from services.alert_generate import generate_alerts_from_db
 from geopy.geocoders import Nominatim
 from geopy.extra.rate_limiter import RateLimiter
 import os
 import logging
-from models.model import AlertModel, LocationRequest
-from fuzzywuzzy import process
-from pymongo.collection import Collection
+from models.model import AlertModel, SimulateRequest
 from datetime import datetime
 from utils.db import init_mongo, close_mongo, get_db, ensure_indexes
 import math
+import asyncio
+from concurrent.futures import ThreadPoolExecutor
 
-# Set up logging
-logging.basicConfig(level=logging.INFO)
+# --- Logging Setup ---
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
 logger = logging.getLogger(__name__)
 
-app = FastAPI()
+# --- App Setup ---
+app = FastAPI(
+    title="Crisis Connect API",
+    description="Real-time flood risk prediction, alerting, and resource planning",
+    version="1.0.0"
+)
 
+# --- CORS Middleware ---
+origins = os.getenv("CORS_ORIGINS", "http://localhost:3000,https://crisisconnect.streamlit.app").split(",")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "https://your-deployed-app-url"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+# --- Global Variables ---
+model = None  # Will be loaded on startup
+executor = ThreadPoolExecutor(max_workers=2)
+
+# --- Geocoder ---
+_geolocator = Nominatim(user_agent="crisis-connect")
+_geocode = RateLimiter(_geolocator.geocode, min_delay_seconds=1)
+
+# --- File Paths ---
 HISTORICAL_XLSX = "data_disaster.xlsx"
 WEATHER_CSV = "latest_data.csv"
 ALERTS_CSV = "alerts.csv"
 
-# Geocoder
-_geolocator = Nominatim(user_agent="crisis-connect")
-_geocode = RateLimiter(_geolocator.geocode, min_delay_seconds=1)
-
-# --- Helper functions to load data from files ---
-from bson import ObjectId
-
+# --- Helper Functions ---
 def serialize_doc(doc):
-    doc["_id"] = str(doc["_id"])
+    """Convert MongoDB doc for JSON serialization."""
+    if "_id" in doc:
+        doc["_id"] = str(doc["_id"])
     return doc
-
-def load_historical_data() -> pd.DataFrame:
-    if not os.path.exists(HISTORICAL_XLSX):
-        logger.error(f"Historical data file {HISTORICAL_XLSX} not found")
-        raise HTTPException(status_code=500, detail="Historical data file not found")
-    try:
-        df = pd.read_excel(HISTORICAL_XLSX)
-        df.columns = df.columns.str.strip().str.lower()
-        df.rename(columns={
-            'location': 'location',
-            'latitude': 'latitude',
-            'longitude': 'longitude',
-            'total deaths': 'total_deaths'
-        }, inplace=True)
-
-        def classify_severity(row):
-            deaths = row.get('total_deaths') or 0
-            try:
-                deaths = int(deaths)
-            except:
-                deaths = 0
-            if deaths > 100:
-                return 'High'
-            elif deaths > 10:
-                return 'Medium'
-            elif deaths > 0:
-                return 'Low'
-            return 'Unknown'
-
-        df['severity'] = df.apply(classify_severity, axis=1)
-        df.fillna({'location': 'Unknown', 'severity': 'Unknown', 'latitude': np.nan, 'longitude': np.nan}, inplace=True)
-        logger.info(f"Loaded {len(df)} historical records from {HISTORICAL_XLSX}")
-        return df
-    except Exception as e:
-        logger.error(f"Failed to load historical data: {e}")
-        raise HTTPException(status_code=500, detail=f"Failed to load historical data: {e}")
-
-def load_weather_data() -> pd.DataFrame:
-    if not os.path.exists(WEATHER_CSV):
-        logger.error(f"Weather data file {WEATHER_CSV} not found")
-        raise HTTPException(status_code=500, detail="Weather data file not found")
-    try:
-        df = pd.read_csv(WEATHER_CSV)
-        logger.info(f"Loaded {len(df)} weather records from {WEATHER_CSV}")
-        return df
-    except Exception as e:
-        logger.error(f"Failed to load weather data: {e}")
-        raise HTTPException(status_code=500, detail=f"Failed to load weather data: {e}")
-
-def load_alerts_data() -> pd.DataFrame:
-    if not os.path.exists(ALERTS_CSV):
-        logger.warning(f"Alerts data file {ALERTS_CSV} not found, returning empty list")
-        return pd.DataFrame()
-    try:
-        df = pd.read_csv(ALERTS_CSV)
-        logger.info(f"Loaded {len(df)} alert records from {ALERTS_CSV}")
-        return df
-    except Exception as e:
-        logger.error(f"Failed to load alerts data: {e}")
-        raise HTTPException(status_code=500, detail=f"Failed to load alerts data: {e}")
-
-# --- API Endpoints ---
 
 def _json_safe(value):
     if isinstance(value, (np.floating, float)):
@@ -132,376 +86,91 @@ def _df_to_json_records(df: pd.DataFrame) -> List[dict]:
     return [{k: _json_safe(v) for k, v in r.items()} for r in records]
 
 def _sanitize_records(records: List[dict]) -> List[dict]:
-    sanitized: List[dict] = []
-    for r in records:
-        sanitized.append({k: _json_safe(v) for k, v in r.items()})
-    return sanitized
+    return [{k: _json_safe(v) for k, v in r.items()} for r in records]
 
 def _strip_mongo_ids(records: List[dict]) -> List[dict]:
     for r in records:
         r.pop("_id", None)
     return records
 
+# --- Startup & Shutdown ---
 @app.on_event("startup")
 async def startup_event():
+    global model
     await init_mongo(app)
     try:
         db = get_db(app)
         await ensure_indexes(db)
-        logger.info("MongoDB indexes ensured")
+        logger.info("✅ MongoDB indexes ensured")
     except Exception as e:
         logger.warning(f"Failed to ensure MongoDB indexes: {e}")
+
+    # Load ML model
+    try:
+        model = joblib.load("rf_model.pkl")
+        logger.info("✅ ML Model loaded successfully")
+    except Exception as e:
+        logger.critical(f"❌ Failed to load model: {e}")
+        raise RuntimeError("Model not found. Run `python predict.py` first.")
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    await close_mongo(app)
+    executor.shutdown(wait=True)
 
 @app.exception_handler(RuntimeError)
 async def runtime_error_handler(request: Request, exc: RuntimeError):
     return JSONResponse(status_code=503, content={"detail": str(exc)})
 
+# --- Health Check ---
 @app.get("/health", summary="Service health check")
 async def health():
     try:
         db = get_db(app)
         await db.command("ping")
-        return {"status": "ok"}
+        if model is None:
+            return JSONResponse(status_code=503, content={"status": "error", "detail": "Model not loaded"})
+        return {"status": "ok", "model_loaded": True, "db_connected": True}
     except Exception as e:
         return JSONResponse(status_code=503, content={"status": "error", "detail": str(e)})
 
-@app.on_event("shutdown")
-async def shutdown_event():
-    await close_mongo(app)
+# --- API Endpoints ---
 
-@app.get("/weather", summary="Retrieve all weather data")
-async def get_weather():
-    db = get_db(app)
-    records = await db["weather_data"].find().sort("timestamp", -1).to_list(length=10000)
-    if not records:
-        try:
-            df = collect_all_data()
-        except Exception as e:
-            logger.error(f"Collect failed: {e}")
-            raise HTTPException(status_code=502, detail=f"Failed to collect live weather data: {e}")
-        if not df.empty:
-            from pymongo import UpdateOne
-            now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            ops = []
-            for r in df.to_dict(orient="records"):
-                key = {"location": r.get("location"), "timestamp": r.get("timestamp") or now}
-                r["timestamp"] = key["timestamp"]
-                ops.append(UpdateOne(key, {"$set": r}, upsert=True))
-            if ops:
-                await db["weather_data"].bulk_write(ops)
-            records = _df_to_json_records(df)
-        else:
-            records = []
-    else:
-        records = _strip_mongo_ids(records)
-        records = _sanitize_records(records)
-    return {"count": len(records), "records": records}
-
-@app.post("/predict", summary="Score weather data using ML models")
-async def predict_risk(generate_alerts: bool = False):
-    db = get_db(app)
-    records = await db["weather_data"].find().to_list(length=10000)
-    if not records:
-        try:
-            df = collect_all_data()
-        except Exception as e:
-            logger.error(f"Collect failed: {e}")
-            raise HTTPException(status_code=502, detail=f"Failed to collect live weather data: {e}")
-        if not df.empty:
-            from pymongo import UpdateOne
-            now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            ops = []
-            for r in df.to_dict(orient="records"):
-                key = {"location": r.get("location"), "timestamp": r.get("timestamp") or now}
-                r["timestamp"] = key["timestamp"]
-                ops.append(UpdateOne(key, {"$set": r}, upsert=True))
-            if ops:
-                await db["weather_data"].bulk_write(ops)
-    else:
-        df = pd.DataFrame(_strip_mongo_ids(records))
-    if df.empty:
-        logger.warning("No weather data to score")
-        raise HTTPException(status_code=404, detail="No weather data to score")
-    df = generate_risk_scores(model, df)
-    df = df.replace([float('inf'), float('-inf')], pd.NA)
-    df = df.where(pd.notnull(df), None)
-    predictions = df.to_dict(orient="records")
-    try:
-        hist_summary = await db["historical_summary"].find({}, {"_id": 0}).to_list(length=100000)
-        if hist_summary:
-            loc_to_summary = {h.get("location", "").lower(): {k: v for k, v in h.items() if k != "location"} for h in hist_summary}
-            for p in predictions:
-                loc = str(p.get("location", "")).lower()
-                if loc in loc_to_summary:
-                    p["historical_profile"] = loc_to_summary[loc]
-    except Exception as e:
-        logger.warning(f"Failed to enrich predictions with historical summary: {e}")
-    if predictions:
-        now_ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        from pymongo import UpdateOne
-        ops = []
-        for p in predictions:
-            key = {
-                "location": p.get("location"),
-                "timestamp": p.get("timestamp") or now_ts,
-            }
-            p["timestamp"] = key["timestamp"]
-            ops.append(UpdateOne(key, {"$set": p}, upsert=True))
-        if ops:
-            await db["predictions"].bulk_write(ops)
-    alerts_generated = []
-    if generate_alerts:
-        try:
-            alerts_generated = await generate_alerts_from_db(db)
-        except Exception as e:
-            logger.warning(f"Failed to generate alerts: {e}")
-    logger.info(f"Scored {len(predictions)} weather records")
-    return {
-        "message": f"{len(predictions)} records scored.",
-        "predictions": predictions,
-        "alerts_generated": len(alerts_generated),
-    }
-
-@app.post("/alerts", summary="Create a new flood alert")
-async def create_alert(request: Request):
-    try:
-        raw_body = await request.body()
-        logger.info(f"Raw request body: {raw_body}")
-        alert_data = await request.json()
-        logger.info(f"Parsed JSON: {alert_data}")
-        alert = AlertModel(**alert_data)
-        logger.info(f"Validated alert: {alert}")
-        db = get_db(app)
-        doc = alert.dict()
-        await db["alerts"].insert_one(doc)
-        doc.pop("_id", None)
-        return {"message": "Alert stored", "alert": doc}
-    except ValueError as e:
-        logger.error(f"Invalid JSON or missing fields: {e}")
-        raise HTTPException(status_code=422, detail=f"Invalid or missing request body: {e}")
-    except Exception as e:
-        logger.error(f"Error processing request: {e}")
-        raise HTTPException(status_code=500, detail=f"Server error: {e}")
-
-@app.get("/alerts/history", summary="Retrieve alert history with optional filters")
-async def get_alerts(
-        location: Optional[str] = Query(None),
-        level: Optional[str] = Query(None),
-        limit: int = Query(100, ge=1, le=1000)
-):
-    db = get_db(app)
-    query = {}
-    if location:
-        query["location"] = {"$regex": f"^{location}$", "$options": "i"}
-    if level:
-        query["risk_level"] = level.upper()
-    cursor = db["alerts"].find(query).sort("timestamp", -1).limit(limit)
-    alerts = await cursor.to_list(length=limit)
-    if not alerts:
-        df = load_alerts_data()
-        if df.empty:
-            return {"count": 0, "alerts": []}
-        if location:
-            df = df[df["location"].str.lower() == location.lower()]
-        if level:
-            df = df[df["risk_level"].str.upper() == level.upper()]
-        df = df.sort_values(by="timestamp", ascending=False).head(limit)
-        alerts = df.to_dict(orient="records")
-    else:
-        alerts = _strip_mongo_ids(alerts)
-    logger.info(f"Loaded {len(alerts)} alerts with filters")
-    return {"count": len(alerts), "alerts": alerts}
-
-@app.get("/api/historical", response_model=List[dict], description="Retrieve historical disaster data")
-async def get_historical_data():
-    db = get_db(app)
-    docs = await db["historical_events"].find().to_list(length=100000)
-    if not docs:
-        df = load_historical_data()
-        records = df.to_dict(orient="records")
-        if records:
-            await db["historical_events"].insert_many(records)
-            summary = (
-                df.groupby("location")["severity"].value_counts().unstack(fill_value=0).reset_index()
-            )
-            summary_records = summary.to_dict(orient="records")
-            await db["historical_summary"].delete_many({})
-            if summary_records:
-                await db["historical_summary"].insert_many(summary_records)
-        return records
-    return _strip_mongo_ids(docs)
-
-@app.get("/api/locations", response_model=List[str], description="Get all unique locations from historical data")
-async def get_all_locations():
-    db = get_db(app)
-    docs = await db["historical_events"].distinct("location")
-    if not docs:
-        df = load_historical_data()
-        locations = df["location"].dropna().unique().tolist()
-        logger.info(f"Loaded {len(locations)} unique locations (from CSV)")
-        return locations
-    logger.info(f"Loaded {len(docs)} unique locations (from DB)")
-    return [loc for loc in docs if loc]
-
-@app.get("/api/risk/{location}", description="Assess historical risk profile for a location")
-async def assess_risk_by_location(location: str):
-    db = get_db(app)
-    docs = await db["historical_events"].find({"location": {"$regex": f"^{location}$", "$options": "i"}}).to_list(length=10000)
-    if not docs:
-        df = load_historical_data()
-        filtered = df[df["location"].str.lower() == location.lower()]
-        if filtered.empty:
-            logger.warning(f"No historical data for location: {location}")
-            raise HTTPException(status_code=404, detail="No historical data for this location")
-        severity_count = filtered["severity"].value_counts().to_dict()
-        total = sum(severity_count.values())
-    else:
-        df = pd.DataFrame(_strip_mongo_ids(docs))
-        severity_count = df["severity"].value_counts().to_dict()
-        total = int(sum(severity_count.values()))
-    logger.info(f"Assessed risk for {location}: {total} events")
-    return {"location": location, "total_events": total, "risk_profile": severity_count}
-
-# New route for household resource calculation
-class ResourceRequest(BaseModel):
-    place_name: Optional[str] = None
-    lat: Optional[float] = None
-    lon: Optional[float] = None
-    household_size: int = 4
-
-@app.post("/resources", summary="Calculate household resource needs for a location")
-async def calculate_resources(request: ResourceRequest):
-    db = get_db(app)
-    location = request.place_name
-    lat = request.lat
-    lon = request.lon
-    household_size = request.household_size
-
-    if not location and not (lat and lon):
-        raise HTTPException(status_code=400, detail="Either place_name or lat/lon must be provided")
-    
-    if household_size < 1:
-        raise HTTPException(status_code=400, detail="Household size must be at least 1")
-
-    # Resolve place_name to coordinates if lat/lon not provided
-    if location and not (lat and lon):
-        try:
-            geocode_result = _geocode(location)
-            if geocode_result:
-                lat, lon = geocode_result.latitude, geocode_result.longitude
-                logger.info(f"Resolved {location} to lat={lat}, lon={lon}")
-            else:
-                logger.warning(f"Geocoding failed for location: {location}")
-                raise HTTPException(status_code=404, detail=f"Could not resolve location: {location}")
-        except Exception as e:
-            logger.error(f"Geocoding error: {e}")
-            raise HTTPException(status_code=400, detail=f"Geocoding error for location: {str(e)}")
-
-    # Query the latest prediction for the location
-    query = {}
-    if location:
-        query["location"] = {"$regex": f"^{location}$", "$options": "i"}
-    if lat and lon:
-        query["$or"] = [
-            {"lat": {"$gte": lat - 0.1, "$lte": lat + 0.1}, "lon": {"$gte": lon - 0.1, "$lte": lon + 0.1}}
-        ]
-
-    prediction = await db["predictions"].find(query).sort("timestamp", -1).limit(1).to_list(length=1)
-    
-    if not prediction:
-        # Fallback to fresh data collection
-        logger.warning(f"No recent prediction for location: {location or f'lat={lat}, lon={lon}'}")
-        try:
-            if not (lat and lon):
-                raise HTTPException(status_code=400, detail="Coordinates required for fresh data collection")
-            df = collect_all_data({"custom_location": (lat, lon)})
-            if df.empty:
-                logger.warning(f"No data collected for location: {location or f'lat={lat}, lon={lon}'}")
-                # Fallback to Low risk if no data is available
-                resources = calculate_household_resources("Low", household_size=household_size)
-                return {
-                    "location": location or "Custom Location",
-                    "risk_category": "Low",
-                    "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                    "household_size": household_size,
-                    "resources": resources,
-                    "message": "No recent prediction available; assuming Low risk."
-                }
-            df = generate_risk_scores(model, df)
-            if not df.empty:
-                from pymongo import UpdateOne
-                now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                ops = []
-                for r in df.to_dict(orient="records"):
-                    key = {"location": r.get("location"), "timestamp": r.get("timestamp") or now}
-                    r["timestamp"] = key["timestamp"]
-                    ops.append(UpdateOne(key, {"$set": r}, upsert=True))
-                if ops:
-                    await db["predictions"].bulk_write(ops)
-                prediction = df.to_dict(orient="records")[:1]
-            else:
-                raise HTTPException(status_code=404, detail="No prediction data available for this location")
-        except Exception as e:
-            logger.error(f"Failed to collect fresh data: {e}")
-            raise HTTPException(status_code=502, detail=f"Failed to collect fresh data: {str(e)}")
-
-    prediction = prediction[0] if isinstance(prediction, list) else prediction
-    risk_category = prediction.get("risk_category", "Low")
-    
-    try:
-        resources = calculate_household_resources(risk_category, household_size=household_size)
-    except ValueError as e:
-        logger.error(f"Error calculating resources: {e}")
-        raise HTTPException(status_code=400, detail=str(e))
-
-    response = {
-        "location": prediction.get("location", location or "Custom Location"),
-        "risk_category": risk_category,
-        "timestamp": prediction.get("timestamp"),
-        "household_size": household_size,
-        "resources": resources
-    }
-    
-    logger.info(f"Calculated resources for {response['location']}: {resources}")
-    return response
-
-@app.get("/", description="API root endpoint")
+@app.get("/")
 def root():
-    return {"message": "Welcome to the Crisis Connect API"}
+    return {"message": "Welcome to Crisis Connect API", "docs": "/docs"}
 
-@app.get("/collect", description="Collect weather and marine data for predefined districts")
+# --- Weather Data Collection ---
+@app.get("/collect", summary="Collect weather data for predefined districts")
 async def collect_data():
     try:
         df = collect_all_data()
         count = len(df)
         if count > 0:
             db = get_db(app)
-            records = df.to_dict(orient="records")
             now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             from pymongo import UpdateOne
-            ops = []
-            for r in records:
-                key = {
-                    "location": r.get("location"),
-                    "timestamp": r.get("timestamp") or now,
-                }
-                r["timestamp"] = key["timestamp"]
-                ops.append(UpdateOne(key, {"$set": r}, upsert=True))
-            if ops:
-                await db["weather_data"].bulk_write(ops)
+            ops = [
+                UpdateOne(
+                    {"location": r["location"], "timestamp": r.get("timestamp") or now},
+                    {"$set": r},
+                    upsert=True
+                )
+                for r in _df_to_json_records(df)
+            ]
+            await db["weather_data"].bulk_write(ops)
         logger.info(f"Collected {count} weather records")
         return {"message": "Data collected", "count": count}
     except Exception as e:
         logger.error(f"Error collecting data: {e}")
-        raise HTTPException(status_code=500, detail=f"Error collecting data: {e}")
+        raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
 
 class CollectRequest(BaseModel):
     locations: Optional[Any] = None
 
-@app.post("/collect", description="Collect weather/marine data for provided locations")
+@app.post("/collect", summary="Collect weather data for custom locations")
 async def collect_data_custom(payload: CollectRequest):
     try:
-        records = []
         df = collect_all_data(payload.locations)
         count = len(df)
         if count > 0:
@@ -509,21 +178,28 @@ async def collect_data_custom(payload: CollectRequest):
             records = _df_to_json_records(df)
             now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             from pymongo import UpdateOne
-            ops = []
-            for r in records:
-                key = {"location": r.get("location"), "timestamp": r.get("timestamp") or now}
-                r["timestamp"] = key["timestamp"]
-                ops.append(UpdateOne(key, {"$set": r}, upsert=True))
-            if ops:
-                await db["weather_data"].bulk_write(ops)
-        logger.info(f"Custom-collected {count} weather records")
-        return {"message": "Data collected", "count": count, "records": records if count <= 50 else []}
+            ops = [
+                UpdateOne(
+                    {"location": r["location"], "timestamp": r.get("timestamp") or now},
+                    {"$set": r},
+                    upsert=True
+                )
+                for r in records
+            ]
+            await db["weather_data"].bulk_write(ops)
+            records = records if count <= 50 else []
+        return {"message": "Data collected", "count": count, "records": records}
     except Exception as e:
         logger.error(f"Error in custom collection: {e}")
-        raise HTTPException(status_code=500, detail=f"Error in custom collection: {e}")
+        raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
 
-@app.get("/risk-assessment", description="Generate risk scores for collected data")
+# --- Risk Assessment ---
+@app.get("/risk-assessment", summary="Generate risk scores for all locations")
 async def assess_risk():
+    global model
+    if model is None:
+        raise HTTPException(status_code=503, detail="Model not loaded")
+
     db = get_db(app)
     records = await db["weather_data"].find().to_list(length=10000)
     if not records:
@@ -531,120 +207,468 @@ async def assess_risk():
             df = collect_all_data()
         except Exception as e:
             logger.error(f"Collect failed: {e}")
-            raise HTTPException(status_code=502, detail=f"Failed to collect live weather data: {e}")
-        if not df.empty:
-            from pymongo import UpdateOne
-            now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            ops = []
-            for r in df.to_dict(orient="records"):
-                key = {"location": r.get("location"), "timestamp": r.get("timestamp") or now}
-                r["timestamp"] = key["timestamp"]
-                ops.append(UpdateOne(key, {"$set": r}, upsert=True))
-            if ops:
-                await db["weather_data"].bulk_write(ops)
+            raise HTTPException(status_code=502, detail=f"Failed to collect data: {e}")
+        if df.empty:
+            raise HTTPException(status_code=404, detail="No weather data available")
+        records = _df_to_json_records(df)
+        now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        from pymongo import UpdateOne
+        ops = [
+            UpdateOne(
+                {"location": r["location"], "timestamp": r.get("timestamp") or now},
+                {"$set": r},
+                upsert=True
+            )
+            for r in records
+        ]
+        await db["weather_data"].bulk_write(ops)
     else:
         df = pd.DataFrame(_strip_mongo_ids(records))
-    if df.empty:
-        logger.warning("No weather data available")
-        raise HTTPException(status_code=404, detail="No weather data available")
+
     df = generate_risk_scores(model, df)
-    df = df.replace([float('inf'), float('-inf')], pd.NA)
-    df = df.where(pd.notnull(df), None)
-    predictions = df.to_dict(orient="records")
+    predictions = _df_to_json_records(df)
+
+    
+    # Enrich with historical profile
     try:
         hist_summary = await db["historical_summary"].find({}, {"_id": 0}).to_list(length=100000)
-        if hist_summary:
-            loc_to_summary = {h.get("location", "").lower(): {k: v for k, v in h.items() if k != "location"} for h in hist_summary}
-            for p in predictions:
-                loc = str(p.get("location", "")).lower()
-                if loc in loc_to_summary:
-                    p["historical_profile"] = loc_to_summary[loc]
+        loc_to_summary = {h["location"].lower(): {k: v for k, v in h.items() if k != "location"} for h in hist_summary}
+        for p in predictions:
+            loc = str(p.get("location", "")).lower()
+            if loc in loc_to_summary:
+                p["historical_profile"] = loc_to_summary[loc]
     except Exception as e:
-        logger.warning(f"Failed to enrich predictions with historical summary: {e}")
+        logger.warning(f"Failed to enrich with historical data: {e}")
+
+    # Save predictions
     if predictions:
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         from pymongo import UpdateOne
         ops = []
         for p in predictions:
             key = {
-                "location": p.get("location"),
-                "timestamp": p.get("timestamp") or now,
+                "location": p["location"],
+                "timestamp": p.get("timestamp") or now
             }
-            p["timestamp"] = key["timestamp"]
+            # Ensure composite_risk_score is float
+            if "composite_risk_score" not in p:
+                p["composite_risk_score"] = 0.0
             ops.append(UpdateOne(key, {"$set": p}, upsert=True))
-        if ops:
-            await db["predictions"].bulk_write(ops)
-    logger.info(f"Generated risk scores for {len(predictions)} records")
-    return predictions
 
-@app.post("/alerts/generate", summary="Generate alerts from recent predictions and store them")
-async def trigger_alert_generation(limit: int = Query(500, ge=1, le=5000)):
+        await db["predictions"].bulk_write(ops)
+        logger.info(f"✅ Saved {len(predictions)} predictions to MongoDB")
+    else:
+        logger.warning("No predictions to save")
+
+# --- Predict Endpoint ---
+# main.py
+
+@app.post("/predict", summary="Score weather data using ML models")
+async def predict_risk(generate_alerts: bool = False):
+    db = get_db(app)
+    records = await db["weather_data"].find().to_list(length=10000)
+    
+    if not records:
+        try:
+            df = collect_all_data()
+        except Exception as e:
+            logger.error(f"Collect failed: {e}")
+            raise HTTPException(status_code=502, detail=f"Failed to collect live weather data: {e}")
+        if not df.empty:
+            # ✅ Save raw weather data
+            from pymongo import UpdateOne
+            now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            ops = [
+                UpdateOne(
+                    {"location": r["location"], "timestamp": r.get("timestamp") or now},
+                    {"$set": r},
+                    upsert=True
+                )
+                for r in _df_to_json_records(df)
+            ]
+            await db["weather_data"].bulk_write(ops)
+    else:
+        df = pd.DataFrame(_strip_mongo_ids(records))
+
+    if df.empty:
+        raise HTTPException(status_code=404, detail="No weather data to score")
+
+    # ✅ CRITICAL: Run generate_risk_scores() to add composite_risk_score
+    global model
+    if model is None:
+        raise HTTPException(status_code=503, detail="ML model not loaded")
+        
+    df = generate_risk_scores(model, df)  # ← This adds composite_risk_score!
+
+    # ✅ Save predictions WITH composite_risk_score
+    predictions = _df_to_json_records(df)
+    if predictions:
+        now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        from pymongo import UpdateOne
+        ops = [
+            UpdateOne(
+                {"location": p["location"], "timestamp": p.get("timestamp") or now},
+                {"$set": p},
+                upsert=True
+            )
+            for p in predictions
+        ]
+        await db["predictions"].bulk_write(ops)
+
+    # ✅ Enrich with historical data (optional)
+    try:
+        hist_summary = await db["historical_summary"].find({}, {"_id": 0}).to_list(100000)
+        if hist_summary:
+            loc_to_summary = {h["location"].lower(): {k: v for k, v in h.items() if k != "location"} for h in hist_summary}
+            for p in predictions:
+                if p.get("location"):
+                    loc = p["location"].lower()
+                    if loc in loc_to_summary:
+                        p["historical_profile"] = loc_to_summary[loc]
+    except Exception as e:
+        logger.warning(f"Failed to enrich with historical profile: {e}")
+
+    # ✅ Generate alerts if requested
+    alerts_generated = []
+    if generate_alerts:
+        try:
+            alerts_generated = await generate_alerts_from_db(db)
+        except Exception as e:
+            logger.warning(f"Failed to generate alerts: {e}")
+
+    logger.info(f"✅ Scored {len(predictions)} records. Alerts generated: {len(alerts_generated)}")
+    return {
+        "message": f"{len(predictions)} records scored.",
+        "predictions": predictions,
+        "alerts_generated": len(alerts_generated),
+    }
+
+# --- Alerts ---
+@app.post("/alerts", summary="Create a new alert")
+async def create_alert(alert: AlertModel):
+    try:
+        db = get_db(app)
+        doc = alert.dict()
+        result = await db["alerts"].insert_one(doc)
+        doc["_id"] = str(result.inserted_id)
+        logger.info(f"Created alert for {alert.location}")
+        return {"message": "Alert created", "alert": doc}
+    except Exception as e:
+        logger.error(f"Failed to create alert: {e}")
+        raise HTTPException(status_code=500, detail=f"Server error: {str(e)}")
+
+@app.get("/alerts/history", summary="Get alert history")
+async def get_alerts(
+    location: Optional[str] = Query(None),
+    level: Optional[str] = Query(None),
+    limit: int = Query(100, ge=1, le=1000)
+):
+    db = get_db(app)
+    query = {}
+    if location:
+        query["location"] = {"$regex": f"^{location}$", "$options": "i"}
+    if level:
+        query["risk_level"] = level.upper()
+
+    cursor = db["alerts"].find(query).sort("timestamp", -1).limit(limit)
+    alerts = await cursor.to_list(length=limit)
+    alerts = [_strip_mongo_ids([a])[0] for a in alerts]
+    return {"count": len(alerts), "alerts": alerts}
+
+# --- Historical Data ---
+@app.get("/api/historical", response_model=List[dict])
+async def get_historical_data():
+    db = get_db(app)
+    docs = await db["historical_events"].find().to_list(length=100000)
+    if not docs:
+        try:
+            df = pd.read_excel(HISTORICAL_XLSX)
+            df.columns = df.columns.str.strip().str.lower()
+            df.rename(columns={"location": "location"}, inplace=True)
+            records = df.to_dict(orient="records")
+            if records:
+                await db["historical_events"].insert_many(records)
+                summary = df.groupby("location")["severity"].value_counts().unstack(fill_value=0).reset_index().to_dict(orient="records")
+                await db["historical_summary"].delete_many({})
+                await db["historical_summary"].insert_many(summary)
+            return records
+        except Exception as e:
+            logger.error(f"Failed to load historical data: {e}")
+            raise HTTPException(status_code=500, detail="Historical data not available")
+    return [_strip_mongo_ids([d])[0] for d in docs]
+
+@app.get("/api/locations")
+async def get_all_locations():
+    db = get_db(app)
+    docs = await db["historical_events"].distinct("location")
+    if not docs:
+        try:
+            df = pd.read_excel(HISTORICAL_XLSX)
+            locations = df["location"].dropna().unique().tolist()
+            return locations
+        except:
+            return list(DISTRICT_COORDS.keys())
+    return [loc for loc in docs if loc]
+
+@app.get("/api/risk/{location}", description="Assess historical risk profile for a location")
+async def assess_risk_by_location(location: str):
+    db = get_db(app)
+    docs = await db["historical_events"].find({
+        "location": {"$regex": f"^{location}$", "$options": "i"}
+    }).to_list(length=10000)
+
+    if not docs:
+        try:
+            df = pd.read_excel(HISTORICAL_XLSX)
+            df.columns = df.columns.str.strip().str.lower()  # Normalize
+            required_cols = {'location', 'total_deaths'}
+            if not required_cols.issubset(df.columns):
+                raise ValueError(f"Missing required columns. Found: {list(df.columns)}")
+
+            # Handle missing values
+            df['total_deaths'] = pd.to_numeric(df['total_deaths'], errors='coerce').fillna(0)
+            df['location'] = df['location'].astype(str).str.strip()
+
+            filtered = df[df['location'].str.contains(location, case=False, na=False)]
+            if filtered.empty:
+                raise HTTPException(status_code=404, detail="No historical data for this location")
+
+            severity_count = filtered["severity"].value_counts().to_dict() if "severity" in filtered.columns else {"Unknown": len(filtered)}
+            total = int(filtered['total_deaths'].sum())
+
+        except Exception as e:
+            logger.error(f"Failed to load historical data: {e}")
+            raise HTTPException(status_code=500, detail="Data load failed")
+    else:
+        df = pd.DataFrame(_strip_mongo_ids(docs))
+        severity_count = df["severity"].value_counts().to_dict() if "severity" in df.columns else {"Unknown": len(df)}
+        total = len(df)
+
+    return {
+        "location": location,
+        "total_events": total,
+        "risk_profile": severity_count
+    }
+# --- Resource Calculator ---
+class ResourceRequest(BaseModel):
+    place_name: Optional[str] = None
+    lat: Optional[float] = None
+    lon: Optional[float] = None
+    household_size: int = 4
+
+@app.post("/resources", summary="Calculate household resource needs")
+async def calculate_resources(request: ResourceRequest):
+    db = get_db(app)
+    location = request.place_name
+    lat = request.lat
+    lon = request.lon
+    household_size = request.household_size
+
+    if household_size < 1:
+        raise HTTPException(status_code=400, detail="Household size must be >= 1")
+
+    # Resolve location to coordinates
+    if location and not (lat and lon):
+        try:
+            loop = asyncio.get_event_loop()
+            geocode_result = await loop.run_in_executor(executor, _geocode, location)
+            if geocode_result:
+                lat, lon = geocode_result.latitude, geocode_result.longitude
+            else:
+                raise HTTPException(status_code=404, detail="Location not found")
+        except Exception as e:
+            logger.error(f"Geocoding error: {e}")
+            raise HTTPException(status_code=400, detail="Geocoding failed")
+
+    if not (lat and lon):
+        raise HTTPException(status_code=400, detail="Valid coordinates required")
+
+    # Find latest prediction
+    query = {
+        "lat": {"$gte": lat - 0.1, "$lte": lat + 0.1},
+        "lon": {"$gte": lon - 0.1, "$lte": lon + 0.1}
+    }
+    prediction_doc = await db["predictions"].find(query).sort("timestamp", -1).limit(1).to_list(1)
+    
+    if not prediction_doc:
+        # Fallback: collect fresh data
+        try:
+            df = collect_all_data({location or "custom": (lat, lon)})
+            if df.empty:
+                resources = calculate_household_resources("Low", household_size)
+                return {
+                    "location": location or "Custom",
+                    "risk_category": "Low",
+                    "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    "household_size": household_size,
+                    "resources": resources,
+                    "message": "No data; assuming Low risk"
+                }
+            df = generate_risk_scores(model, df)
+            prediction = df.iloc[0].to_dict()
+        except Exception as e:
+            logger.error(f"Fresh collect failed: {e}")
+            raise HTTPException(status_code=502, detail="Data collection failed")
+    else:
+        prediction = _strip_mongo_ids(prediction_doc)[0]
+
+    risk_category = prediction.get("risk_category", "Low")
+    try:
+        resources = calculate_household_resources(risk_category, household_size)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    response = {
+        "location": prediction.get("location", location or "Custom"),
+        "risk_category": risk_category,
+        "timestamp": prediction.get("timestamp", datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
+        "household_size": household_size,
+        "resources": resources,
+        **{k: v for k, v in prediction.items() if k in ['anomaly_score', 'precip_mm', 'wind_kph', 'wave_height', 'model_risk_score']}
+    }
+    return response
+
+# --- Generate Alerts ---
+@app.post("/alerts/generate")
+async def trigger_alert_generation(limit: int = Query(500)):
     db = get_db(app)
     try:
         alerts = await generate_alerts_from_db(db, limit=limit)
-        return {"generated": len(alerts), "alerts": _strip_mongo_ids(alerts)}
+        return {"generated": len(alerts), "alerts": [_strip_mongo_ids([a])[0] for a in alerts]}
     except Exception as e:
         logger.error(f"Alert generation failed: {e}")
-        raise HTTPException(status_code=500, detail=f"Alert generation failed: {e}")
+        raise HTTPException(status_code=500, detail="Failed to generate alerts")
 
-@app.post("/risk/location", description="Assess risk for a specific location")
-async def location_risk(request: Request):
-    try:
-        raw_body = await request.body()
-        logger.info(f"Raw request body: {raw_body}")
-        data = await request.json()
-        logger.info(f"Parsed JSON: {data}")
-        location_data = LocationRequest(**data)
-        logger.info(f"Validated location request: {location_data}")
 
-        db = get_db(app)
-        query = {}
-        search_term = location_data.place_name or location_data.district
-        if not search_term:
-            if location_data.lat and location_data.lon:
-                raise HTTPException(status_code=501, detail="Lat/lon lookup not implemented")
-            raise HTTPException(status_code=400, detail="Either place_name or district must be provided")
+# Disaster scenario templates
+SCENARIOS = {
+    "flood": {
+        "precip_mm": 60.0,
+        "temp_c": 18.0,
+        "humidity": 92.0,
+        "wind_kph": 30.0,
+        "pressure_mb": 1000.0,
+        "cloud": 95.0,
+        "wave_height": 0.5,
+        "description": "Severe inland flooding due to prolonged rainfall"
+    },
+    "storm": {
+        "precip_mm": 40.0,
+        "temp_c": 22.0,
+        "humidity": 85.0,
+        "wind_kph": 80.0,
+        "pressure_mb": 995.0,
+        "cloud": 100.0,
+        "wave_height": 1.2,
+        "description": "Intense thunderstorm with strong winds"
+    },
+    "coastal_cyclone": {
+        "precip_mm": 50.0,
+        "temp_c": 25.0,
+        "humidity": 90.0,
+        "wind_kph": 110.0,
+        "pressure_mb": 980.0,
+        "cloud": 100.0,
+        "wave_height": 4.5,
+        "description": "Coastal cyclone with storm surge"
+    },
+    "flash_flood": {
+        "precip_mm": 80.0,
+        "temp_c": 20.0,
+        "humidity": 95.0,
+        "wind_kph": 40.0,
+        "pressure_mb": 990.0,
+        "cloud": 98.0,
+        "wave_height": 0.3,
+        "description": "Extreme flash flooding in urban/rural areas"
+    }
+}
 
-        docs = await db["historical_events"].find({
-            "location": {"$regex": f"^{search_term}$", "$options": "i"}
-        }).to_list(length=10000)
+@app.post("/simulate", summary="Simulate a disaster scenario for testing")
+async def simulate_disaster(request: SimulateRequest):
+    db = get_db(app)
+    location = request.location.strip()
+    scenario = request.scenario
+    household_size = request.household_size
 
-        if not docs:
-            df = load_historical_data()
-            all_locations = df["location"].dropna().unique()
-            best_match, score = process.extractOne(search_term.lower(), [loc.lower() for loc in all_locations])
-            if score < 80:
-                logger.warning(f"No historical data for location: {search_term}")
-                raise HTTPException(status_code=404, detail=f"No historical data for location: {search_term}")
-            filtered = df[df["location"].str.lower() == best_match]
-            if filtered.empty:
-                logger.warning(f"No historical data for matched location: {best_match}")
-                raise HTTPException(status_code=404, detail=f"No historical data for matched location: {best_match}")
-            severity_count = filtered["severity"].value_counts().to_dict()
-            total = len(filtered)
+    # Get coordinates: from input or fallback to known districts
+    lat, lon = None, None
+    if request.lat and request.lon:
+        lat, lon = float(request.lat), float(request.lon)
+    else:
+        # Try to match to known district
+        matched = None
+        for k, (la, lo) in DISTRICT_COORDS.items():
+            if location.lower() in k.lower():
+                matched = (la, lo)
+                break
+        if matched:
+            lat, lon = matched
         else:
-            df = pd.DataFrame(_strip_mongo_ids(docs))
-            severity_count = df["severity"].value_counts().to_dict()
-            total = len(df)
+            # Try geocoding
+            try:
+                loop = asyncio.get_event_loop()
+                geo = await loop.run_in_executor(executor, _geocode, location)
+                if geo:
+                    lat, lon = geo.latitude, geo.longitude
+                else:
+                    raise HTTPException(status_code=404, detail="Location not found and no coordinates provided")
+            except Exception as e:
+                logger.warning(f"Geocoding failed: {e}")
+                raise HTTPException(status_code=404, detail="Could not resolve location")
 
-        logger.info(f"Assessed risk for {search_term}: {total} events")
-        return {
-            "location": search_term,
-            "total_events": total,
-            "risk_profile": severity_count,
-            "is_coastal": location_data.is_coastal
-        }
-    except ValueError as e:
-        logger.error(f"Invalid JSON or missing fields: {e}")
-        raise HTTPException(status_code=422, detail=f"Invalid or missing request body: {e}")
-    except Exception as e:
-        logger.error(f"Error processing request: {e}")
-        raise HTTPException(status_code=500, detail=f"Server error: {e}")
+    # Build simulated weather
+    template = SCENARIOS[scenario]
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-# Load ML model on startup
-try:
-    model = joblib.load("rf_model.pkl")
-    logger.info("Loaded Random Forest model")
-except Exception:
-    logger.error("Model not found")
-    raise HTTPException(status_code=500, detail="Model not found, please train the models first")
+    simulated_features = {
+        "location": location,
+        "lat": lat,
+        "lon": lon,
+        "temp_c": template["temp_c"],
+        "humidity": template["humidity"],
+        "wind_kph": template["wind_kph"],
+        "pressure_mb": template["pressure_mb"],
+        "precip_mm": template["precip_mm"],
+        "cloud": template["cloud"],
+        "wave_height": template["wave_height"],
+        "timestamp": now,
+        "is_severe": 1,
+        "anomaly_score": 95.0,
+        "model_risk_score": 88.0,
+        "composite_risk_score": 92.0,
+        "risk_category": "High",
+        "scenario": scenario,
+        "description": template["description"]
+    }
+
+    # Add household resources
+    resources = calculate_household_resources("High", household_size=household_size)
+    simulated_features["household_resources"] = resources
+
+    # Save to weather_data and predictions
+    from pymongo import UpdateOne
+    ops = [
+        UpdateOne(
+            {"location": location, "scenario": scenario, "timestamp": now},
+            {"$set": simulated_features},
+            upsert=True
+        )
+    ]
+    await db["simulated_events"].bulk_write(ops)
+    await db["weather_data"].bulk_write(ops)
+    await db["predictions"].bulk_write(ops)
+
+    logger.info(f"🔥 Simulated {scenario} in {location} (lat={lat}, lon={lon})")
+
+    return {
+        "message": f"✅ Simulated {scenario.upper()} in {location}",
+        "location": location,
+        "coordinates": {"lat": lat, "lon": lon},
+        "scenario": scenario,
+        "risk_score": 92.0,
+        "composite_risk_score": 92.0,
+        "household_resources": resources,
+        "description": template["description"],
+        "timestamp": now
+    }
