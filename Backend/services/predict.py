@@ -345,13 +345,12 @@ def generate_risk_scores(model, df: pd.DataFrame):
     X = df[FEATURE_COLS]
     df['model_risk_score'] = model.predict_proba(X)[:, 1] * 100
     df['composite_risk_score'] = 0.7 * df['model_risk_score'] + 0.3 * df['anomaly_score']
-
-    # Only categorize — don't use for alerting
+    
+    # Categorize
     df['risk_category'] = pd.cut(
         df['composite_risk_score'],
         bins=[0, 40, 70, 100],
-        labels=['Low', 'Medium', 'High'],
-        include_lowest=True
+        labels=['Low', 'Medium', 'High']
     ).astype(str)
 
     # Ensure household_resources is safe
@@ -359,7 +358,7 @@ def generate_risk_scores(model, df: pd.DataFrame):
         lambda s: calculate_household_resources(s)
     ).apply(lambda x: x if isinstance(x, dict) else {})
 
-    return df
+    return df  # ← Must return updated df
 
 def visualize_data(df):
     plt.figure(figsize=(6, 4))

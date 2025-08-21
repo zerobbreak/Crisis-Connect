@@ -194,72 +194,28 @@ async def collect_data_custom(payload: CollectRequest):
         raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
 
 # --- Risk Assessment ---
-@app.get("/risk-assessment", summary="Generate risk scores for all locations")
+@app.get("/risk-assessment", summary="Get latest risk scores (read-only)")
 async def assess_risk():
-    global model
-    if model is None:
-        raise HTTPException(status_code=503, detail="Model not loaded")
-
     db = get_db(app)
-    records = await db["weather_data"].find().to_list(length=10000)
-    if not records:
-        try:
-            df = collect_all_data()
-        except Exception as e:
-            logger.error(f"Collect failed: {e}")
-            raise HTTPException(status_code=502, detail=f"Failed to collect data: {e}")
-        if df.empty:
-            raise HTTPException(status_code=404, detail="No weather data available")
-        records = _df_to_json_records(df)
-        now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        from pymongo import UpdateOne
-        ops = [
-            UpdateOne(
-                {"location": r["location"], "timestamp": r.get("timestamp") or now},
-                {"$set": r},
-                upsert=True
-            )
-            for r in records
-        ]
-        await db["weather_data"].bulk_write(ops)
-    else:
-        df = pd.DataFrame(_strip_mongo_ids(records))
-
-    df = generate_risk_scores(model, df)
-    predictions = _df_to_json_records(df)
-
     
-    # Enrich with historical profile
+    # Just read from predictions collection
     try:
-        hist_summary = await db["historical_summary"].find({}, {"_id": 0}).to_list(length=100000)
-        loc_to_summary = {h["location"].lower(): {k: v for k, v in h.items() if k != "location"} for h in hist_summary}
-        for p in predictions:
-            loc = str(p.get("location", "")).lower()
-            if loc in loc_to_summary:
-                p["historical_profile"] = loc_to_summary[loc]
+        predictions = await db["predictions"].find(
+            {},
+            {"_id": 0}  # Exclude MongoDB ID
+        ).sort("timestamp", -1).to_list(length=10000)
+
+        if not predictions:
+            logger.warning("No predictions found in DB")
+            return []
+
+        logger.info(f"✅ Returned {len(predictions)} predictions")
+        return predictions
+
     except Exception as e:
-        logger.warning(f"Failed to enrich with historical data: {e}")
-
-    # Save predictions
-    if predictions:
-        now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        from pymongo import UpdateOne
-        ops = []
-        for p in predictions:
-            key = {
-                "location": p["location"],
-                "timestamp": p.get("timestamp") or now
-            }
-            # Ensure composite_risk_score is float
-            if "composite_risk_score" not in p:
-                p["composite_risk_score"] = 0.0
-            ops.append(UpdateOne(key, {"$set": p}, upsert=True))
-
-        await db["predictions"].bulk_write(ops)
-        logger.info(f"✅ Saved {len(predictions)} predictions to MongoDB")
-    else:
-        logger.warning("No predictions to save")
-
+        logger.error(f"Failed to fetch predictions: {e}")
+        raise HTTPException(status_code=500, detail="Failed to retrieve risk assessments")
+    
 # --- Predict Endpoint ---
 # main.py
 
