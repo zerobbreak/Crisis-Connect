@@ -782,7 +782,7 @@ def generate_risk_scores(df: pd.DataFrame, model=None, create_new_model=False):
         from sklearn.model_selection import train_test_split
 
         # Prepare training data
-    X = df[FEATURE_COLS]
+        X = df[FEATURE_COLS]
         y = df['is_severe'] if 'is_severe' in df.columns else [0] * len(df)
 
         if len(X) > 10:  # Need minimum samples
