@@ -1,0 +1,1580 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_deffbc94593aaa8dfdc7f23ae2d7dfe9 {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+</head>
+<body>
+    
+    
+            <div class="folium-map" id="map_deffbc94593aaa8dfdc7f23ae2d7dfe9" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_deffbc94593aaa8dfdc7f23ae2d7dfe9 = L.map(
+                "map_deffbc94593aaa8dfdc7f23ae2d7dfe9",
+                {
+                    center: [-30.5595, 22.9375],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 5,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_caee8e1eb4d522fa8ca80e07d0cf08cf = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 19,
+  "maxNativeZoom": 19,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_caee8e1eb4d522fa8ca80e07d0cf08cf.addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+            var circle_marker_acf347187767be0ae6bd139e8eead497 = L.circleMarker(
+                [-29.8587, 31.0218],
+                {"bubblingMouseEvents": true, "color": "#628e00ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#628e00ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_ce3e97f24e2c63305a510afec52ad56e = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_de36dd42d1f9692806293899215bc578 = $(`<div id="html_de36dd42d1f9692806293899215bc578" style="width: 100.0%; height: 100.0%;">eThekwini (Durban): Low Risk (19.2%) Wave Height: 1.6m Anomaly Score: 35.9%</div>`)[0];
+                popup_ce3e97f24e2c63305a510afec52ad56e.setContent(html_de36dd42d1f9692806293899215bc578);
+            
+        
+
+        circle_marker_acf347187767be0ae6bd139e8eead497.bindPopup(popup_ce3e97f24e2c63305a510afec52ad56e)
+        ;
+
+        
+    
+    
+            var circle_marker_cdfd6dd5af2c9a6063d3a1cedffc56a7 = L.circleMarker(
+                [-28.7807, 32.0383],
+                {"bubblingMouseEvents": true, "color": "#2d8700ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#2d8700ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_5e1702ec65a6151f595b835ac4842b7a = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_ef60997efa7e72c86d31b4553fde5a39 = $(`<div id="html_ef60997efa7e72c86d31b4553fde5a39" style="width: 100.0%; height: 100.0%;">King Cetshwayo (Richards Bay): Low Risk (8.9%) Wave Height: 2.0m Anomaly Score: 40.3%</div>`)[0];
+                popup_5e1702ec65a6151f595b835ac4842b7a.setContent(html_ef60997efa7e72c86d31b4553fde5a39);
+            
+        
+
+        circle_marker_cdfd6dd5af2c9a6063d3a1cedffc56a7.bindPopup(popup_5e1702ec65a6151f595b835ac4842b7a)
+        ;
+
+        
+    
+    
+            var circle_marker_e67d99efb7ee26defcf2b3d8129de6ff = L.circleMarker(
+                [-30.7414, 30.454],
+                {"bubblingMouseEvents": true, "color": "#528c00ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#528c00ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_06bd3a78261e74a664a6bcdc0eafcf7d = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_a387a27c0dc7dc99ec76822afd2243e5 = $(`<div id="html_a387a27c0dc7dc99ec76822afd2243e5" style="width: 100.0%; height: 100.0%;">Ugu (Port Shepstone): Low Risk (16.0%) Wave Height: 2.4m Anomaly Score: 48.2%</div>`)[0];
+                popup_06bd3a78261e74a664a6bcdc0eafcf7d.setContent(html_a387a27c0dc7dc99ec76822afd2243e5);
+            
+        
+
+        circle_marker_e67d99efb7ee26defcf2b3d8129de6ff.bindPopup(popup_06bd3a78261e74a664a6bcdc0eafcf7d)
+        ;
+
+        
+    
+    
+            var circle_marker_1f13eb14f80b36b9cd82b7e042b1b050 = L.circleMarker(
+                [-29.5389, 31.214],
+                {"bubblingMouseEvents": true, "color": "#468a00ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#468a00ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_2f04c209e28629fcd971bacfedae27c1 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_aab06873d527e8fe77b90e757db76142 = $(`<div id="html_aab06873d527e8fe77b90e757db76142" style="width: 100.0%; height: 100.0%;">iLembe (Ballito): Low Risk (13.7%) Wave Height: 1.5m Anomaly Score: 40.4%</div>`)[0];
+                popup_2f04c209e28629fcd971bacfedae27c1.setContent(html_aab06873d527e8fe77b90e757db76142);
+            
+        
+
+        circle_marker_1f13eb14f80b36b9cd82b7e042b1b050.bindPopup(popup_2f04c209e28629fcd971bacfedae27c1)
+        ;
+
+        
+    
+    
+            var circle_marker_1f8abdafa713ea25bac4866fcf9df53a = L.circleMarker(
+                [-28.5539, 29.7784],
+                {"bubblingMouseEvents": true, "color": "#648f00ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#648f00ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_ea89bc73ff811fe97583d4e459c817a8 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_2922821fb5610f8705714d0d27dd8a95 = $(`<div id="html_2922821fb5610f8705714d0d27dd8a95" style="width: 100.0%; height: 100.0%;">uThukela (Ladysmith): Low Risk (19.6%) Wave Height: 0.0m Anomaly Score: 53.9%</div>`)[0];
+                popup_ea89bc73ff811fe97583d4e459c817a8.setContent(html_2922821fb5610f8705714d0d27dd8a95);
+            
+        
+
+        circle_marker_1f8abdafa713ea25bac4866fcf9df53a.bindPopup(popup_ea89bc73ff811fe97583d4e459c817a8)
+        ;
+
+        
+    
+    
+            var circle_marker_c754d5a37aa762ac5f63363b124e610c = L.circleMarker(
+                [-29.6006, 30.3794],
+                {"bubblingMouseEvents": true, "color": "#ab9900ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ab9900ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_f82326772a9fa6b96ebe27fbfb33117b = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_953eb244e1eea829ba9fd9c5546b8d06 = $(`<div id="html_953eb244e1eea829ba9fd9c5546b8d06" style="width: 100.0%; height: 100.0%;">uMgungundlovu (Pietermaritzburg): Medium Risk (33.6%) Wave Height: 0.0m Anomaly Score: 35.8%</div>`)[0];
+                popup_f82326772a9fa6b96ebe27fbfb33117b.setContent(html_953eb244e1eea829ba9fd9c5546b8d06);
+            
+        
+
+        circle_marker_c754d5a37aa762ac5f63363b124e610c.bindPopup(popup_f82326772a9fa6b96ebe27fbfb33117b)
+        ;
+
+        
+    
+    
+            var circle_marker_b6d7e6aed5e40f720cd49958c991183b = L.circleMarker(
+                [-27.7577, 29.9318],
+                {"bubblingMouseEvents": true, "color": "#658f00ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#658f00ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_64e68614d80c5b52146eadd0c2dfad95 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_e8f7254692c572465338c2123af5a90f = $(`<div id="html_e8f7254692c572465338c2123af5a90f" style="width: 100.0%; height: 100.0%;">Amajuba (Newcastle): Low Risk (19.8%) Wave Height: 0.0m Anomaly Score: 87.2%</div>`)[0];
+                popup_64e68614d80c5b52146eadd0c2dfad95.setContent(html_e8f7254692c572465338c2123af5a90f);
+            
+        
+
+        circle_marker_b6d7e6aed5e40f720cd49958c991183b.bindPopup(popup_64e68614d80c5b52146eadd0c2dfad95)
+        ;
+
+        
+    
+    
+            var circle_marker_85ad1596169dfe2b95333d81ec4fb36d = L.circleMarker(
+                [-28.7489, 31.8933],
+                {"bubblingMouseEvents": true, "color": "#1a8400ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#1a8400ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_241f5bc2db7de42ef86e63041551d8f2 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_98119b22f92e2efa4057d32063802539 = $(`<div id="html_98119b22f92e2efa4057d32063802539" style="width: 100.0%; height: 100.0%;">Uthungulu (Empangeni): Low Risk (5.1%) Wave Height: 0.0m Anomaly Score: 21.7%</div>`)[0];
+                popup_241f5bc2db7de42ef86e63041551d8f2.setContent(html_98119b22f92e2efa4057d32063802539);
+            
+        
+
+        circle_marker_85ad1596169dfe2b95333d81ec4fb36d.bindPopup(popup_241f5bc2db7de42ef86e63041551d8f2)
+        ;
+
+        
+    
+    
+            var circle_marker_f002f2d6445b508ca7f5252dcd4f0148 = L.circleMarker(
+                [-28.4176, 32.1822],
+                {"bubblingMouseEvents": true, "color": "#328700ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#328700ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_53412a1f5ba9743c119eefe27b46298a = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_f765729ab6510c421375a61b00f60662 = $(`<div id="html_f765729ab6510c421375a61b00f60662" style="width: 100.0%; height: 100.0%;">UMkhanyakude (Mtubatuba): Low Risk (9.8%) Wave Height: 0.0m Anomaly Score: 29.2%</div>`)[0];
+                popup_53412a1f5ba9743c119eefe27b46298a.setContent(html_f765729ab6510c421375a61b00f60662);
+            
+        
+
+        circle_marker_f002f2d6445b508ca7f5252dcd4f0148.bindPopup(popup_53412a1f5ba9743c119eefe27b46298a)
+        ;
+
+        
+    
+    
+            var circle_marker_2f9ef4fc4a2c03af98ca6da3a2a498fe = L.circleMarker(
+                [-27.7695, 30.7916],
+                {"bubblingMouseEvents": true, "color": "#658f00ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#658f00ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_1e2ec25eef2c1f348676a4e552ac92eb = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_a64be269a59d95c89016f3e82fbe18d0 = $(`<div id="html_a64be269a59d95c89016f3e82fbe18d0" style="width: 100.0%; height: 100.0%;">Zululand (Vryheid): Low Risk (19.8%) Wave Height: 0.0m Anomaly Score: 67.1%</div>`)[0];
+                popup_1e2ec25eef2c1f348676a4e552ac92eb.setContent(html_a64be269a59d95c89016f3e82fbe18d0);
+            
+        
+
+        circle_marker_2f9ef4fc4a2c03af98ca6da3a2a498fe.bindPopup(popup_1e2ec25eef2c1f348676a4e552ac92eb)
+        ;
+
+        
+    
+    
+            var circle_marker_f13105a54316d6e8efa7d874385dc7a8 = L.circleMarker(
+                [-33.9249, 18.4241],
+                {"bubblingMouseEvents": true, "color": "#538c00ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#538c00ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_32cd285a718db0b342ccb33cc217375f = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_d95dca5872d3b0a99e7646cea091cbd8 = $(`<div id="html_d95dca5872d3b0a99e7646cea091cbd8" style="width: 100.0%; height: 100.0%;">Cape Town: Low Risk (16.2%) Wave Height: 3.5m Anomaly Score: 61.1%</div>`)[0];
+                popup_32cd285a718db0b342ccb33cc217375f.setContent(html_d95dca5872d3b0a99e7646cea091cbd8);
+            
+        
+
+        circle_marker_f13105a54316d6e8efa7d874385dc7a8.bindPopup(popup_32cd285a718db0b342ccb33cc217375f)
+        ;
+
+        
+    
+    
+            var circle_marker_2c30a8fb048bbfca241e869fa3d293b3 = L.circleMarker(
+                [-33.963, 22.4617],
+                {"bubblingMouseEvents": true, "color": "#5c8d00ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#5c8d00ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_19f3cd1a411ded530a05d77776703469 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_88925558889f89231ff9f143cbab0a17 = $(`<div id="html_88925558889f89231ff9f143cbab0a17" style="width: 100.0%; height: 100.0%;">George: Low Risk (18.1%) Wave Height: 2.8m Anomaly Score: 58.4%</div>`)[0];
+                popup_19f3cd1a411ded530a05d77776703469.setContent(html_88925558889f89231ff9f143cbab0a17);
+            
+        
+
+        circle_marker_2c30a8fb048bbfca241e869fa3d293b3.bindPopup(popup_19f3cd1a411ded530a05d77776703469)
+        ;
+
+        
+    
+    
+            var circle_marker_2574aa6a8a4a8bb758a744466bd07fbc = L.circleMarker(
+                [-34.183, 22.146],
+                {"bubblingMouseEvents": true, "color": "#688f00ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#688f00ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_04d2f58d9fa134eef513aecaa5036fe9 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_c42ee2f832c639b907463a3cb5be01a1 = $(`<div id="html_c42ee2f832c639b907463a3cb5be01a1" style="width: 100.0%; height: 100.0%;">Mossel Bay: Low Risk (20.4%) Wave Height: 2.5m Anomaly Score: 53.9%</div>`)[0];
+                popup_04d2f58d9fa134eef513aecaa5036fe9.setContent(html_c42ee2f832c639b907463a3cb5be01a1);
+            
+        
+
+        circle_marker_2574aa6a8a4a8bb758a744466bd07fbc.bindPopup(popup_04d2f58d9fa134eef513aecaa5036fe9)
+        ;
+
+        
+    
+    
+            var circle_marker_400745c49a508eca808b0883eb119a50 = L.circleMarker(
+                [-34.4187, 19.2345],
+                {"bubblingMouseEvents": true, "color": "#448a00ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#448a00ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_b4f7708a14d2a3705ec673c85cde0e66 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_7c3b13d5fec5a0c758f58da9b84de539 = $(`<div id="html_7c3b13d5fec5a0c758f58da9b84de539" style="width: 100.0%; height: 100.0%;">Hermanus: Low Risk (13.4%) Wave Height: 3.5m Anomaly Score: 58.8%</div>`)[0];
+                popup_b4f7708a14d2a3705ec673c85cde0e66.setContent(html_7c3b13d5fec5a0c758f58da9b84de539);
+            
+        
+
+        circle_marker_400745c49a508eca808b0883eb119a50.bindPopup(popup_b4f7708a14d2a3705ec673c85cde0e66)
+        ;
+
+        
+    
+    
+            var circle_marker_9c67b6b63156a503ea1d6bd284d99c07 = L.circleMarker(
+                [-33.0117, 17.944],
+                {"bubblingMouseEvents": true, "color": "#6e9000ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#6e9000ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_ed63b716fab5e224d80a2fb331303bfb = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_64e35637f9f65db4822b649cb8091533 = $(`<div id="html_64e35637f9f65db4822b649cb8091533" style="width: 100.0%; height: 100.0%;">Saldanha: Low Risk (21.6%) Wave Height: 3.3m Anomaly Score: 100.0%</div>`)[0];
+                popup_ed63b716fab5e224d80a2fb331303bfb.setContent(html_64e35637f9f65db4822b649cb8091533);
+            
+        
+
+        circle_marker_9c67b6b63156a503ea1d6bd284d99c07.bindPopup(popup_ed63b716fab5e224d80a2fb331303bfb)
+        ;
+
+        
+    
+    
+            var circle_marker_f7f15111dd219cca1c0c5c4553d53c50 = L.circleMarker(
+                [-34.0363, 23.0479],
+                {"bubblingMouseEvents": true, "color": "#698f00ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#698f00ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_419a6898dcb976941d7609a7c6507e85 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_ff4e8c7ee5fc14e58ab545d87413b391 = $(`<div id="html_ff4e8c7ee5fc14e58ab545d87413b391" style="width: 100.0%; height: 100.0%;">Knysna: Low Risk (20.6%) Wave Height: 3.8m Anomaly Score: 70.9%</div>`)[0];
+                popup_419a6898dcb976941d7609a7c6507e85.setContent(html_ff4e8c7ee5fc14e58ab545d87413b391);
+            
+        
+
+        circle_marker_f7f15111dd219cca1c0c5c4553d53c50.bindPopup(popup_419a6898dcb976941d7609a7c6507e85)
+        ;
+
+        
+    
+    
+            var circle_marker_3555f9cf1c0209f057411b51c362871e = L.circleMarker(
+                [-33.9608, 25.6022],
+                {"bubblingMouseEvents": true, "color": "#f9a400ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#f9a400ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_05a5c526d4b8638434a7cb417842060d = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_d353f10364d7e19ccf15265f4f342d5a = $(`<div id="html_d353f10364d7e19ccf15265f4f342d5a" style="width: 100.0%; height: 100.0%;">Gqeberha (Port Elizabeth): Medium Risk (48.8%) Wave Height: 4.1m Anomaly Score: 100.0%</div>`)[0];
+                popup_05a5c526d4b8638434a7cb417842060d.setContent(html_d353f10364d7e19ccf15265f4f342d5a);
+            
+        
+
+        circle_marker_3555f9cf1c0209f057411b51c362871e.bindPopup(popup_05a5c526d4b8638434a7cb417842060d)
+        ;
+
+        
+    
+    
+            var circle_marker_e31c2378d76d9c8e18d7efd1e23f8ace = L.circleMarker(
+                [-33.0153, 27.9116],
+                {"bubblingMouseEvents": true, "color": "#588d00ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#588d00ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_2a6edd1e4b4f1b11fad923efd9515688 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_ab36a3095e191c2322cb8df11ce35173 = $(`<div id="html_ab36a3095e191c2322cb8df11ce35173" style="width: 100.0%; height: 100.0%;">East London: Low Risk (17.2%) Wave Height: 3.1m Anomaly Score: 74.2%</div>`)[0];
+                popup_2a6edd1e4b4f1b11fad923efd9515688.setContent(html_ab36a3095e191c2322cb8df11ce35173);
+            
+        
+
+        circle_marker_e31c2378d76d9c8e18d7efd1e23f8ace.bindPopup(popup_2a6edd1e4b4f1b11fad923efd9515688)
+        ;
+
+        
+    
+    
+            var circle_marker_d964b5e45572fd2e10d9d5a167e5a85f = L.circleMarker(
+                [-31.5889, 28.7844],
+                {"bubblingMouseEvents": true, "color": "#5f8e00ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#5f8e00ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_aeeb26c0b656bd3a88bc898a8c7aedb5 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_1605df0496877932ca89dc4f912957bd = $(`<div id="html_1605df0496877932ca89dc4f912957bd" style="width: 100.0%; height: 100.0%;">Mthatha: Low Risk (18.7%) Wave Height: 0.0m Anomaly Score: 41.5%</div>`)[0];
+                popup_aeeb26c0b656bd3a88bc898a8c7aedb5.setContent(html_1605df0496877932ca89dc4f912957bd);
+            
+        
+
+        circle_marker_d964b5e45572fd2e10d9d5a167e5a85f.bindPopup(popup_aeeb26c0b656bd3a88bc898a8c7aedb5)
+        ;
+
+        
+    
+    
+            var circle_marker_01f61de4e2130e012b259296afdd5a0f = L.circleMarker(
+                [-26.2041, 28.0473],
+                {"bubblingMouseEvents": true, "color": "#258600ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#258600ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_b7488a6b0daa89341df1f5c13a246301 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_7f157e6bfe5103aec9a3eef46a86a436 = $(`<div id="html_7f157e6bfe5103aec9a3eef46a86a436" style="width: 100.0%; height: 100.0%;">Johannesburg: Low Risk (7.4%) Wave Height: 0.0m Anomaly Score: 37.1%</div>`)[0];
+                popup_b7488a6b0daa89341df1f5c13a246301.setContent(html_7f157e6bfe5103aec9a3eef46a86a436);
+            
+        
+
+        circle_marker_01f61de4e2130e012b259296afdd5a0f.bindPopup(popup_b7488a6b0daa89341df1f5c13a246301)
+        ;
+
+        
+    
+    
+            var circle_marker_d71f1981c9015d553db3e425389d6485 = L.circleMarker(
+                [-25.7479, 28.2293],
+                {"bubblingMouseEvents": true, "color": "#258500ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#258500ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_4fd1cb50f317841cdb9b725844ec644f = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_b8bb6cfc96084942b5c99d35594b6786 = $(`<div id="html_b8bb6cfc96084942b5c99d35594b6786" style="width: 100.0%; height: 100.0%;">Pretoria: Low Risk (7.4%) Wave Height: 0.0m Anomaly Score: 36.9%</div>`)[0];
+                popup_4fd1cb50f317841cdb9b725844ec644f.setContent(html_b8bb6cfc96084942b5c99d35594b6786);
+            
+        
+
+        circle_marker_d71f1981c9015d553db3e425389d6485.bindPopup(popup_4fd1cb50f317841cdb9b725844ec644f)
+        ;
+
+        
+    
+    
+            var circle_marker_d0d18f0c376cb5773fdb96de7a7eb6e9 = L.circleMarker(
+                [-29.0852, 26.1596],
+                {"bubblingMouseEvents": true, "color": "#4c8b00ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#4c8b00ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_0a144801ac22de5a9a2580c6866f5e23 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_789f1d0a7cb4916ab1278ebfda1d3a4d = $(`<div id="html_789f1d0a7cb4916ab1278ebfda1d3a4d" style="width: 100.0%; height: 100.0%;">Bloemfontein: Low Risk (15.0%) Wave Height: 0.0m Anomaly Score: 35.0%</div>`)[0];
+                popup_0a144801ac22de5a9a2580c6866f5e23.setContent(html_789f1d0a7cb4916ab1278ebfda1d3a4d);
+            
+        
+
+        circle_marker_d0d18f0c376cb5773fdb96de7a7eb6e9.bindPopup(popup_0a144801ac22de5a9a2580c6866f5e23)
+        ;
+
+        
+    
+    
+            var circle_marker_e6b5bbcb5a65cff01d8c86b9c2f1e63a = L.circleMarker(
+                [-23.9045, 29.4689],
+                {"bubblingMouseEvents": true, "color": "#188400ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#188400ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_9b113ba0474e131e8cdaa8b55bcb6406 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_f2e903f7b9b2979089f5b1637a6f9033 = $(`<div id="html_f2e903f7b9b2979089f5b1637a6f9033" style="width: 100.0%; height: 100.0%;">Polokwane: Low Risk (4.9%) Wave Height: 0.0m Anomaly Score: 24.3%</div>`)[0];
+                popup_9b113ba0474e131e8cdaa8b55bcb6406.setContent(html_f2e903f7b9b2979089f5b1637a6f9033);
+            
+        
+
+        circle_marker_e6b5bbcb5a65cff01d8c86b9c2f1e63a.bindPopup(popup_9b113ba0474e131e8cdaa8b55bcb6406)
+        ;
+
+        
+    
+    
+            var circle_marker_ba5b587adea89463559cc86dab085590 = L.circleMarker(
+                [-25.4658, 30.9853],
+                {"bubblingMouseEvents": true, "color": "#298600ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#298600ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_d3e90947a004ccb6b06fa53299438c79 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_52d9eb00d189920084400eac5c62b368 = $(`<div id="html_52d9eb00d189920084400eac5c62b368" style="width: 100.0%; height: 100.0%;">Mbombela (Nelspruit): Low Risk (8.2%) Wave Height: 0.0m Anomaly Score: 28.8%</div>`)[0];
+                popup_d3e90947a004ccb6b06fa53299438c79.setContent(html_52d9eb00d189920084400eac5c62b368);
+            
+        
+
+        circle_marker_ba5b587adea89463559cc86dab085590.bindPopup(popup_d3e90947a004ccb6b06fa53299438c79)
+        ;
+
+        
+    
+    
+            var circle_marker_be56634b489cc3c19e0e9e0dd2e45c5a = L.circleMarker(
+                [-25.6676, 27.2421],
+                {"bubblingMouseEvents": true, "color": "#2c8600ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#2c8600ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_78e45116b19c6a89e4e610b4ab6889f9 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_2259dd0f17ab239a592c36c650f95184 = $(`<div id="html_2259dd0f17ab239a592c36c650f95184" style="width: 100.0%; height: 100.0%;">Rustenburg: Low Risk (8.6%) Wave Height: 0.0m Anomaly Score: 43.0%</div>`)[0];
+                popup_78e45116b19c6a89e4e610b4ab6889f9.setContent(html_2259dd0f17ab239a592c36c650f95184);
+            
+        
+
+        circle_marker_be56634b489cc3c19e0e9e0dd2e45c5a.bindPopup(popup_78e45116b19c6a89e4e610b4ab6889f9)
+        ;
+
+        
+    
+    
+            var circle_marker_ac25f6239a2501ba9c13d6db9221aa20 = L.circleMarker(
+                [-28.7282, 24.7499],
+                {"bubblingMouseEvents": true, "color": "#688f00ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#688f00ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_c55de8a1882882b3ab9f4e909f5b3d36 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_9de718897bd5cd1009b76a5ff5fb8bcc = $(`<div id="html_9de718897bd5cd1009b76a5ff5fb8bcc" style="width: 100.0%; height: 100.0%;">Kimberley: Low Risk (20.4%) Wave Height: 0.0m Anomaly Score: 18.1%</div>`)[0];
+                popup_c55de8a1882882b3ab9f4e909f5b3d36.setContent(html_9de718897bd5cd1009b76a5ff5fb8bcc);
+            
+        
+
+        circle_marker_ac25f6239a2501ba9c13d6db9221aa20.bindPopup(popup_c55de8a1882882b3ab9f4e909f5b3d36)
+        ;
+
+        
+    
+    
+            var circle_marker_91131ce486da744689508df2a867e87f = L.circleMarker(
+                [-29.848699999999997, 31.0318],
+                {"bubblingMouseEvents": true, "color": "#008000ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#008000ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_f1a7c3269fe39a264136810e69a6df87 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_25ff53b4204e40316ba70c5fa9e6bd91 = $(`<div id="html_25ff53b4204e40316ba70c5fa9e6bd91" style="width: 100.0%; height: 100.0%;">eThekwini (Durban)_synthetic: Low Risk (0.0%) Wave Height: 0.0m Anomaly Score: 0.0%</div>`)[0];
+                popup_f1a7c3269fe39a264136810e69a6df87.setContent(html_25ff53b4204e40316ba70c5fa9e6bd91);
+            
+        
+
+        circle_marker_91131ce486da744689508df2a867e87f.bindPopup(popup_f1a7c3269fe39a264136810e69a6df87)
+        ;
+
+        
+    
+    
+            var circle_marker_151d72778d23514cdebf97dab3478b64 = L.circleMarker(
+                [-28.770699999999998, 32.0483],
+                {"bubblingMouseEvents": true, "color": "#008000ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#008000ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_469cfe9b5ceaa9c49db4588e7e3e896b = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_402b85ef4768a54231bd62ed20c46362 = $(`<div id="html_402b85ef4768a54231bd62ed20c46362" style="width: 100.0%; height: 100.0%;">King Cetshwayo (Richards Bay)_synthetic: Low Risk (0.0%) Wave Height: 0.0m Anomaly Score: 0.0%</div>`)[0];
+                popup_469cfe9b5ceaa9c49db4588e7e3e896b.setContent(html_402b85ef4768a54231bd62ed20c46362);
+            
+        
+
+        circle_marker_151d72778d23514cdebf97dab3478b64.bindPopup(popup_469cfe9b5ceaa9c49db4588e7e3e896b)
+        ;
+
+        
+    
+    
+            var circle_marker_9a033c844a60cd1e7a7faa88c3895d19 = L.circleMarker(
+                [-30.731399999999997, 30.464000000000002],
+                {"bubblingMouseEvents": true, "color": "#008000ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#008000ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_c67aff280342faa8c348a8cef1c1bb7e = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_8494d09e8b96da7723a09bcd27dc9ff6 = $(`<div id="html_8494d09e8b96da7723a09bcd27dc9ff6" style="width: 100.0%; height: 100.0%;">Ugu (Port Shepstone)_synthetic: Low Risk (0.0%) Wave Height: 0.0m Anomaly Score: 0.0%</div>`)[0];
+                popup_c67aff280342faa8c348a8cef1c1bb7e.setContent(html_8494d09e8b96da7723a09bcd27dc9ff6);
+            
+        
+
+        circle_marker_9a033c844a60cd1e7a7faa88c3895d19.bindPopup(popup_c67aff280342faa8c348a8cef1c1bb7e)
+        ;
+
+        
+    
+    
+            var circle_marker_d4639fe4868a9d7c08ecdec653427b0b = L.circleMarker(
+                [-29.5289, 31.224],
+                {"bubblingMouseEvents": true, "color": "#008000ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#008000ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_42f5ec8357ff44ab955c0d67988607c2 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_7dd55d108562884b00e07ed3dfac5365 = $(`<div id="html_7dd55d108562884b00e07ed3dfac5365" style="width: 100.0%; height: 100.0%;">iLembe (Ballito)_synthetic: Low Risk (0.0%) Wave Height: 0.0m Anomaly Score: 0.0%</div>`)[0];
+                popup_42f5ec8357ff44ab955c0d67988607c2.setContent(html_7dd55d108562884b00e07ed3dfac5365);
+            
+        
+
+        circle_marker_d4639fe4868a9d7c08ecdec653427b0b.bindPopup(popup_42f5ec8357ff44ab955c0d67988607c2)
+        ;
+
+        
+    
+    
+            var circle_marker_07ef20983003268ff4b3a902aa3e1b4d = L.circleMarker(
+                [-28.543899999999997, 29.788400000000003],
+                {"bubblingMouseEvents": true, "color": "#008000ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#008000ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_b60c42bbf314b96a88c3be025e6b9660 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_eeb92a6f2e63f8780a1b5aa5c6edc2d4 = $(`<div id="html_eeb92a6f2e63f8780a1b5aa5c6edc2d4" style="width: 100.0%; height: 100.0%;">uThukela (Ladysmith)_synthetic: Low Risk (0.0%) Wave Height: 0.0m Anomaly Score: 0.0%</div>`)[0];
+                popup_b60c42bbf314b96a88c3be025e6b9660.setContent(html_eeb92a6f2e63f8780a1b5aa5c6edc2d4);
+            
+        
+
+        circle_marker_07ef20983003268ff4b3a902aa3e1b4d.bindPopup(popup_b60c42bbf314b96a88c3be025e6b9660)
+        ;
+
+        
+    
+    
+            var circle_marker_e2249063f5a757003891044026b4380d = L.circleMarker(
+                [-29.5906, 30.389400000000002],
+                {"bubblingMouseEvents": true, "color": "#008000ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#008000ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_9fd3adce79286d47ac2efd0232ea1c74 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_0350955ab92eb3e07f27e4968fddaada = $(`<div id="html_0350955ab92eb3e07f27e4968fddaada" style="width: 100.0%; height: 100.0%;">uMgungundlovu (Pietermaritzburg)_synthetic: Low Risk (0.0%) Wave Height: 0.0m Anomaly Score: 0.0%</div>`)[0];
+                popup_9fd3adce79286d47ac2efd0232ea1c74.setContent(html_0350955ab92eb3e07f27e4968fddaada);
+            
+        
+
+        circle_marker_e2249063f5a757003891044026b4380d.bindPopup(popup_9fd3adce79286d47ac2efd0232ea1c74)
+        ;
+
+        
+    
+    
+            var circle_marker_b73b7baa1d9a4868318bf8d2349ca592 = L.circleMarker(
+                [-27.7477, 29.9418],
+                {"bubblingMouseEvents": true, "color": "#008000ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#008000ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_37023632d2b347415e710126964cc6e5 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_b5a54d3e5559722b0c511f657e5a0ce9 = $(`<div id="html_b5a54d3e5559722b0c511f657e5a0ce9" style="width: 100.0%; height: 100.0%;">Amajuba (Newcastle)_synthetic: Low Risk (0.0%) Wave Height: 0.0m Anomaly Score: 0.0%</div>`)[0];
+                popup_37023632d2b347415e710126964cc6e5.setContent(html_b5a54d3e5559722b0c511f657e5a0ce9);
+            
+        
+
+        circle_marker_b73b7baa1d9a4868318bf8d2349ca592.bindPopup(popup_37023632d2b347415e710126964cc6e5)
+        ;
+
+        
+    
+    
+            var circle_marker_b873cdf81ce1b33d6ed3a585231aa4b0 = L.circleMarker(
+                [-28.738899999999997, 31.9033],
+                {"bubblingMouseEvents": true, "color": "#008000ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#008000ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_4918a6458431219f29b853037f0375a5 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_86e9985c4882d434e667b21f4728072a = $(`<div id="html_86e9985c4882d434e667b21f4728072a" style="width: 100.0%; height: 100.0%;">Uthungulu (Empangeni)_synthetic: Low Risk (0.0%) Wave Height: 0.0m Anomaly Score: 0.0%</div>`)[0];
+                popup_4918a6458431219f29b853037f0375a5.setContent(html_86e9985c4882d434e667b21f4728072a);
+            
+        
+
+        circle_marker_b873cdf81ce1b33d6ed3a585231aa4b0.bindPopup(popup_4918a6458431219f29b853037f0375a5)
+        ;
+
+        
+    
+    
+            var circle_marker_008bcd9eab170cdf737298eaa1160f8f = L.circleMarker(
+                [-28.4076, 32.1922],
+                {"bubblingMouseEvents": true, "color": "#008000ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#008000ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_a58a1f500ce77d8a877829beafef9be6 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_c2965f5026eb5524f45ad054827dcf83 = $(`<div id="html_c2965f5026eb5524f45ad054827dcf83" style="width: 100.0%; height: 100.0%;">UMkhanyakude (Mtubatuba)_synthetic: Low Risk (0.0%) Wave Height: 0.0m Anomaly Score: 0.0%</div>`)[0];
+                popup_a58a1f500ce77d8a877829beafef9be6.setContent(html_c2965f5026eb5524f45ad054827dcf83);
+            
+        
+
+        circle_marker_008bcd9eab170cdf737298eaa1160f8f.bindPopup(popup_a58a1f500ce77d8a877829beafef9be6)
+        ;
+
+        
+    
+    
+            var circle_marker_28585ee50a950adfadeda0f319458a46 = L.circleMarker(
+                [-27.7595, 30.8016],
+                {"bubblingMouseEvents": true, "color": "#008000ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#008000ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_8131578ca9c5a2d98e98612dae733278 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_d67e952a46f735a531f4a8e3976137b9 = $(`<div id="html_d67e952a46f735a531f4a8e3976137b9" style="width: 100.0%; height: 100.0%;">Zululand (Vryheid)_synthetic: Low Risk (0.0%) Wave Height: 0.0m Anomaly Score: 0.0%</div>`)[0];
+                popup_8131578ca9c5a2d98e98612dae733278.setContent(html_d67e952a46f735a531f4a8e3976137b9);
+            
+        
+
+        circle_marker_28585ee50a950adfadeda0f319458a46.bindPopup(popup_8131578ca9c5a2d98e98612dae733278)
+        ;
+
+        
+    
+    
+            var circle_marker_8bd3d481b6ffb1ea0c458899ebbead85 = L.circleMarker(
+                [-33.9149, 18.4341],
+                {"bubblingMouseEvents": true, "color": "#008000ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#008000ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_0b36a445cb52b7c6a9fe66fa27ed6e02 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_917bbf9a0de51754d94137c441c82de9 = $(`<div id="html_917bbf9a0de51754d94137c441c82de9" style="width: 100.0%; height: 100.0%;">Cape Town_synthetic: Low Risk (0.0%) Wave Height: 0.0m Anomaly Score: 0.0%</div>`)[0];
+                popup_0b36a445cb52b7c6a9fe66fa27ed6e02.setContent(html_917bbf9a0de51754d94137c441c82de9);
+            
+        
+
+        circle_marker_8bd3d481b6ffb1ea0c458899ebbead85.bindPopup(popup_0b36a445cb52b7c6a9fe66fa27ed6e02)
+        ;
+
+        
+    
+    
+            var circle_marker_9181cc19d083066b5f8a38c72f1ff574 = L.circleMarker(
+                [-33.953, 22.471700000000002],
+                {"bubblingMouseEvents": true, "color": "#008000ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#008000ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_8319c3cb555be90136e82bd91bb91a3a = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_f02c4e631b80799acbafd208dd07b862 = $(`<div id="html_f02c4e631b80799acbafd208dd07b862" style="width: 100.0%; height: 100.0%;">George_synthetic: Low Risk (0.0%) Wave Height: 0.0m Anomaly Score: 0.0%</div>`)[0];
+                popup_8319c3cb555be90136e82bd91bb91a3a.setContent(html_f02c4e631b80799acbafd208dd07b862);
+            
+        
+
+        circle_marker_9181cc19d083066b5f8a38c72f1ff574.bindPopup(popup_8319c3cb555be90136e82bd91bb91a3a)
+        ;
+
+        
+    
+    
+            var circle_marker_3e6f29ceec084a56c611b920bdeebd23 = L.circleMarker(
+                [-34.173, 22.156000000000002],
+                {"bubblingMouseEvents": true, "color": "#088100ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#088100ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_c02d7f3a85d858b477a63568689f35ed = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_d67300eb1bf9b2f475f64bf82b4a2f57 = $(`<div id="html_d67300eb1bf9b2f475f64bf82b4a2f57" style="width: 100.0%; height: 100.0%;">Mossel Bay_synthetic: Low Risk (1.6%) Wave Height: 0.0m Anomaly Score: 0.0%</div>`)[0];
+                popup_c02d7f3a85d858b477a63568689f35ed.setContent(html_d67300eb1bf9b2f475f64bf82b4a2f57);
+            
+        
+
+        circle_marker_3e6f29ceec084a56c611b920bdeebd23.bindPopup(popup_c02d7f3a85d858b477a63568689f35ed)
+        ;
+
+        
+    
+    
+            var circle_marker_39c7288828faa6251b20c965f42387c7 = L.circleMarker(
+                [-34.4087, 19.244500000000002],
+                {"bubblingMouseEvents": true, "color": "#088100ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#088100ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_6368acb37e326b1653e67643aa32f55b = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_0c04355178875144b10d4dbdfba94b1e = $(`<div id="html_0c04355178875144b10d4dbdfba94b1e" style="width: 100.0%; height: 100.0%;">Hermanus_synthetic: Low Risk (1.6%) Wave Height: 0.0m Anomaly Score: 0.0%</div>`)[0];
+                popup_6368acb37e326b1653e67643aa32f55b.setContent(html_0c04355178875144b10d4dbdfba94b1e);
+            
+        
+
+        circle_marker_39c7288828faa6251b20c965f42387c7.bindPopup(popup_6368acb37e326b1653e67643aa32f55b)
+        ;
+
+        
+    
+    
+            var circle_marker_dc09e9591f5546040c6597dbb6621d5c = L.circleMarker(
+                [-33.0017, 17.954],
+                {"bubblingMouseEvents": true, "color": "#008000ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#008000ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_973b9a2925c1ec17a75c7a750f88de6f = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_6e1dc2f0799edb22b3fe509a71aa0a67 = $(`<div id="html_6e1dc2f0799edb22b3fe509a71aa0a67" style="width: 100.0%; height: 100.0%;">Saldanha_synthetic: Low Risk (0.0%) Wave Height: 0.0m Anomaly Score: 0.0%</div>`)[0];
+                popup_973b9a2925c1ec17a75c7a750f88de6f.setContent(html_6e1dc2f0799edb22b3fe509a71aa0a67);
+            
+        
+
+        circle_marker_dc09e9591f5546040c6597dbb6621d5c.bindPopup(popup_973b9a2925c1ec17a75c7a750f88de6f)
+        ;
+
+        
+    
+    
+            var circle_marker_9974f837747fcd269240e4b80e8edfab = L.circleMarker(
+                [-34.0263, 23.0579],
+                {"bubblingMouseEvents": true, "color": "#008000ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#008000ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_dbe756b594f16eea07159a7fcc97c021 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_e51a23bce7acca66ce98d501b0e92655 = $(`<div id="html_e51a23bce7acca66ce98d501b0e92655" style="width: 100.0%; height: 100.0%;">Knysna_synthetic: Low Risk (0.0%) Wave Height: 0.0m Anomaly Score: 0.0%</div>`)[0];
+                popup_dbe756b594f16eea07159a7fcc97c021.setContent(html_e51a23bce7acca66ce98d501b0e92655);
+            
+        
+
+        circle_marker_9974f837747fcd269240e4b80e8edfab.bindPopup(popup_dbe756b594f16eea07159a7fcc97c021)
+        ;
+
+        
+    
+    
+            var circle_marker_63002d8ae383df61d8148136f2452a41 = L.circleMarker(
+                [-33.9508, 25.6122],
+                {"bubblingMouseEvents": true, "color": "#008000ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#008000ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_a3d1550c208c331eaea8b4461565e1ca = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_f0ddae314308be6574b4fb2876643b27 = $(`<div id="html_f0ddae314308be6574b4fb2876643b27" style="width: 100.0%; height: 100.0%;">Gqeberha (Port Elizabeth)_synthetic: Low Risk (0.0%) Wave Height: 0.0m Anomaly Score: 0.0%</div>`)[0];
+                popup_a3d1550c208c331eaea8b4461565e1ca.setContent(html_f0ddae314308be6574b4fb2876643b27);
+            
+        
+
+        circle_marker_63002d8ae383df61d8148136f2452a41.bindPopup(popup_a3d1550c208c331eaea8b4461565e1ca)
+        ;
+
+        
+    
+    
+            var circle_marker_71f3fb2e3e21bd2bf741929bf0d9d83e = L.circleMarker(
+                [-33.005300000000005, 27.9216],
+                {"bubblingMouseEvents": true, "color": "#008000ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#008000ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_4cef25514f5d26300ac68e67e0a8ec95 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_c8b7b382c1f6acb87a4745e5cd00a594 = $(`<div id="html_c8b7b382c1f6acb87a4745e5cd00a594" style="width: 100.0%; height: 100.0%;">East London_synthetic: Low Risk (0.0%) Wave Height: 0.0m Anomaly Score: 0.0%</div>`)[0];
+                popup_4cef25514f5d26300ac68e67e0a8ec95.setContent(html_c8b7b382c1f6acb87a4745e5cd00a594);
+            
+        
+
+        circle_marker_71f3fb2e3e21bd2bf741929bf0d9d83e.bindPopup(popup_4cef25514f5d26300ac68e67e0a8ec95)
+        ;
+
+        
+    
+    
+            var circle_marker_2d0dcad12672a211129008fd3f0731bb = L.circleMarker(
+                [-31.578899999999997, 28.794400000000003],
+                {"bubblingMouseEvents": true, "color": "#008000ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#008000ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_1c923b54193abbe5fd9e604b7834b840 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_6b966970853fe7aa5d7825d7d3cbb3fc = $(`<div id="html_6b966970853fe7aa5d7825d7d3cbb3fc" style="width: 100.0%; height: 100.0%;">Mthatha_synthetic: Low Risk (0.0%) Wave Height: 0.0m Anomaly Score: 0.0%</div>`)[0];
+                popup_1c923b54193abbe5fd9e604b7834b840.setContent(html_6b966970853fe7aa5d7825d7d3cbb3fc);
+            
+        
+
+        circle_marker_2d0dcad12672a211129008fd3f0731bb.bindPopup(popup_1c923b54193abbe5fd9e604b7834b840)
+        ;
+
+        
+    
+    
+            var circle_marker_9656514a72bab9c508da2838f9e6fa77 = L.circleMarker(
+                [-26.1941, 28.0573],
+                {"bubblingMouseEvents": true, "color": "#008000ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#008000ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_3e223c4dc0f51442fc31fef9b1cb5ec5 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_851f536d253c5bf68916c3fa538b2a5c = $(`<div id="html_851f536d253c5bf68916c3fa538b2a5c" style="width: 100.0%; height: 100.0%;">Johannesburg_synthetic: Low Risk (0.0%) Wave Height: 0.0m Anomaly Score: 0.0%</div>`)[0];
+                popup_3e223c4dc0f51442fc31fef9b1cb5ec5.setContent(html_851f536d253c5bf68916c3fa538b2a5c);
+            
+        
+
+        circle_marker_9656514a72bab9c508da2838f9e6fa77.bindPopup(popup_3e223c4dc0f51442fc31fef9b1cb5ec5)
+        ;
+
+        
+    
+    
+            var circle_marker_10b34e505f29d2e52a0e5ee0d65e9cd5 = L.circleMarker(
+                [-25.7379, 28.2393],
+                {"bubblingMouseEvents": true, "color": "#008000ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#008000ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_5d1d306a4d577b49e8961c8343536b4b = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_79506c0e22bc49084e2ef39e5b9e055d = $(`<div id="html_79506c0e22bc49084e2ef39e5b9e055d" style="width: 100.0%; height: 100.0%;">Pretoria_synthetic: Low Risk (0.0%) Wave Height: 0.0m Anomaly Score: 0.0%</div>`)[0];
+                popup_5d1d306a4d577b49e8961c8343536b4b.setContent(html_79506c0e22bc49084e2ef39e5b9e055d);
+            
+        
+
+        circle_marker_10b34e505f29d2e52a0e5ee0d65e9cd5.bindPopup(popup_5d1d306a4d577b49e8961c8343536b4b)
+        ;
+
+        
+    
+    
+            var circle_marker_31f4695b2cef8249057aa6028c3d1a0d = L.circleMarker(
+                [-29.0752, 26.169600000000003],
+                {"bubblingMouseEvents": true, "color": "#008000ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#008000ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_47a76a207a09140acee5b3b284bc240b = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_27df584c387a65ee0d257fb2cad4d26e = $(`<div id="html_27df584c387a65ee0d257fb2cad4d26e" style="width: 100.0%; height: 100.0%;">Bloemfontein_synthetic: Low Risk (0.0%) Wave Height: 0.0m Anomaly Score: 0.0%</div>`)[0];
+                popup_47a76a207a09140acee5b3b284bc240b.setContent(html_27df584c387a65ee0d257fb2cad4d26e);
+            
+        
+
+        circle_marker_31f4695b2cef8249057aa6028c3d1a0d.bindPopup(popup_47a76a207a09140acee5b3b284bc240b)
+        ;
+
+        
+    
+    
+            var circle_marker_6d8bc1dae7f0ea93b2ac0e2e4ddbadaf = L.circleMarker(
+                [-23.894499999999997, 29.478900000000003],
+                {"bubblingMouseEvents": true, "color": "#008000ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#008000ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_0dcd4c3c8d42cca440767eeb6562e272 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_01f892fc0f7d748d5849ad2c7de493c4 = $(`<div id="html_01f892fc0f7d748d5849ad2c7de493c4" style="width: 100.0%; height: 100.0%;">Polokwane_synthetic: Low Risk (0.0%) Wave Height: 0.0m Anomaly Score: 0.0%</div>`)[0];
+                popup_0dcd4c3c8d42cca440767eeb6562e272.setContent(html_01f892fc0f7d748d5849ad2c7de493c4);
+            
+        
+
+        circle_marker_6d8bc1dae7f0ea93b2ac0e2e4ddbadaf.bindPopup(popup_0dcd4c3c8d42cca440767eeb6562e272)
+        ;
+
+        
+    
+    
+            var circle_marker_7fe231e61ce8a7c91ff95a11b4aee7ce = L.circleMarker(
+                [-25.4558, 30.9953],
+                {"bubblingMouseEvents": true, "color": "#008000ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#008000ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_a882620d87e256f301b123a1b5169461 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_dd605843145da38798c63a82f4edb2d6 = $(`<div id="html_dd605843145da38798c63a82f4edb2d6" style="width: 100.0%; height: 100.0%;">Mbombela (Nelspruit)_synthetic: Low Risk (0.0%) Wave Height: 0.0m Anomaly Score: 0.0%</div>`)[0];
+                popup_a882620d87e256f301b123a1b5169461.setContent(html_dd605843145da38798c63a82f4edb2d6);
+            
+        
+
+        circle_marker_7fe231e61ce8a7c91ff95a11b4aee7ce.bindPopup(popup_a882620d87e256f301b123a1b5169461)
+        ;
+
+        
+    
+    
+            var circle_marker_ee0a87e9f90c08beb582b3d15f7239a0 = L.circleMarker(
+                [-25.6576, 27.252100000000002],
+                {"bubblingMouseEvents": true, "color": "#008000ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#008000ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_2d29c5c77a2a91c91c7cccb7966cabbe = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_6b3cc3f04d837478a5f66bf3793168ab = $(`<div id="html_6b3cc3f04d837478a5f66bf3793168ab" style="width: 100.0%; height: 100.0%;">Rustenburg_synthetic: Low Risk (0.0%) Wave Height: 0.0m Anomaly Score: 0.0%</div>`)[0];
+                popup_2d29c5c77a2a91c91c7cccb7966cabbe.setContent(html_6b3cc3f04d837478a5f66bf3793168ab);
+            
+        
+
+        circle_marker_ee0a87e9f90c08beb582b3d15f7239a0.bindPopup(popup_2d29c5c77a2a91c91c7cccb7966cabbe)
+        ;
+
+        
+    
+    
+            var circle_marker_60033754fb8d9659ba1f8809dc73c2e6 = L.circleMarker(
+                [-28.7182, 24.759900000000002],
+                {"bubblingMouseEvents": true, "color": "#008000ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#008000ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_6dd6183654353e9341342b716f547cfc = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_9b0c23bc738f3638cdae4c6f0d20f9c3 = $(`<div id="html_9b0c23bc738f3638cdae4c6f0d20f9c3" style="width: 100.0%; height: 100.0%;">Kimberley_synthetic: Low Risk (0.0%) Wave Height: 0.0m Anomaly Score: 0.0%</div>`)[0];
+                popup_6dd6183654353e9341342b716f547cfc.setContent(html_9b0c23bc738f3638cdae4c6f0d20f9c3);
+            
+        
+
+        circle_marker_60033754fb8d9659ba1f8809dc73c2e6.bindPopup(popup_6dd6183654353e9341342b716f547cfc)
+        ;
+
+        
+    
+    
+            var circle_marker_bc066127443edee140dada6cb0588d7f = L.circleMarker(
+                [-27.44, 24.83],
+                {"bubblingMouseEvents": true, "color": "#ff0300ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff0300ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_ad0db37ad7d90bc3186cd2aec16a7cd3 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_3f4490c7b7f8d5a74391e00a8f77ad2c = $(`<div id="html_3f4490c7b7f8d5a74391e00a8f77ad2c" style="width: 100.0%; height: 100.0%;">Taung town (Greater Taung area, Dr Ruth Segomotsi Mompati district, North West province): High Risk (99.0%) Wave Height: 0.0m Anomaly Score: 0.0%</div>`)[0];
+                popup_ad0db37ad7d90bc3186cd2aec16a7cd3.setContent(html_3f4490c7b7f8d5a74391e00a8f77ad2c);
+            
+        
+
+        circle_marker_bc066127443edee140dada6cb0588d7f.bindPopup(popup_ad0db37ad7d90bc3186cd2aec16a7cd3)
+        ;
+
+        
+    
+    
+            var circle_marker_5a13d74b0e8a7c0da5dd8efa5b792417 = L.circleMarker(
+                [-33.538, 26.3],
+                {"bubblingMouseEvents": true, "color": "#ff0900ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff0900ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_47688104992a00ba0962ab5f64aa9c24 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_50a7864e0160e63b9b32741a137326da = $(`<div id="html_50a7864e0160e63b9b32741a137326da" style="width: 100.0%; height: 100.0%;">Eastern Cape, Western Cape provinces: High Risk (97.0%) Wave Height: 0.0m Anomaly Score: 0.0%</div>`)[0];
+                popup_47688104992a00ba0962ab5f64aa9c24.setContent(html_50a7864e0160e63b9b32741a137326da);
+            
+        
+
+        circle_marker_5a13d74b0e8a7c0da5dd8efa5b792417.bindPopup(popup_47688104992a00ba0962ab5f64aa9c24)
+        ;
+
+        
+    
+    
+            var circle_marker_c1042705659f19c0b3eb0c3dc3319c36 = L.circleMarker(
+                [-34.09, 19.58],
+                {"bubblingMouseEvents": true, "color": "#ff0600ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff0600ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_f57c8942c8ff6a98dee0df647572a02e = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_dbd666a7f9c62659425370eafc63991b = $(`<div id="html_dbd666a7f9c62659425370eafc63991b" style="width: 100.0%; height: 100.0%;">Cape Flats area (City of Cape Town district, Western Cape province): High Risk (98.0%) Wave Height: 0.0m Anomaly Score: 0.0%</div>`)[0];
+                popup_f57c8942c8ff6a98dee0df647572a02e.setContent(html_dbd666a7f9c62659425370eafc63991b);
+            
+        
+
+        circle_marker_c1042705659f19c0b3eb0c3dc3319c36.bindPopup(popup_f57c8942c8ff6a98dee0df647572a02e)
+        ;
+
+        
+    
+    
+            var circle_marker_481b9d21a7264dd9bfa4412f76dd8098 = L.circleMarker(
+                [-29.67, 31.09],
+                {"bubblingMouseEvents": true, "color": "#ff0d00ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff0d00ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_6c607e40945050f4b150bc847799df91 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_ee1db8956c29de1d805fec6301b9316f = $(`<div id="html_ee1db8956c29de1d805fec6301b9316f" style="width: 100.0%; height: 100.0%;">KwaZulu-Natal province: High Risk (96.0%) Wave Height: 0.0m Anomaly Score: 0.0%</div>`)[0];
+                popup_6c607e40945050f4b150bc847799df91.setContent(html_ee1db8956c29de1d805fec6301b9316f);
+            
+        
+
+        circle_marker_481b9d21a7264dd9bfa4412f76dd8098.bindPopup(popup_6c607e40945050f4b150bc847799df91)
+        ;
+
+        
+    
+    
+            var circle_marker_8ec070b0dd6260009d45c99705c9a453 = L.circleMarker(
+                [-29.41, 30.82],
+                {"bubblingMouseEvents": true, "color": "#ff1000ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff1000ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_43d49049f15e532c8643485c1b005847 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_8e1dda862249b1550931769661ce76ca = $(`<div id="html_8e1dda862249b1550931769661ce76ca" style="width: 100.0%; height: 100.0%;">KwaZulu Natal province: High Risk (95.0%) Wave Height: 0.0m Anomaly Score: 0.0%</div>`)[0];
+                popup_43d49049f15e532c8643485c1b005847.setContent(html_8e1dda862249b1550931769661ce76ca);
+            
+        
+
+        circle_marker_8ec070b0dd6260009d45c99705c9a453.bindPopup(popup_43d49049f15e532c8643485c1b005847)
+        ;
+
+        
+    
+    
+            var circle_marker_c1d5863be723ff431ececaeb623f2ae0 = L.circleMarker(
+                [-33.07, 18.92],
+                {"bubblingMouseEvents": true, "color": "#ff0900ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff0900ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_65f4935a2938bf5703561d1aa562b2e7 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_78f1cf258f2017614b47717e625b2eeb = $(`<div id="html_78f1cf258f2017614b47717e625b2eeb" style="width: 100.0%; height: 100.0%;">City of Cape Town district (Western Cape province): High Risk (97.0%) Wave Height: 0.0m Anomaly Score: 0.0%</div>`)[0];
+                popup_65f4935a2938bf5703561d1aa562b2e7.setContent(html_78f1cf258f2017614b47717e625b2eeb);
+            
+        
+
+        circle_marker_c1d5863be723ff431ececaeb623f2ae0.bindPopup(popup_65f4935a2938bf5703561d1aa562b2e7)
+        ;
+
+        
+    
+    
+            var circle_marker_d9e0cd4e3cd8e4430e39580c6025e45d = L.circleMarker(
+                [-31.055, 28.41],
+                {"bubblingMouseEvents": true, "color": "#ff0900ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff0900ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_8d02cd93725593a250967b9ff3ab8773 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_72a7177599e67bc77bcb3603b7362aa6 = $(`<div id="html_72a7177599e67bc77bcb3603b7362aa6" style="width: 100.0%; height: 100.0%;">Buffalo City, Amathole, Joe Gqabi, O.R. Tambo, Alfred Nzo, Chris Hani districts (Eastern Cape province), Fezile Dabi, Thabo Mofutsanyane, Xhariep districts (Free State province), City of Johannesburg, Ekurhuleni, Sedibeng, West Rand districts (Gauteng province), Amajuba, eThekwini, iLembe, Sisonke, Ugu, Uthukela districts (KwaZulu-Natal province), Mopani, Sekhukhune, Vhembe, Waterberg districts (Limpopo province), Ehlanzeni, Nkangala districts (Mpumalanga province), Frances Baard, Namakwa, Pixley ka Seme, Siyanda districts (Northern Cape province), North West province: High Risk (97.0%) Wave Height: 0.0m Anomaly Score: 0.0%</div>`)[0];
+                popup_8d02cd93725593a250967b9ff3ab8773.setContent(html_72a7177599e67bc77bcb3603b7362aa6);
+            
+        
+
+        circle_marker_d9e0cd4e3cd8e4430e39580c6025e45d.bindPopup(popup_8d02cd93725593a250967b9ff3ab8773)
+        ;
+
+        
+    
+    
+            var circle_marker_045c022b5e04efe598f483c29c7283d5 = L.circleMarker(
+                [-32.93, 26.56],
+                {"bubblingMouseEvents": true, "color": "#ff0900ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff0900ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_e106ced5b7be7160a822bf34918f35c5 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_c54554d3c51ea16ed1a96fd6b0aab09a = $(`<div id="html_c54554d3c51ea16ed1a96fd6b0aab09a" style="width: 100.0%; height: 100.0%;">Bathurst, Port Alfred, Kenton-on-Sea towns (Ndlambe area, Cacadu district, Eastern Cape province), Grahamstown town (Makana area, Cacadu district, Eastern Cape province): High Risk (97.0%) Wave Height: 0.0m Anomaly Score: 0.0%</div>`)[0];
+                popup_e106ced5b7be7160a822bf34918f35c5.setContent(html_c54554d3c51ea16ed1a96fd6b0aab09a);
+            
+        
+
+        circle_marker_045c022b5e04efe598f483c29c7283d5.bindPopup(popup_e106ced5b7be7160a822bf34918f35c5)
+        ;
+
+        
+    
+    
+            var circle_marker_400a371f3b26eb3ebbd2acc3b6256c37 = L.circleMarker(
+                [-21.5153, 25.61],
+                {"bubblingMouseEvents": true, "color": "#ff0600ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff0600ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_9049c00b37825eadccbb4def777ca18e = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_e2c4f463b1c1c5cac2b44fe67f5d9705 = $(`<div id="html_e2c4f463b1c1c5cac2b44fe67f5d9705" style="width: 100.0%; height: 100.0%;">Gauteng, KwaZulu-Natal, Limpopo, Mpumalanga, North West provinces: High Risk (98.0%) Wave Height: 0.0m Anomaly Score: 0.0%</div>`)[0];
+                popup_9049c00b37825eadccbb4def777ca18e.setContent(html_e2c4f463b1c1c5cac2b44fe67f5d9705);
+            
+        
+
+        circle_marker_400a371f3b26eb3ebbd2acc3b6256c37.bindPopup(popup_9049c00b37825eadccbb4def777ca18e)
+        ;
+
+        
+    
+    
+            var circle_marker_fc863a1c45d92e7f395331735f510521 = L.circleMarker(
+                [-28.362, 29.715],
+                {"bubblingMouseEvents": true, "color": "#ff0900ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff0900ff", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+        
+    
+        var popup_64d024223dd09a383ce15b2e73b80455 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_9b5aac0ae9d3e772f9f458fe194c3e86 = $(`<div id="html_9b5aac0ae9d3e772f9f458fe194c3e86" style="width: 100.0%; height: 100.0%;">KwaZulu-Natal, Nquthu (Umzinyathi District), Zinkwazi (Ilembe District), Mzingwenya (Uthungulu District), uMzumbe municipality, uMdoni, uMuziwabantu (Ugu): High Risk (97.0%) Wave Height: 0.0m Anomaly Score: 0.0%</div>`)[0];
+                popup_64d024223dd09a383ce15b2e73b80455.setContent(html_9b5aac0ae9d3e772f9f458fe194c3e86);
+            
+        
+
+        circle_marker_fc863a1c45d92e7f395331735f510521.bindPopup(popup_64d024223dd09a383ce15b2e73b80455)
+        ;
+
+        
+    
+    
+    var color_map_f20141e5a5ee0adf817b5b4fa3f818b3 = {};
+
+    
+    color_map_f20141e5a5ee0adf817b5b4fa3f818b3.color = d3.scale.threshold()
+              .domain([0.0, 0.20040080160320642, 0.40080160320641284, 0.6012024048096193, 0.8016032064128257, 1.002004008016032, 1.2024048096192386, 1.402805611222445, 1.6032064128256514, 1.8036072144288577, 2.004008016032064, 2.2044088176352705, 2.404809619238477, 2.6052104208416833, 2.80561122244489, 3.006012024048096, 3.2064128256513027, 3.406813627254509, 3.6072144288577155, 3.8076152304609217, 4.008016032064128, 4.208416833667335, 4.408817635270541, 4.609218436873747, 4.809619238476954, 5.01002004008016, 5.210420841683367, 5.410821643286573, 5.61122244488978, 5.811623246492986, 6.012024048096192, 6.212424849699399, 6.412825651302605, 6.613226452905812, 6.813627254509018, 7.014028056112225, 7.214428857715431, 7.414829659318637, 7.615230460921843, 7.81563126252505, 8.016032064128256, 8.216432865731463, 8.41683366733467, 8.617234468937875, 8.817635270541082, 9.01803607214429, 9.218436873747494, 9.418837675350701, 9.619238476953909, 9.819639278557114, 10.02004008016032, 10.220440881763528, 10.420841683366733, 10.62124248496994, 10.821643286573146, 11.022044088176353, 11.22244488977956, 11.422845691382765, 11.623246492985972, 11.823647294589179, 12.024048096192384, 12.224448897795591, 12.424849699398798, 12.625250501002004, 12.82565130260521, 13.026052104208416, 13.226452905811623, 13.42685370741483, 13.627254509018035, 13.827655310621243, 14.02805611222445, 14.228456913827655, 14.428857715430862, 14.629258517034069, 14.829659318637274, 15.030060120240481, 15.230460921843687, 15.430861723446894, 15.6312625250501, 15.831663326653306, 16.03206412825651, 16.23246492985972, 16.432865731462925, 16.63326653306613, 16.83366733466934, 17.034068136272545, 17.23446893787575, 17.43486973947896, 17.635270541082164, 17.83567134268537, 18.03607214428858, 18.236472945891784, 18.43687374749499, 18.637274549098198, 18.837675350701403, 19.03807615230461, 19.238476953907817, 19.438877755511022, 19.639278557114228, 19.839679358717436, 20.04008016032064, 20.240480961923847, 20.440881763527056, 20.64128256513026, 20.841683366733466, 21.04208416833667, 21.24248496993988, 21.442885771543086, 21.64328657314629, 21.8436873747495, 22.044088176352705, 22.24448897795591, 22.44488977955912, 22.645290581162325, 22.84569138276553, 23.04609218436874, 23.246492985971944, 23.44689378757515, 23.647294589178358, 23.847695390781563, 24.04809619238477, 24.248496993987978, 24.448897795591183, 24.649298597194388, 24.849699398797597, 25.050100200400802, 25.250501002004007, 25.450901803607213, 25.65130260521042, 25.851703406813627, 26.052104208416832, 26.25250501002004, 26.452905811623246, 26.65330661322645, 26.85370741482966, 27.054108216432866, 27.25450901803607, 27.45490981963928, 27.655310621242485, 27.85571142284569, 28.0561122244489, 28.256513026052104, 28.45691382765531, 28.65731462925852, 28.857715430861724, 29.05811623246493, 29.258517034068138, 29.458917835671343, 29.65931863727455, 29.859719438877754, 30.060120240480963, 30.260521042084168, 30.460921843687373, 30.661322645290582, 30.861723446893787, 31.062124248496993, 31.2625250501002, 31.462925851703407, 31.663326653306612, 31.86372745490982, 32.06412825651302, 32.26452905811623, 32.46492985971944, 32.66533066132264, 32.86573146292585, 33.06613226452906, 33.26653306613226, 33.46693386773547, 33.66733466933868, 33.86773547094188, 34.06813627254509, 34.2685370741483, 34.4689378757515, 34.66933867735471, 34.86973947895792, 35.07014028056112, 35.27054108216433, 35.47094188376754, 35.67134268537074, 35.87174348697395, 36.07214428857716, 36.27254509018036, 36.47294589178357, 36.673346693386776, 36.87374749498998, 37.07414829659319, 37.274549098196395, 37.4749498997996, 37.675350701402806, 37.875751503006015, 38.07615230460922, 38.276553106212425, 38.476953907815634, 38.677354709418836, 38.877755511022045, 39.078156312625254, 39.278557114228455, 39.478957915831664, 39.67935871743487, 39.879759519038075, 40.08016032064128, 40.28056112224449, 40.480961923847694, 40.6813627254509, 40.88176352705411, 41.08216432865731, 41.28256513026052, 41.482965931863724, 41.68336673346693, 41.88376753507014, 42.08416833667334, 42.28456913827655, 42.48496993987976, 42.68537074148296, 42.88577154308617, 43.08617234468938, 43.28657314629258, 43.48697394789579, 43.687374749499, 43.8877755511022, 44.08817635270541, 44.28857715430862, 44.48897795591182, 44.68937875751503, 44.88977955911824, 45.09018036072144, 45.29058116232465, 45.49098196392786, 45.69138276553106, 45.89178356713427, 46.09218436873748, 46.29258517034068, 46.49298597194389, 46.6933867735471, 46.8937875751503, 47.09418837675351, 47.294589178356716, 47.49498997995992, 47.69539078156313, 47.895791583166336, 48.09619238476954, 48.296593186372746, 48.496993987975955, 48.69739478957916, 48.897795591182366, 49.098196392785574, 49.298597194388776, 49.498997995991985, 49.699398797595194, 49.899799599198396, 50.100200400801604, 50.300601202404806, 50.501002004008015, 50.701402805611224, 50.901803607214426, 51.102204408817634, 51.30260521042084, 51.503006012024045, 51.703406813627254, 51.90380761523046, 52.104208416833664, 52.30460921843687, 52.50501002004008, 52.705410821643284, 52.90581162324649, 53.1062124248497, 53.3066132264529, 53.50701402805611, 53.70741482965932, 53.90781563126252, 54.10821643286573, 54.30861723446894, 54.50901803607214, 54.70941883767535, 54.90981963927856, 55.11022044088176, 55.31062124248497, 55.51102204408818, 55.71142284569138, 55.91182364729459, 56.1122244488978, 56.312625250501, 56.51302605210421, 56.71342685370742, 56.91382765531062, 57.11422845691383, 57.31462925851704, 57.51503006012024, 57.71543086172345, 57.91583166332666, 58.11623246492986, 58.31663326653307, 58.517034068136276, 58.71743486973948, 58.91783567134269, 59.11823647294589, 59.3186372745491, 59.519038076152306, 59.71943887775551, 59.91983967935872, 60.120240480961925, 60.32064128256513, 60.521042084168336, 60.721442885771545, 60.921843687374746, 61.122244488977955, 61.322645290581164, 61.523046092184366, 61.723446893787575, 61.92384769539078, 62.124248496993985, 62.324649298597194, 62.5250501002004, 62.725450901803605, 62.92585170340681, 63.12625250501002, 63.326653306613224, 63.52705410821643, 63.72745490981964, 63.92785571142284, 64.12825651302605, 64.32865731462925, 64.52905811623246, 64.72945891783567, 64.92985971943888, 65.13026052104209, 65.33066132264528, 65.53106212424849, 65.7314629258517, 65.93186372745491, 66.13226452905812, 66.33266533066133, 66.53306613226452, 66.73346693386773, 66.93386773547094, 67.13426853707415, 67.33466933867736, 67.53507014028057, 67.73547094188376, 67.93587174348697, 68.13627254509018, 68.33667334669339, 68.5370741482966, 68.7374749498998, 68.937875751503, 69.13827655310621, 69.33867735470942, 69.53907815631263, 69.73947895791584, 69.93987975951904, 70.14028056112224, 70.34068136272545, 70.54108216432866, 70.74148296593187, 70.94188376753507, 71.14228456913828, 71.34268537074148, 71.54308617234469, 71.7434869739479, 71.9438877755511, 72.14428857715431, 72.34468937875752, 72.54509018036072, 72.74549098196393, 72.94589178356713, 73.14629258517034, 73.34669338677355, 73.54709418837675, 73.74749498997996, 73.94789579158316, 74.14829659318637, 74.34869739478958, 74.54909819639279, 74.74949899799599, 74.9498997995992, 75.1503006012024, 75.35070140280561, 75.55110220440882, 75.75150300601203, 75.95190380761522, 76.15230460921843, 76.35270541082164, 76.55310621242485, 76.75350701402806, 76.95390781563127, 77.15430861723446, 77.35470941883767, 77.55511022044088, 77.75551102204409, 77.9559118236473, 78.15631262525051, 78.3567134268537, 78.55711422845691, 78.75751503006012, 78.95791583166333, 79.15831663326654, 79.35871743486975, 79.55911823647294, 79.75951903807615, 79.95991983967936, 80.16032064128257, 80.36072144288578, 80.56112224448898, 80.76152304609218, 80.96192384769539, 81.1623246492986, 81.3627254509018, 81.56312625250501, 81.76352705410822, 81.96392785571142, 82.16432865731463, 82.36472945891784, 82.56513026052104, 82.76553106212425, 82.96593186372745, 83.16633266533066, 83.36673346693387, 83.56713426853707, 83.76753507014028, 83.96793587174349, 84.16833667334669, 84.3687374749499, 84.5691382765531, 84.76953907815631, 84.96993987975952, 85.17034068136273, 85.37074148296593, 85.57114228456913, 85.77154308617234, 85.97194388777555, 86.17234468937876, 86.37274549098197, 86.57314629258516, 86.77354709418837, 86.97394789579158, 87.17434869739479, 87.374749498998, 87.57515030060121, 87.7755511022044, 87.97595190380761, 88.17635270541082, 88.37675350701403, 88.57715430861724, 88.77755511022045, 88.97795591182364, 89.17835671342685, 89.37875751503006, 89.57915831663327, 89.77955911823648, 89.97995991983969, 90.18036072144288, 90.38076152304609, 90.5811623246493, 90.78156312625251, 90.98196392785572, 91.18236472945891, 91.38276553106212, 91.58316633266533, 91.78356713426854, 91.98396793587175, 92.18436873747495, 92.38476953907815, 92.58517034068136, 92.78557114228457, 92.98597194388778, 93.18637274549098, 93.3867735470942, 93.58717434869739, 93.7875751503006, 93.9879759519038, 94.18837675350701, 94.38877755511022, 94.58917835671343, 94.78957915831663, 94.98997995991984, 95.19038076152304, 95.39078156312625, 95.59118236472946, 95.79158316633267, 95.99198396793587, 96.19238476953907, 96.39278557114228, 96.59318637274549, 96.7935871743487, 96.99398797595191, 97.1943887775551, 97.39478957915831, 97.59519038076152, 97.79559118236473, 97.99599198396794, 98.19639278557115, 98.39679358717434, 98.59719438877755, 98.79759519038076, 98.99799599198397, 99.19839679358718, 99.39879759519039, 99.59919839679358, 99.79959919839679, 100.0])
+              .range(['#008000ff', '#018000ff', '#028000ff', '#038000ff', '#048100ff', '#058100ff', '#068100ff', '#078100ff', '#088100ff', '#098100ff', '#0a8100ff', '#0b8200ff', '#0c8200ff', '#0d8200ff', '#0e8200ff', '#0f8200ff', '#108200ff', '#118300ff', '#128300ff', '#138300ff', '#148300ff', '#158300ff', '#168300ff', '#178300ff', '#188400ff', '#198400ff', '#1a8400ff', '#1b8400ff', '#1c8400ff', '#1d8400ff', '#1e8400ff', '#1f8500ff', '#208500ff', '#218500ff', '#228500ff', '#238500ff', '#248500ff', '#258600ff', '#268600ff', '#288600ff', '#298600ff', '#2a8600ff', '#2b8600ff', '#2c8600ff', '#2d8700ff', '#2e8700ff', '#2f8700ff', '#308700ff', '#318700ff', '#328700ff', '#338700ff', '#348800ff', '#358800ff', '#368800ff', '#378800ff', '#388800ff', '#398800ff', '#3a8800ff', '#3b8900ff', '#3c8900ff', '#3d8900ff', '#3e8900ff', '#3f8900ff', '#408900ff', '#418a00ff', '#428a00ff', '#438a00ff', '#448a00ff', '#458a00ff', '#468a00ff', '#478a00ff', '#488b00ff', '#498b00ff', '#4a8b00ff', '#4b8b00ff', '#4c8b00ff', '#4d8b00ff', '#4f8b00ff', '#508c00ff', '#518c00ff', '#528c00ff', '#538c00ff', '#548c00ff', '#558c00ff', '#568d00ff', '#578d00ff', '#588d00ff', '#598d00ff', '#5a8d00ff', '#5b8d00ff', '#5c8d00ff', '#5d8e00ff', '#5e8e00ff', '#5f8e00ff', '#608e00ff', '#618e00ff', '#628e00ff', '#638e00ff', '#648f00ff', '#658f00ff', '#668f00ff', '#678f00ff', '#688f00ff', '#698f00ff', '#6a8f00ff', '#6b9000ff', '#6c9000ff', '#6d9000ff', '#6e9000ff', '#6f9000ff', '#709000ff', '#719100ff', '#729100ff', '#739100ff', '#749100ff', '#759100ff', '#779100ff', '#789100ff', '#799200ff', '#7a9200ff', '#7b9200ff', '#7c9200ff', '#7d9200ff', '#7e9200ff', '#7f9200ff', '#809300ff', '#819300ff', '#829300ff', '#839300ff', '#849300ff', '#859300ff', '#869400ff', '#879400ff', '#889400ff', '#899400ff', '#8a9400ff', '#8b9400ff', '#8c9400ff', '#8d9500ff', '#8e9500ff', '#8f9500ff', '#909500ff', '#919500ff', '#929500ff', '#939500ff', '#949600ff', '#959600ff', '#969600ff', '#979600ff', '#989600ff', '#999600ff', '#9a9600ff', '#9b9700ff', '#9c9700ff', '#9e9700ff', '#9f9700ff', '#a09700ff', '#a19700ff', '#a29800ff', '#a39800ff', '#a49800ff', '#a59800ff', '#a69800ff', '#a79800ff', '#a89800ff', '#a99900ff', '#aa9900ff', '#ab9900ff', '#ac9900ff', '#ad9900ff', '#ae9900ff', '#af9900ff', '#b09a00ff', '#b19a00ff', '#b29a00ff', '#b39a00ff', '#b49a00ff', '#b59a00ff', '#b69b00ff', '#b79b00ff', '#b89b00ff', '#b99b00ff', '#ba9b00ff', '#bb9b00ff', '#bc9b00ff', '#bd9c00ff', '#be9c00ff', '#bf9c00ff', '#c09c00ff', '#c19c00ff', '#c29c00ff', '#c39c00ff', '#c59d00ff', '#c69d00ff', '#c79d00ff', '#c89d00ff', '#c99d00ff', '#ca9d00ff', '#cb9d00ff', '#cc9e00ff', '#cd9e00ff', '#ce9e00ff', '#cf9e00ff', '#d09e00ff', '#d19e00ff', '#d29f00ff', '#d39f00ff', '#d49f00ff', '#d59f00ff', '#d69f00ff', '#d79f00ff', '#d89f00ff', '#d9a000ff', '#daa000ff', '#dba000ff', '#dca000ff', '#dda000ff', '#dea000ff', '#dfa000ff', '#e0a100ff', '#e1a100ff', '#e2a100ff', '#e3a100ff', '#e4a100ff', '#e5a100ff', '#e6a100ff', '#e7a200ff', '#e8a200ff', '#e9a200ff', '#eaa200ff', '#eba200ff', '#eda200ff', '#eea300ff', '#efa300ff', '#f0a300ff', '#f1a300ff', '#f2a300ff', '#f3a300ff', '#f4a300ff', '#f5a400ff', '#f6a400ff', '#f7a400ff', '#f8a400ff', '#f9a400ff', '#faa400ff', '#fba400ff', '#fca500ff', '#fda500ff', '#fea500ff', '#ffa500ff', '#ffa500ff', '#ffa400ff', '#ffa300ff', '#ffa300ff', '#ffa200ff', '#ffa100ff', '#ffa100ff', '#ffa000ff', '#ffa000ff', '#ff9f00ff', '#ff9e00ff', '#ff9e00ff', '#ff9d00ff', '#ff9c00ff', '#ff9c00ff', '#ff9b00ff', '#ff9a00ff', '#ff9a00ff', '#ff9900ff', '#ff9800ff', '#ff9800ff', '#ff9700ff', '#ff9600ff', '#ff9600ff', '#ff9500ff', '#ff9400ff', '#ff9400ff', '#ff9300ff', '#ff9200ff', '#ff9200ff', '#ff9100ff', '#ff9000ff', '#ff9000ff', '#ff8f00ff', '#ff8e00ff', '#ff8e00ff', '#ff8d00ff', '#ff8c00ff', '#ff8c00ff', '#ff8b00ff', '#ff8a00ff', '#ff8a00ff', '#ff8900ff', '#ff8800ff', '#ff8800ff', '#ff8700ff', '#ff8600ff', '#ff8600ff', '#ff8500ff', '#ff8400ff', '#ff8400ff', '#ff8300ff', '#ff8200ff', '#ff8200ff', '#ff8100ff', '#ff8000ff', '#ff8000ff', '#ff7f00ff', '#ff7e00ff', '#ff7e00ff', '#ff7d00ff', '#ff7c00ff', '#ff7c00ff', '#ff7b00ff', '#ff7a00ff', '#ff7a00ff', '#ff7900ff', '#ff7800ff', '#ff7800ff', '#ff7700ff', '#ff7600ff', '#ff7600ff', '#ff7500ff', '#ff7400ff', '#ff7400ff', '#ff7300ff', '#ff7200ff', '#ff7200ff', '#ff7100ff', '#ff7000ff', '#ff7000ff', '#ff6f00ff', '#ff6e00ff', '#ff6e00ff', '#ff6d00ff', '#ff6c00ff', '#ff6c00ff', '#ff6b00ff', '#ff6a00ff', '#ff6a00ff', '#ff6900ff', '#ff6800ff', '#ff6800ff', '#ff6700ff', '#ff6600ff', '#ff6600ff', '#ff6500ff', '#ff6400ff', '#ff6400ff', '#ff6300ff', '#ff6200ff', '#ff6200ff', '#ff6100ff', '#ff6000ff', '#ff6000ff', '#ff5f00ff', '#ff5e00ff', '#ff5e00ff', '#ff5d00ff', '#ff5c00ff', '#ff5c00ff', '#ff5b00ff', '#ff5a00ff', '#ff5a00ff', '#ff5900ff', '#ff5800ff', '#ff5800ff', '#ff5700ff', '#ff5600ff', '#ff5600ff', '#ff5500ff', '#ff5400ff', '#ff5400ff', '#ff5300ff', '#ff5200ff', '#ff5200ff', '#ff5100ff', '#ff5000ff', '#ff5000ff', '#ff4f00ff', '#ff4f00ff', '#ff4e00ff', '#ff4d00ff', '#ff4d00ff', '#ff4c00ff', '#ff4b00ff', '#ff4b00ff', '#ff4a00ff', '#ff4900ff', '#ff4900ff', '#ff4800ff', '#ff4700ff', '#ff4700ff', '#ff4600ff', '#ff4500ff', '#ff4500ff', '#ff4400ff', '#ff4300ff', '#ff4300ff', '#ff4200ff', '#ff4100ff', '#ff4100ff', '#ff4000ff', '#ff3f00ff', '#ff3f00ff', '#ff3e00ff', '#ff3d00ff', '#ff3d00ff', '#ff3c00ff', '#ff3b00ff', '#ff3b00ff', '#ff3a00ff', '#ff3900ff', '#ff3900ff', '#ff3800ff', '#ff3700ff', '#ff3700ff', '#ff3600ff', '#ff3500ff', '#ff3500ff', '#ff3400ff', '#ff3300ff', '#ff3300ff', '#ff3200ff', '#ff3100ff', '#ff3100ff', '#ff3000ff', '#ff2f00ff', '#ff2f00ff', '#ff2e00ff', '#ff2d00ff', '#ff2d00ff', '#ff2c00ff', '#ff2b00ff', '#ff2b00ff', '#ff2a00ff', '#ff2900ff', '#ff2900ff', '#ff2800ff', '#ff2700ff', '#ff2700ff', '#ff2600ff', '#ff2500ff', '#ff2500ff', '#ff2400ff', '#ff2300ff', '#ff2300ff', '#ff2200ff', '#ff2100ff', '#ff2100ff', '#ff2000ff', '#ff1f00ff', '#ff1f00ff', '#ff1e00ff', '#ff1d00ff', '#ff1d00ff', '#ff1c00ff', '#ff1b00ff', '#ff1b00ff', '#ff1a00ff', '#ff1900ff', '#ff1900ff', '#ff1800ff', '#ff1700ff', '#ff1700ff', '#ff1600ff', '#ff1500ff', '#ff1500ff', '#ff1400ff', '#ff1300ff', '#ff1300ff', '#ff1200ff', '#ff1100ff', '#ff1100ff', '#ff1000ff', '#ff0f00ff', '#ff0f00ff', '#ff0e00ff', '#ff0d00ff', '#ff0d00ff', '#ff0c00ff', '#ff0b00ff', '#ff0b00ff', '#ff0a00ff', '#ff0900ff', '#ff0900ff', '#ff0800ff', '#ff0700ff', '#ff0700ff', '#ff0600ff', '#ff0500ff', '#ff0500ff', '#ff0400ff', '#ff0300ff', '#ff0300ff', '#ff0200ff', '#ff0100ff', '#ff0100ff', '#ff0000ff', '#ff0000ff']);
+    
+
+    color_map_f20141e5a5ee0adf817b5b4fa3f818b3.x = d3.scale.linear()
+              .domain([0.0, 100.0])
+              .range([0, 450 - 50]);
+
+    color_map_f20141e5a5ee0adf817b5b4fa3f818b3.legend = L.control({position: 'topright'});
+    color_map_f20141e5a5ee0adf817b5b4fa3f818b3.legend.onAdd = function (map) {var div = L.DomUtil.create('div', 'legend'); return div};
+    color_map_f20141e5a5ee0adf817b5b4fa3f818b3.legend.addTo(map_deffbc94593aaa8dfdc7f23ae2d7dfe9);
+
+    color_map_f20141e5a5ee0adf817b5b4fa3f818b3.xAxis = d3.svg.axis()
+        .scale(color_map_f20141e5a5ee0adf817b5b4fa3f818b3.x)
+        .orient("top")
+        .tickSize(1)
+        .tickValues([0.0, 50.0, 100.0]);
+
+    color_map_f20141e5a5ee0adf817b5b4fa3f818b3.svg = d3.select(".legend.leaflet-control").append("svg")
+        .attr("id", 'legend')
+        .attr("width", 450)
+        .attr("height", 40);
+
+    color_map_f20141e5a5ee0adf817b5b4fa3f818b3.g = color_map_f20141e5a5ee0adf817b5b4fa3f818b3.svg.append("g")
+        .attr("class", "key")
+        .attr("fill", "black")
+        .attr("transform", "translate(25,16)");
+
+    color_map_f20141e5a5ee0adf817b5b4fa3f818b3.g.selectAll("rect")
+        .data(color_map_f20141e5a5ee0adf817b5b4fa3f818b3.color.range().map(function(d, i) {
+          return {
+            x0: i ? color_map_f20141e5a5ee0adf817b5b4fa3f818b3.x(color_map_f20141e5a5ee0adf817b5b4fa3f818b3.color.domain()[i - 1]) : color_map_f20141e5a5ee0adf817b5b4fa3f818b3.x.range()[0],
+            x1: i < color_map_f20141e5a5ee0adf817b5b4fa3f818b3.color.domain().length ? color_map_f20141e5a5ee0adf817b5b4fa3f818b3.x(color_map_f20141e5a5ee0adf817b5b4fa3f818b3.color.domain()[i]) : color_map_f20141e5a5ee0adf817b5b4fa3f818b3.x.range()[1],
+            z: d
+          };
+        }))
+      .enter().append("rect")
+        .attr("height", 40 - 30)
+        .attr("x", function(d) { return d.x0; })
+        .attr("width", function(d) { return d.x1 - d.x0; })
+        .style("fill", function(d) { return d.z; });
+
+    color_map_f20141e5a5ee0adf817b5b4fa3f818b3.g.call(color_map_f20141e5a5ee0adf817b5b4fa3f818b3.xAxis).append("text")
+        .attr("class", "caption")
+        .attr("y", 21)
+        .attr("fill", "black")
+        .text("Flood Risk (%)");
+</script>
+</html>

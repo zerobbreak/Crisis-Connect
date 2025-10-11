@@ -65,7 +65,7 @@ def translate_with_gemini(text: str, target_language: str) -> str:
         return content_obj.text.strip()
     return str(content_obj)
 
-def generate_alerts(data: pd.DataFrame) -> List[dict]:
+def generate_alerts(data: pd.DataFrame, risk_threshold: float = 70.0) -> List[dict]:
     alerts = []
     translation_cache = {}
 
@@ -79,7 +79,7 @@ def generate_alerts(data: pd.DataFrame) -> List[dict]:
         except (TypeError, ValueError):
             risk_score = 0.0
 
-        if risk_score < 70.0:
+        if risk_score < risk_threshold:
             continue
 
         location = str(row.get("location", "Unknown"))
@@ -131,7 +131,7 @@ def generate_alerts(data: pd.DataFrame) -> List[dict]:
         logger.info(f"✅ Alert generated for {location} (score: {risk_score:.1f})")
 
     return alerts
-async def generate_alerts_from_db(db: AsyncIOMotorDatabase, limit: int = 1000):
+async def generate_alerts_from_db(db: AsyncIOMotorDatabase, limit: int = 1000, risk_threshold: float = 70.0):
     cursor = (
         db["predictions"]
         .find(
@@ -158,10 +158,9 @@ async def generate_alerts_from_db(db: AsyncIOMotorDatabase, limit: int = 1000):
         return []
 
     df = pd.DataFrame(predictions)
-    alerts = generate_alerts(df)
+    alerts = generate_alerts(df, risk_threshold)
 
     if alerts:
-        await db["alerts"].insert_many(alerts)
-        logger.info(f"✅ Generated and saved {len(alerts)} alerts")
+        logger.info(f"✅ Generated {len(alerts)} alerts with threshold {risk_threshold}")
 
     return alerts
