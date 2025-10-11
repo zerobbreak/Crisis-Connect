@@ -1,0 +1,118 @@
+timestamp,location,risk_score,risk_level,message_en,message_zu,message_xh
+2025-08-04 01:50:25,"Taung town (Greater Taung area, Dr Ruth Segomotsi Mompati district, North West province)",99.0,HIGH,"⚠️ [HIGH RISK] Severe weather in Taung town (Greater Taung area, Dr Ruth Segomotsi Mompati district, North West province).
+Risk Score: 99%.
+Wave Height: 0.0m.
+Move to higher ground and follow local updates.","⚠️ INGOZI EPhEZULU
+Isimo sezulu esibi kakhulu edolobheni laseTaung (endawo yaseGreater Taung, esifundeni saseDr Ruth Segomotsi Mompati, esifundazweni saseNyakatho Ntshonalanga).
+Isilinganiso sengozi: 99%.
+Ukuphakama kwamagagasi: 0.0m.
+Hambani endaweni ephakeme futhi nilandele izibuyekezo zasendaweni.","⚠️ Isilumkiso: Umngcipheko Ophezulu! Imozulu enobungozi kwidolophu yaseTaung (kummandla weGreater Taung, kwisithili saseDr Ruth Segomotsi Mompati, kwiPhondo loMntla-Ntshona).
+Inqanaba loMngcipheko: 99%.
+Ukuphakama kweAmagagasi: 0.0m.
+Fudukela kwindawo ephakamileyo kwaye ulandele uhlaziyo lwalapha ekhaya."
+2025-08-04 01:50:47,"Eastern Cape, Western Cape provinces",100.0,HIGH,"⚠️ [HIGH RISK] Severe weather in Eastern Cape, Western Cape provinces.
+Risk Score: 100%.
+Wave Height: 0.0m.
+Move to higher ground and follow local updates.","⚠️ [INGOZI ENKULU] Isimo sezulu esibi kakhulu e-Eastern Cape nase-Western Cape.
+Izinga Lengozi: 100%.
+Ubude Bamagagasi: 0.0m.
+Thuthela endaweni ephakeme futhi ulandele izibuyekezo zasendaweni.","⚠️ [UMNGCIPHEKO OPHEZULU] Isimo sezulu esiqatha kumaphondo eMpuma Koloni naseNtshona Koloni.
+Umlinganiselo Womngcipheko: I-100%.
+Ukuphakama Kwamaza: I-0.0m.
+Yiyani kwindawo ephakamileyo nize nilandele uhlaziyo lwasekhaya."
+2025-08-04 01:51:06,"Cape Flats area (City of Cape Town district, Western Cape province)",100.0,HIGH,"⚠️ [HIGH RISK] Severe weather in Cape Flats area (City of Cape Town district, Western Cape province).
+Risk Score: 100%.
+Wave Height: 0.0m.
+Move to higher ground and follow local updates.","⚠️ **[UBUNGOZI OBUPHEZULU]** Isimo sezulu esinzima kakhulu endaweni yaseCape Flats (esifundeni soMasipala waseKapa, eSifundazweni saseNtshonalanga Kapa).
+Isikolo Sobungozi: 100%.
+Ubude begagasi: 0.0m.
+Thuthela endaweni ephakeme futhi ulandele izibuyekezo zasendaweni.","⚠️ **[INGOZI ENKULU]** Isimo sezulu esirhabaxa kakhulu kummandla weCape Flats (Isithili seSixeko saseKapa, iphondo leNtshona Koloni).
+Inqanaba loMngcipheko: 100%.
+Ukuphakama kwamaLiza: 0.0m.
+Nyukela kwindawo ephakamileyo kwaye ulandele uhlaziyo lwasendaweni."
+2025-08-04 01:51:28,KwaZulu-Natal province,91.0,HIGH,"⚠️ [HIGH RISK] Severe weather in KwaZulu-Natal province.
+Risk Score: 91%.
+Wave Height: 0.0m.
+Move to higher ground and follow local updates.","⚠️ **UBUNGOZI OBUPHEZULU**
+Isimo sezulu esibi kakhulu eSifundazweni saKwaZulu-Natal.
+Isikolo Sobungozi: 91%.
+Ubude Bamagagasi: 0.0m.
+Sukani niye ezindaweni eziphakeme futhi nilandele izibuyekezo zasendaweni.","⚠️ [UBUNGOZI OBUKHULU] Isimo sezulu esibi kakhulu ePhondweni laKwaZulu-Natal.
+Inqanaba lobungozi: 91%.
+Ubude bezaMaqhuba: 0.0m.
+Yiya kwindawo ephakamileyo kwaye uhlale ulandela uhlaziyo lwasendaweni."
+2025-08-04 01:51:48,KwaZulu Natal province,87.0,HIGH,"⚠️ [HIGH RISK] Severe weather in KwaZulu Natal province.
+Risk Score: 87%.
+Wave Height: 0.0m.
+Move to higher ground and follow local updates.","⚠️ INGOZI ENKULU
+Isimo sezulu esibi kakhulu esifundazweni saKwaZulu-Natal.
+Izinga lobungozi: ama-87%.
+Ukuphakama kwamagagasi: ama-0.0m.
+Dlulela ezindaweni eziphakeme futhi ulandele izibuyekezo zasendaweni.","⚠️ INGOZI ENKULU!
+Iimeko zemozulu ezinzima kwiPhondo laKwaZulu-Natal.
+Inqanaba lobungozi: 87%.
+Ukuphakama kwamaza: 0.0m.
+Nyukela kwindawo ephakamileyo kwaye ulandele izaziso zasekhaya."
+2025-08-04 01:52:06,City of Cape Town district (Western Cape province),100.0,HIGH,"⚠️ [HIGH RISK] Severe weather in City of Cape Town district (Western Cape province).
+Risk Score: 100%.
+Wave Height: 0.0m.
+Move to higher ground and follow local updates.","⚠️ **[UBUNGOZI OBUPHEZULU]**
+Isimo sezulu esibi kakhulu esifundeni soMasipala waseKapa (esifundazweni saseNtshonalanga Kapa).
+Izinga Lobungozi: 100%.
+Ukuphakama kwamagagasi: 0.0m.
+Thuthela endaweni ephakeme futhi ulandele izibuyekezo zasendaweni.","`⚠️ [INGODI ENKULU]`
+Imozulu emandla kwisithili seSixeko saseKapa (ePhondweni leNtshona Koloni).
+Umanqaku woMngcipheko: 100%.
+Ubude beLiza: 0.0m.
+Hambani niye kwindawo ephakamileyo kwaye niqwalasele uhlaziyo lwasengingqini."
+2025-08-04 01:52:28,"Buffalo City, Amathole, Joe Gqabi, O.R. Tambo, Alfred Nzo, Chris Hani districts (Eastern Cape province), Fezile Dabi, Thabo Mofutsanyane, Xhariep districts (Free State province), City of Johannesburg, Ekurhuleni, Sedibeng, West Rand districts (Gauteng province), Amajuba, eThekwini, iLembe, Sisonke, Ugu, Uthukela districts (KwaZulu-Natal province), Mopani, Sekhukhune, Vhembe, Waterberg districts (Limpopo province), Ehlanzeni, Nkangala districts (Mpumalanga province), Frances Baard, Namakwa, Pixley ka Seme, Siyanda districts (Northern Cape province), North West province",99.0,HIGH,"⚠️ [HIGH RISK] Severe weather in Buffalo City, Amathole, Joe Gqabi, O.R. Tambo, Alfred Nzo, Chris Hani districts (Eastern Cape province), Fezile Dabi, Thabo Mofutsanyane, Xhariep districts (Free State province), City of Johannesburg, Ekurhuleni, Sedibeng, West Rand districts (Gauteng province), Amajuba, eThekwini, iLembe, Sisonke, Ugu, Uthukela districts (KwaZulu-Natal province), Mopani, Sekhukhune, Vhembe, Waterberg districts (Limpopo province), Ehlanzeni, Nkangala districts (Mpumalanga province), Frances Baard, Namakwa, Pixley ka Seme, Siyanda districts (Northern Cape province), North West province.
+Risk Score: 99%.
+Wave Height: 0.0m.
+Move to higher ground and follow local updates.","⚠️ **INGOZI ENKULU**
+Isimo sezulu esibi kakhulu ezifundeni iBuffalo City, Amathole, Joe Gqabi, O.R. Tambo, Alfred Nzo, Chris Hani (esifundazweni sase-Eastern Cape), ezifundeni iFezile Dabi, Thabo Mofutsanyane, Xhariep (esifundazweni sase-Free State), iDolobha laseGoli, i-Ekurhuleni, iSedibeng, nezifunda zaseWest Rand (esifundazweni saseGauteng), ezifundeni iAmajuba, eThekwini, iLembe, iSisonke, iUgu, iUthukela (esifundazweni saKwaZulu-Natal), ezifundeni iMopani, iSekhukhune, iVhembe, iWaterberg (esifundazweni saseLimpopo), ezifundeni iEhlanzeni, iNkangala (esifundazweni saseMpumalanga), ezifundeni iFrances Baard, iNamakwa, iPixley ka Seme, iSiyanda (esifundazweni saseNorthern Cape), nasesifundazweni saseNorth West.
+
+**Izinga Lobungozi:** 99%.
+**Ukuphakama Kwamagagasi:** 0.0m.
+Hamba uye endaweni ephakeme futhi ulandele izibuyekezo zasendaweni.","⚠️ **[UMNGCIPHEKO OPHEZULU]**
+Isimo sezulu esiqatha kakhulu kwiZithili zaseBuffalo City, Amathole, Joe Gqabi, O.R. Tambo, Alfred Nzo, Chris Hani (kwiPhondo leMpuma Koloni); kwiZithili zaseFezile Dabi, Thabo Mofutsanyane, Xhariep (kwiPhondo leFreyistata); kwiZithili zaseSixeko saseRhawuti (City of Johannesburg), e-Ekurhuleni, e-Sedibeng, eWest Rand (kwiPhondo laseGauteng); kwiZithili zaseAmajuba, eThekwini, iLembe, Sisonke, Ugu, Uthukela (kwiPhondo laKwaZulu-Natal); kwiZithili zaseMopani, Sekhukhune, Vhembe, Waterberg (kwiPhondo leLimpopo); kwiZithili zase-Ehlanzeni, Nkangala (kwiPhondo leMpumalanga); kwiZithili zaseFrances Baard, Namakwa, Pixley ka Seme, Siyanda (kwiPhondo leMntla Koloni); nakwiPhondo loMntla Ntshona.
+
+Umgangatho woMngcipheko: 99%.
+Ukuphakama kwaMazaza: 0.0m.
+
+Yiya kwiindawo eziphakamileyo kwaye ulandele lonke uhlaziyo lwengingqi."
+2025-08-04 01:52:54,"Bathurst, Port Alfred, Kenton-on-Sea towns (Ndlambe area, Cacadu district, Eastern Cape province), Grahamstown town (Makana area, Cacadu district, Eastern Cape province)",100.0,HIGH,"⚠️ [HIGH RISK] Severe weather in Bathurst, Port Alfred, Kenton-on-Sea towns (Ndlambe area, Cacadu district, Eastern Cape province), Grahamstown town (Makana area, Cacadu district, Eastern Cape province).
+Risk Score: 100%.
+Wave Height: 0.0m.
+Move to higher ground and follow local updates.","⚠️ [INGOZI ENKULU]
+Isimo sezulu esinzima kakhulu emadolobheni aseBathurst, Port Alfred, naseKenton-on-Sea (endawo yaseNdlambe, esifundeni saseCacadu, eSifundazweni saseMpumalanga Kapa), kanye nasedolobheni laseGrahamstown (indawo yaseMakana, esifundeni saseCacadu, eSifundazweni saseMpumalanga Kapa).
+
+Izinga lobungozi: 100%.
+Ukuphakama kwamagagasi: 0.0m.
+
+Nyukelani ezindaweni eziphakeme futhi nilandele izibuyekezo zasendaweni.","⚠️ [UBUNGOZI OBUPHAKAMILEYO] Imozulu enobungozi kakhulu kwiidolophu zaseBathurst, ePort Alfred, naseKenton-on-Sea (kumphandle waseNdlambe, kwisithili saseCacadu, kwiPhondo leMpuma Koloni), nasedolophini yaseGrahamstown (kumphandle waseMakana, kwisithili saseCacadu, kwiPhondo leMpuma Koloni).
+Ubungozi bulingana ne-100%.
+Ukuphakama kwamaza: 0.0m.
+Yiya kwindawo ephakamileyo uze ulandele uhlaziyo lwasekhaya."
+2025-08-04 01:53:16,"Gauteng, KwaZulu-Natal, Limpopo, Mpumalanga, North West provinces",99.0,HIGH,"⚠️ [HIGH RISK] Severe weather in Gauteng, KwaZulu-Natal, Limpopo, Mpumalanga, North West provinces.
+Risk Score: 99%.
+Wave Height: 0.0m.
+Move to higher ground and follow local updates.","⚠️ **[ISIXWAYISO ESIKHULU]** Isimo sezulu esibi kakhulu ezifundazweni zaseGauteng, KwaZulu-Natal, Limpopo, Mpumalanga naseNorth West.
+Izinga Lobungozi: 99%.
+Ukuphakama Kwamagagasi: 0.0m.
+Nyukela endaweni ephakeme futhi ulandele izibuyekezo zasendaweni.","⚠️ **Umngcipheko Omkhulu**
+Imozulu engqongqo eGauteng, eKwaZulu-Natal, eLimpopo, eMpumalanga naseNorth West.
+Inqanaba lomngcipheko: 99%.
+Ubude bamaLiza: 0.0m.
+Nyukela kwindawo ephakamileyo kwaye ulandele uhlaziyo lwengingqi."
+2025-08-04 01:53:35,"KwaZulu-Natal, Nquthu (Umzinyathi District), Zinkwazi (Ilembe District), Mzingwenya (Uthungulu District), uMzumbe municipality, uMdoni, uMuziwabantu (Ugu)",91.0,HIGH,"⚠️ [HIGH RISK] Severe weather in KwaZulu-Natal, Nquthu (Umzinyathi District), Zinkwazi (Ilembe District), Mzingwenya (Uthungulu District), uMzumbe municipality, uMdoni, uMuziwabantu (Ugu).
+Risk Score: 91%.
+Wave Height: 0.0m.
+Move to higher ground and follow local updates.","⚠️ **[UBUNGOZI OBUKHULU]** Isimo sezulu esibi kakhulu eKwaZulu-Natali, eNquthu (eSifundeni sase-Umzinyathi), eZinkwazi (eSifundeni sase-Ilembe), eMzingwenya (eSifundeni sase-Uthungulu), kuMasipala waseMzumbe, kuMasipala waseMdoni, nakuMasipala waseMuziwabantu (eSifundeni sase-Ugu).
+Izinga lobungozi: amaphesenti angama-91.
+Ubude bamagagasi: amamitha angu-0.0.
+Nyukelani ezindaweni eziphakeme futhi nilandele izibuyekezo zasendaweni.","⚠️ [INGEZI ENKULU]
+Isimo sezulu esibi kakhulu eKwaZulu-Natal, eNquthu (Isithili sase-Umzinyathi), eZinkwazi (Isithili sase-Ilembe), eMzingwenya (Isithili sase-Uthungulu), kuMasipala waseMzumbe, kuMdoni, kuMuziwabantu (eUgu).
+Inqanaba lobungozi: 91%.
+Ukuphakama kwamaza: 0.0m.
+Nyukela kwindawo ephakamileyo kwaye ulandele uhlaziyo lwengingqi."
+2025-08-05 13:00:00,Pretoria,95.0,HIGH,Severe weather alert for Pretoria.,Isixwayiso sezulu esibi ePretoria.,Isilumkiso semozulu embi ePretoria.
