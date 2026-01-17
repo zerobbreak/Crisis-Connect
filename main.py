@@ -18,6 +18,14 @@ from services.weather_service import WeatherService
 from services.alert_service import AlertService
 from services.location_service import LocationService
 
+# Phase 3 imports
+from services.alert_formatter import create_alert_formatter
+from services.action_generator import create_action_generator
+from services.resource_calculator import create_resource_calculator
+from services.alert_distributor import create_alert_distributor
+from services.emergency_system_integrator import create_emergency_integrator
+from services.feedback_system import create_feedback_system
+
 # Import Routers
 from routers import weather, alerts, historical, locations, system, forecast, notifications
 from services.scheduler import scheduler_service
@@ -65,10 +73,22 @@ async def lifespan(app: FastAPI):
         app.state.weather_service = WeatherService(app)
         app.state.alert_service = AlertService(app)
         app.state.location_service = LocationService(db)
-        logger.info("Services initialized successfully")
+        logger.info("Core services initialized successfully")
     except Exception as e:
         logger.error("Service initialization failed", error=str(e))
         raise RuntimeError("Service initialization failed")
+    
+    # Initialize Phase 3 Services
+    try:
+        app.state.alert_formatter = create_alert_formatter()
+        app.state.action_generator = create_action_generator()
+        app.state.resource_calculator = create_resource_calculator()
+        app.state.alert_distributor = create_alert_distributor()
+        app.state.emergency_integrator = create_emergency_integrator()
+        app.state.feedback_system = create_feedback_system()
+        logger.info("Phase 3 services initialized successfully")
+    except Exception as e:
+        logger.warning("Phase 3 service initialization failed (non-critical)", error=str(e))
 
     # Initialize default locations if needed
     try:
@@ -174,5 +194,98 @@ async def root():
             "system": "/api/v1/system",
             "forecast": "/api/v1/forecast",
             "notifications": "/api/v1/notifications"
+        },
+        "phase3_endpoints": {
+            "actionable_alerts": "/api/v1/alerts/generate-actionable",
+            "action_plans": "/api/v1/alerts/actions/generate",
+            "resources": "/api/v1/alerts/resources/calculate",
+            "distribution": "/api/v1/alerts/distribute",
+            "outcomes": "/api/v1/alerts/outcomes",
+            "system_metrics": "/api/v1/alerts/system-metrics",
+            "feedback_report": "/api/v1/alerts/feedback-report",
+            "channels": "/api/v1/alerts/channels",
+            "integrations": "/api/v1/alerts/integrations/status"
+        }
+    }
+
+
+@app.get("/api/v1", summary="API v1 Overview", tags=["General"])
+async def api_v1_overview():
+    """Get complete API v1 endpoint overview"""
+    return {
+        "version": "v1",
+        "description": "Crisis Connect API - AI-Powered Disaster Prediction and Emergency Response",
+        "endpoints": {
+            "weather": {
+                "prefix": "/api/v1/weather",
+                "description": "Real-time weather data and monitoring",
+                "endpoints": [
+                    {"method": "GET", "path": "/current/{location}", "description": "Get current weather"},
+                    {"method": "GET", "path": "/forecast/{location}", "description": "Get weather forecast"}
+                ]
+            },
+            "alerts": {
+                "prefix": "/api/v1/alerts",
+                "description": "Alert management and Phase 3 action-oriented alerts",
+                "endpoints": [
+                    {"method": "GET", "path": "/history", "description": "Get alert history"},
+                    {"method": "GET", "path": "/statistics", "description": "Get alert statistics"},
+                    {"method": "POST", "path": "/generate", "description": "Generate alerts from predictions"},
+                    {"method": "POST", "path": "/generate-actionable", "description": "Generate full actionable alert with action plan"},
+                    {"method": "POST", "path": "/distribute", "description": "Distribute alert through channels"},
+                    {"method": "POST", "path": "/outcomes", "description": "Record prediction outcomes"},
+                    {"method": "GET", "path": "/system-metrics", "description": "Get system performance metrics"},
+                    {"method": "GET", "path": "/feedback-report", "description": "Get feedback report"},
+                    {"method": "POST", "path": "/actions/generate", "description": "Generate action plan"},
+                    {"method": "POST", "path": "/resources/calculate", "description": "Calculate resource requirements"},
+                    {"method": "GET", "path": "/channels", "description": "Get distribution channels"},
+                    {"method": "GET", "path": "/integrations/status", "description": "Check integration status"}
+                ]
+            },
+            "forecast": {
+                "prefix": "/api/v1/forecast",
+                "description": "Multi-horizon flood risk forecasting",
+                "endpoints": [
+                    {"method": "GET", "path": "/{location_id}", "description": "Get forecast for location"},
+                    {"method": "GET", "path": "/timeline/{location_id}", "description": "Get hourly risk timeline"},
+                    {"method": "POST", "path": "/batch", "description": "Batch forecast generation"},
+                    {"method": "GET", "path": "/early-warnings", "description": "Get early warnings"}
+                ]
+            },
+            "locations": {
+                "prefix": "/api/v1/locations",
+                "description": "Location management",
+                "endpoints": [
+                    {"method": "GET", "path": "/", "description": "List locations"},
+                    {"method": "POST", "path": "/", "description": "Create location"},
+                    {"method": "GET", "path": "/{location_id}", "description": "Get location details"}
+                ]
+            },
+            "historical": {
+                "prefix": "/api/v1/historical",
+                "description": "Historical disaster data",
+                "endpoints": [
+                    {"method": "GET", "path": "/events", "description": "Get historical events"},
+                    {"method": "GET", "path": "/statistics", "description": "Get historical statistics"}
+                ]
+            },
+            "notifications": {
+                "prefix": "/api/v1/notifications",
+                "description": "Notification configuration",
+                "endpoints": [
+                    {"method": "POST", "path": "/telegram/config", "description": "Configure Telegram bot"},
+                    {"method": "POST", "path": "/telegram/test", "description": "Send test alert"}
+                ]
+            },
+            "system": {
+                "prefix": "/",
+                "description": "System monitoring and testing",
+                "endpoints": [
+                    {"method": "GET", "path": "/health", "description": "Health check"},
+                    {"method": "GET", "path": "/metrics", "description": "Application metrics"},
+                    {"method": "POST", "path": "/api/v1/test/validate-accuracy", "description": "Run accuracy validation"},
+                    {"method": "POST", "path": "/api/v1/test/simulate", "description": "Simulate disaster scenario"}
+                ]
+            }
         }
     }
