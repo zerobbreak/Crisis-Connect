@@ -1,0 +1,516 @@
+2026-01-17 19:59:56,504 | INFO | __main__ | Running single collection...
+2026-01-17 19:59:56,504 | INFO | __main__ | ============================================================
+2026-01-17 19:59:56,505 | INFO | __main__ | Starting daily data collection...
+2026-01-17 19:59:56,505 | INFO | __main__ | ============================================================
+2026-01-17 19:59:56,505 | INFO | __main__ | Step 1/6: Fetching EM-DAT disasters...
+2026-01-17 19:59:56,505 | INFO | __main__ |   No EM-DAT API key configured, trying file loader...
+2026-01-17 19:59:56,508 | INFO | __main__ |   Loading EM-DAT from file: emdat_.xlsx
+2026-01-17 19:59:56,508 | INFO | services.data_sources.emdat_file_loader | Loading EM-DAT Excel: data\emdat_.xlsx
+2026-01-17 19:59:58,548 | INFO | services.data_sources.emdat_file_loader |   Loaded 2226 raw records
+2026-01-17 19:59:58,566 | INFO | services.data_sources.emdat_file_loader |   Filtered to Southern Africa: 2226 -> 587 records
+2026-01-17 19:59:58,567 | INFO | services.data_sources.emdat_file_loader |   Filtered to year >= 2010: 587 -> 319 records
+2026-01-17 19:59:58,571 | INFO | services.data_sources.emdat_file_loader |   Final: 319 records with 50 columns
+2026-01-17 19:59:58,607 | INFO | services.data_storage | Saved 319 records to data\raw\emdat_file_20260117_195958.csv
+2026-01-17 19:59:58,832 | INFO | __main__ | Step 2/6: Fetching weather data...
+2026-01-17 19:59:58,833 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Johannesburg
+2026-01-17 19:59:58,833 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-26.2044, 28.0456) from 2020-01-01 to 2026-01-17
+2026-01-17 20:00:00,848 | INFO | httpx | HTTP Request: GET https://archive-api.open-meteo.com/v1/archive?latitude=-26.2044&longitude=28.0456&start_date=2020-01-01&end_date=2021-12-01&daily=temperature_2m_max%2Ctemperature_2m_min%2Ctemperature_2m_mean%2Cprecipitation_sum%2Crain_sum%2Csnowfall_sum%2Cprecipitation_hours%2Cwind_speed_10m_max%2Cwind_gusts_10m_max%2Cwind_direction_10m_dominant%2Cshortwave_radiation_sum%2Cet0_fao_evapotranspiration&timezone=auto "HTTP/1.1 200 OK"
+2026-01-17 20:00:01,587 | INFO | httpx | HTTP Request: GET https://archive-api.open-meteo.com/v1/archive?latitude=-26.2044&longitude=28.0456&start_date=2021-12-02&end_date=2023-11-02&daily=temperature_2m_max%2Ctemperature_2m_min%2Ctemperature_2m_mean%2Cprecipitation_sum%2Crain_sum%2Csnowfall_sum%2Cprecipitation_hours%2Cwind_speed_10m_max%2Cwind_gusts_10m_max%2Cwind_direction_10m_dominant%2Cshortwave_radiation_sum%2Cet0_fao_evapotranspiration&timezone=auto "HTTP/1.1 200 OK"
+2026-01-17 20:00:02,372 | INFO | httpx | HTTP Request: GET https://archive-api.open-meteo.com/v1/archive?latitude=-26.2044&longitude=28.0456&start_date=2023-11-03&end_date=2025-10-03&daily=temperature_2m_max%2Ctemperature_2m_min%2Ctemperature_2m_mean%2Cprecipitation_sum%2Crain_sum%2Csnowfall_sum%2Cprecipitation_hours%2Cwind_speed_10m_max%2Cwind_gusts_10m_max%2Cwind_direction_10m_dominant%2Cshortwave_radiation_sum%2Cet0_fao_evapotranspiration&timezone=auto "HTTP/1.1 200 OK"
+2026-01-17 20:00:02,940 | INFO | httpx | HTTP Request: GET https://archive-api.open-meteo.com/v1/archive?latitude=-26.2044&longitude=28.0456&start_date=2025-10-04&end_date=2026-01-17&daily=temperature_2m_max%2Ctemperature_2m_min%2Ctemperature_2m_mean%2Cprecipitation_sum%2Crain_sum%2Csnowfall_sum%2Cprecipitation_hours%2Cwind_speed_10m_max%2Cwind_gusts_10m_max%2Cwind_direction_10m_dominant%2Cshortwave_radiation_sum%2Cet0_fao_evapotranspiration&timezone=auto "HTTP/1.1 200 OK"
+2026-01-17 20:00:04,419 | INFO | services.data_sources.noaa_fetcher |   Retrieved 2209 weather records
+2026-01-17 20:00:04,923 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Cape Town
+2026-01-17 20:00:04,923 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-33.9249, 18.4241) from 2020-01-01 to 2026-01-17
+2026-01-17 20:00:05,217 | INFO | httpx | HTTP Request: GET https://archive-api.open-meteo.com/v1/archive?latitude=-33.9249&longitude=18.4241&start_date=2020-01-01&end_date=2021-12-01&daily=temperature_2m_max%2Ctemperature_2m_min%2Ctemperature_2m_mean%2Cprecipitation_sum%2Crain_sum%2Csnowfall_sum%2Cprecipitation_hours%2Cwind_speed_10m_max%2Cwind_gusts_10m_max%2Cwind_direction_10m_dominant%2Cshortwave_radiation_sum%2Cet0_fao_evapotranspiration&timezone=auto "HTTP/1.1 200 OK"
+2026-01-17 20:00:06,018 | INFO | httpx | HTTP Request: GET https://archive-api.open-meteo.com/v1/archive?latitude=-33.9249&longitude=18.4241&start_date=2021-12-02&end_date=2023-11-02&daily=temperature_2m_max%2Ctemperature_2m_min%2Ctemperature_2m_mean%2Cprecipitation_sum%2Crain_sum%2Csnowfall_sum%2Cprecipitation_hours%2Cwind_speed_10m_max%2Cwind_gusts_10m_max%2Cwind_direction_10m_dominant%2Cshortwave_radiation_sum%2Cet0_fao_evapotranspiration&timezone=auto "HTTP/1.1 200 OK"
+2026-01-17 20:00:06,889 | INFO | httpx | HTTP Request: GET https://archive-api.open-meteo.com/v1/archive?latitude=-33.9249&longitude=18.4241&start_date=2023-11-03&end_date=2025-10-03&daily=temperature_2m_max%2Ctemperature_2m_min%2Ctemperature_2m_mean%2Cprecipitation_sum%2Crain_sum%2Csnowfall_sum%2Cprecipitation_hours%2Cwind_speed_10m_max%2Cwind_gusts_10m_max%2Cwind_direction_10m_dominant%2Cshortwave_radiation_sum%2Cet0_fao_evapotranspiration&timezone=auto "HTTP/1.1 200 OK"
+2026-01-17 20:00:07,455 | INFO | httpx | HTTP Request: GET https://archive-api.open-meteo.com/v1/archive?latitude=-33.9249&longitude=18.4241&start_date=2025-10-04&end_date=2026-01-17&daily=temperature_2m_max%2Ctemperature_2m_min%2Ctemperature_2m_mean%2Cprecipitation_sum%2Crain_sum%2Csnowfall_sum%2Cprecipitation_hours%2Cwind_speed_10m_max%2Cwind_gusts_10m_max%2Cwind_direction_10m_dominant%2Cshortwave_radiation_sum%2Cet0_fao_evapotranspiration&timezone=auto "HTTP/1.1 200 OK"
+2026-01-17 20:00:07,786 | INFO | services.data_sources.noaa_fetcher |   Retrieved 2209 weather records
+2026-01-17 20:00:08,289 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Durban
+2026-01-17 20:00:08,289 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-29.8587, 31.0218) from 2020-01-01 to 2026-01-17
+2026-01-17 20:00:08,606 | INFO | httpx | HTTP Request: GET https://archive-api.open-meteo.com/v1/archive?latitude=-29.8587&longitude=31.0218&start_date=2020-01-01&end_date=2021-12-01&daily=temperature_2m_max%2Ctemperature_2m_min%2Ctemperature_2m_mean%2Cprecipitation_sum%2Crain_sum%2Csnowfall_sum%2Cprecipitation_hours%2Cwind_speed_10m_max%2Cwind_gusts_10m_max%2Cwind_direction_10m_dominant%2Cshortwave_radiation_sum%2Cet0_fao_evapotranspiration&timezone=auto "HTTP/1.1 200 OK"
+2026-01-17 20:00:09,448 | INFO | httpx | HTTP Request: GET https://archive-api.open-meteo.com/v1/archive?latitude=-29.8587&longitude=31.0218&start_date=2021-12-02&end_date=2023-11-02&daily=temperature_2m_max%2Ctemperature_2m_min%2Ctemperature_2m_mean%2Cprecipitation_sum%2Crain_sum%2Csnowfall_sum%2Cprecipitation_hours%2Cwind_speed_10m_max%2Cwind_gusts_10m_max%2Cwind_direction_10m_dominant%2Cshortwave_radiation_sum%2Cet0_fao_evapotranspiration&timezone=auto "HTTP/1.1 200 OK"
+2026-01-17 20:00:10,574 | INFO | httpx | HTTP Request: GET https://archive-api.open-meteo.com/v1/archive?latitude=-29.8587&longitude=31.0218&start_date=2023-11-03&end_date=2025-10-03&daily=temperature_2m_max%2Ctemperature_2m_min%2Ctemperature_2m_mean%2Cprecipitation_sum%2Crain_sum%2Csnowfall_sum%2Cprecipitation_hours%2Cwind_speed_10m_max%2Cwind_gusts_10m_max%2Cwind_direction_10m_dominant%2Cshortwave_radiation_sum%2Cet0_fao_evapotranspiration&timezone=auto "HTTP/1.1 200 OK"
+2026-01-17 20:00:11,146 | INFO | httpx | HTTP Request: GET https://archive-api.open-meteo.com/v1/archive?latitude=-29.8587&longitude=31.0218&start_date=2025-10-04&end_date=2026-01-17&daily=temperature_2m_max%2Ctemperature_2m_min%2Ctemperature_2m_mean%2Cprecipitation_sum%2Crain_sum%2Csnowfall_sum%2Cprecipitation_hours%2Cwind_speed_10m_max%2Cwind_gusts_10m_max%2Cwind_direction_10m_dominant%2Cshortwave_radiation_sum%2Cet0_fao_evapotranspiration&timezone=auto "HTTP/1.1 200 OK"
+2026-01-17 20:00:11,481 | INFO | services.data_sources.noaa_fetcher |   Retrieved 2209 weather records
+2026-01-17 20:00:11,998 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Harare
+2026-01-17 20:00:11,998 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-17.8252, 31.0335) from 2020-01-01 to 2026-01-17
+2026-01-17 20:00:12,306 | INFO | httpx | HTTP Request: GET https://archive-api.open-meteo.com/v1/archive?latitude=-17.8252&longitude=31.0335&start_date=2020-01-01&end_date=2021-12-01&daily=temperature_2m_max%2Ctemperature_2m_min%2Ctemperature_2m_mean%2Cprecipitation_sum%2Crain_sum%2Csnowfall_sum%2Cprecipitation_hours%2Cwind_speed_10m_max%2Cwind_gusts_10m_max%2Cwind_direction_10m_dominant%2Cshortwave_radiation_sum%2Cet0_fao_evapotranspiration&timezone=auto "HTTP/1.1 200 OK"
+2026-01-17 20:00:12,826 | INFO | httpx | HTTP Request: GET https://archive-api.open-meteo.com/v1/archive?latitude=-17.8252&longitude=31.0335&start_date=2021-12-02&end_date=2023-11-02&daily=temperature_2m_max%2Ctemperature_2m_min%2Ctemperature_2m_mean%2Cprecipitation_sum%2Crain_sum%2Csnowfall_sum%2Cprecipitation_hours%2Cwind_speed_10m_max%2Cwind_gusts_10m_max%2Cwind_direction_10m_dominant%2Cshortwave_radiation_sum%2Cet0_fao_evapotranspiration&timezone=auto "HTTP/1.1 429 Too Many Requests"
+2026-01-17 20:00:12,827 | WARNING | services.data_sources.noaa_fetcher | Rate limit hit, waiting...
+2026-01-17 20:00:23,680 | INFO | httpx | HTTP Request: GET https://archive-api.open-meteo.com/v1/archive?latitude=-17.8252&longitude=31.0335&start_date=2021-12-02&end_date=2023-11-02&daily=temperature_2m_max%2Ctemperature_2m_min%2Ctemperature_2m_mean%2Cprecipitation_sum%2Crain_sum%2Csnowfall_sum%2Cprecipitation_hours%2Cwind_speed_10m_max%2Cwind_gusts_10m_max%2Cwind_direction_10m_dominant%2Cshortwave_radiation_sum%2Cet0_fao_evapotranspiration&timezone=auto "HTTP/1.1 429 Too Many Requests"
+2026-01-17 20:00:23,681 | WARNING | services.data_sources.noaa_fetcher | HTTP error: 429
+2026-01-17 20:00:24,220 | INFO | httpx | HTTP Request: GET https://archive-api.open-meteo.com/v1/archive?latitude=-17.8252&longitude=31.0335&start_date=2023-11-03&end_date=2025-10-03&daily=temperature_2m_max%2Ctemperature_2m_min%2Ctemperature_2m_mean%2Cprecipitation_sum%2Crain_sum%2Csnowfall_sum%2Cprecipitation_hours%2Cwind_speed_10m_max%2Cwind_gusts_10m_max%2Cwind_direction_10m_dominant%2Cshortwave_radiation_sum%2Cet0_fao_evapotranspiration&timezone=auto "HTTP/1.1 429 Too Many Requests"
+2026-01-17 20:00:24,220 | WARNING | services.data_sources.noaa_fetcher | Rate limit hit, waiting...
+2026-01-17 20:00:35,186 | INFO | httpx | HTTP Request: GET https://archive-api.open-meteo.com/v1/archive?latitude=-17.8252&longitude=31.0335&start_date=2023-11-03&end_date=2025-10-03&daily=temperature_2m_max%2Ctemperature_2m_min%2Ctemperature_2m_mean%2Cprecipitation_sum%2Crain_sum%2Csnowfall_sum%2Cprecipitation_hours%2Cwind_speed_10m_max%2Cwind_gusts_10m_max%2Cwind_direction_10m_dominant%2Cshortwave_radiation_sum%2Cet0_fao_evapotranspiration&timezone=auto "HTTP/1.1 429 Too Many Requests"
+2026-01-17 20:00:35,187 | WARNING | services.data_sources.noaa_fetcher | HTTP error: 429
+2026-01-17 20:00:35,702 | INFO | httpx | HTTP Request: GET https://archive-api.open-meteo.com/v1/archive?latitude=-17.8252&longitude=31.0335&start_date=2025-10-04&end_date=2026-01-17&daily=temperature_2m_max%2Ctemperature_2m_min%2Ctemperature_2m_mean%2Cprecipitation_sum%2Crain_sum%2Csnowfall_sum%2Cprecipitation_hours%2Cwind_speed_10m_max%2Cwind_gusts_10m_max%2Cwind_direction_10m_dominant%2Cshortwave_radiation_sum%2Cet0_fao_evapotranspiration&timezone=auto "HTTP/1.1 429 Too Many Requests"
+2026-01-17 20:00:35,703 | WARNING | services.data_sources.noaa_fetcher | Rate limit hit, waiting...
+2026-01-17 20:00:46,619 | INFO | httpx | HTTP Request: GET https://archive-api.open-meteo.com/v1/archive?latitude=-17.8252&longitude=31.0335&start_date=2025-10-04&end_date=2026-01-17&daily=temperature_2m_max%2Ctemperature_2m_min%2Ctemperature_2m_mean%2Cprecipitation_sum%2Crain_sum%2Csnowfall_sum%2Cprecipitation_hours%2Cwind_speed_10m_max%2Cwind_gusts_10m_max%2Cwind_direction_10m_dominant%2Cshortwave_radiation_sum%2Cet0_fao_evapotranspiration&timezone=auto "HTTP/1.1 429 Too Many Requests"
+2026-01-17 20:00:46,620 | WARNING | services.data_sources.noaa_fetcher | HTTP error: 429
+2026-01-17 20:00:46,945 | INFO | services.data_sources.noaa_fetcher |   Retrieved 701 weather records
+2026-01-17 20:00:47,453 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Gaborone
+2026-01-17 20:00:47,454 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-24.6282, 25.9231) from 2020-01-01 to 2026-01-17
+2026-01-17 20:00:47,653 | INFO | httpx | HTTP Request: GET https://archive-api.open-meteo.com/v1/archive?latitude=-24.6282&longitude=25.9231&start_date=2020-01-01&end_date=2021-12-01&daily=temperature_2m_max%2Ctemperature_2m_min%2Ctemperature_2m_mean%2Cprecipitation_sum%2Crain_sum%2Csnowfall_sum%2Cprecipitation_hours%2Cwind_speed_10m_max%2Cwind_gusts_10m_max%2Cwind_direction_10m_dominant%2Cshortwave_radiation_sum%2Cet0_fao_evapotranspiration&timezone=auto "HTTP/1.1 429 Too Many Requests"
+2026-01-17 20:00:47,653 | WARNING | services.data_sources.noaa_fetcher | Rate limit hit, waiting...
+2026-01-17 20:00:58,497 | INFO | httpx | HTTP Request: GET https://archive-api.open-meteo.com/v1/archive?latitude=-24.6282&longitude=25.9231&start_date=2020-01-01&end_date=2021-12-01&daily=temperature_2m_max%2Ctemperature_2m_min%2Ctemperature_2m_mean%2Cprecipitation_sum%2Crain_sum%2Csnowfall_sum%2Cprecipitation_hours%2Cwind_speed_10m_max%2Cwind_gusts_10m_max%2Cwind_direction_10m_dominant%2Cshortwave_radiation_sum%2Cet0_fao_evapotranspiration&timezone=auto "HTTP/1.1 429 Too Many Requests"
+2026-01-17 20:00:58,498 | WARNING | services.data_sources.noaa_fetcher | HTTP error: 429
+2026-01-17 20:00:59,001 | INFO | httpx | HTTP Request: GET https://archive-api.open-meteo.com/v1/archive?latitude=-24.6282&longitude=25.9231&start_date=2021-12-02&end_date=2023-11-02&daily=temperature_2m_max%2Ctemperature_2m_min%2Ctemperature_2m_mean%2Cprecipitation_sum%2Crain_sum%2Csnowfall_sum%2Cprecipitation_hours%2Cwind_speed_10m_max%2Cwind_gusts_10m_max%2Cwind_direction_10m_dominant%2Cshortwave_radiation_sum%2Cet0_fao_evapotranspiration&timezone=auto "HTTP/1.1 429 Too Many Requests"
+2026-01-17 20:00:59,002 | WARNING | services.data_sources.noaa_fetcher | Rate limit hit, waiting...
+2026-01-17 20:01:10,067 | INFO | httpx | HTTP Request: GET https://archive-api.open-meteo.com/v1/archive?latitude=-24.6282&longitude=25.9231&start_date=2021-12-02&end_date=2023-11-02&daily=temperature_2m_max%2Ctemperature_2m_min%2Ctemperature_2m_mean%2Cprecipitation_sum%2Crain_sum%2Csnowfall_sum%2Cprecipitation_hours%2Cwind_speed_10m_max%2Cwind_gusts_10m_max%2Cwind_direction_10m_dominant%2Cshortwave_radiation_sum%2Cet0_fao_evapotranspiration&timezone=auto "HTTP/1.1 200 OK"
+2026-01-17 20:01:10,972 | INFO | httpx | HTTP Request: GET https://archive-api.open-meteo.com/v1/archive?latitude=-24.6282&longitude=25.9231&start_date=2023-11-03&end_date=2025-10-03&daily=temperature_2m_max%2Ctemperature_2m_min%2Ctemperature_2m_mean%2Cprecipitation_sum%2Crain_sum%2Csnowfall_sum%2Cprecipitation_hours%2Cwind_speed_10m_max%2Cwind_gusts_10m_max%2Cwind_direction_10m_dominant%2Cshortwave_radiation_sum%2Cet0_fao_evapotranspiration&timezone=auto "HTTP/1.1 200 OK"
+2026-01-17 20:01:11,630 | INFO | httpx | HTTP Request: GET https://archive-api.open-meteo.com/v1/archive?latitude=-24.6282&longitude=25.9231&start_date=2025-10-04&end_date=2026-01-17&daily=temperature_2m_max%2Ctemperature_2m_min%2Ctemperature_2m_mean%2Cprecipitation_sum%2Crain_sum%2Csnowfall_sum%2Cprecipitation_hours%2Cwind_speed_10m_max%2Cwind_gusts_10m_max%2Cwind_direction_10m_dominant%2Cshortwave_radiation_sum%2Cet0_fao_evapotranspiration&timezone=auto "HTTP/1.1 200 OK"
+2026-01-17 20:01:11,950 | INFO | services.data_sources.noaa_fetcher |   Retrieved 1508 weather records
+2026-01-17 20:01:12,457 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Maputo
+2026-01-17 20:01:12,458 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-25.9692, 32.5732) from 2020-01-01 to 2026-01-17
+2026-01-17 20:01:12,947 | INFO | httpx | HTTP Request: GET https://archive-api.open-meteo.com/v1/archive?latitude=-25.9692&longitude=32.5732&start_date=2020-01-01&end_date=2021-12-01&daily=temperature_2m_max%2Ctemperature_2m_min%2Ctemperature_2m_mean%2Cprecipitation_sum%2Crain_sum%2Csnowfall_sum%2Cprecipitation_hours%2Cwind_speed_10m_max%2Cwind_gusts_10m_max%2Cwind_direction_10m_dominant%2Cshortwave_radiation_sum%2Cet0_fao_evapotranspiration&timezone=auto "HTTP/1.1 200 OK"
+2026-01-17 20:01:13,654 | INFO | httpx | HTTP Request: GET https://archive-api.open-meteo.com/v1/archive?latitude=-25.9692&longitude=32.5732&start_date=2021-12-02&end_date=2023-11-02&daily=temperature_2m_max%2Ctemperature_2m_min%2Ctemperature_2m_mean%2Cprecipitation_sum%2Crain_sum%2Csnowfall_sum%2Cprecipitation_hours%2Cwind_speed_10m_max%2Cwind_gusts_10m_max%2Cwind_direction_10m_dominant%2Cshortwave_radiation_sum%2Cet0_fao_evapotranspiration&timezone=auto "HTTP/1.1 200 OK"
+2026-01-17 20:01:14,442 | INFO | httpx | HTTP Request: GET https://archive-api.open-meteo.com/v1/archive?latitude=-25.9692&longitude=32.5732&start_date=2023-11-03&end_date=2025-10-03&daily=temperature_2m_max%2Ctemperature_2m_min%2Ctemperature_2m_mean%2Cprecipitation_sum%2Crain_sum%2Csnowfall_sum%2Cprecipitation_hours%2Cwind_speed_10m_max%2Cwind_gusts_10m_max%2Cwind_direction_10m_dominant%2Cshortwave_radiation_sum%2Cet0_fao_evapotranspiration&timezone=auto "HTTP/1.1 200 OK"
+2026-01-17 20:01:15,058 | INFO | httpx | HTTP Request: GET https://archive-api.open-meteo.com/v1/archive?latitude=-25.9692&longitude=32.5732&start_date=2025-10-04&end_date=2026-01-17&daily=temperature_2m_max%2Ctemperature_2m_min%2Ctemperature_2m_mean%2Cprecipitation_sum%2Crain_sum%2Csnowfall_sum%2Cprecipitation_hours%2Cwind_speed_10m_max%2Cwind_gusts_10m_max%2Cwind_direction_10m_dominant%2Cshortwave_radiation_sum%2Cet0_fao_evapotranspiration&timezone=auto "HTTP/1.1 200 OK"
+2026-01-17 20:01:15,378 | INFO | services.data_sources.noaa_fetcher |   Retrieved 2209 weather records
+2026-01-17 20:01:15,883 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Lusaka
+2026-01-17 20:01:15,883 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-15.3875, 28.3228) from 2020-01-01 to 2026-01-17
+2026-01-17 20:01:16,315 | INFO | httpx | HTTP Request: GET https://archive-api.open-meteo.com/v1/archive?latitude=-15.3875&longitude=28.3228&start_date=2020-01-01&end_date=2021-12-01&daily=temperature_2m_max%2Ctemperature_2m_min%2Ctemperature_2m_mean%2Cprecipitation_sum%2Crain_sum%2Csnowfall_sum%2Cprecipitation_hours%2Cwind_speed_10m_max%2Cwind_gusts_10m_max%2Cwind_direction_10m_dominant%2Cshortwave_radiation_sum%2Cet0_fao_evapotranspiration&timezone=auto "HTTP/1.1 200 OK"
+2026-01-17 20:01:17,150 | INFO | httpx | HTTP Request: GET https://archive-api.open-meteo.com/v1/archive?latitude=-15.3875&longitude=28.3228&start_date=2021-12-02&end_date=2023-11-02&daily=temperature_2m_max%2Ctemperature_2m_min%2Ctemperature_2m_mean%2Cprecipitation_sum%2Crain_sum%2Csnowfall_sum%2Cprecipitation_hours%2Cwind_speed_10m_max%2Cwind_gusts_10m_max%2Cwind_direction_10m_dominant%2Cshortwave_radiation_sum%2Cet0_fao_evapotranspiration&timezone=auto "HTTP/1.1 200 OK"
+2026-01-17 20:01:17,964 | INFO | httpx | HTTP Request: GET https://archive-api.open-meteo.com/v1/archive?latitude=-15.3875&longitude=28.3228&start_date=2023-11-03&end_date=2025-10-03&daily=temperature_2m_max%2Ctemperature_2m_min%2Ctemperature_2m_mean%2Cprecipitation_sum%2Crain_sum%2Csnowfall_sum%2Cprecipitation_hours%2Cwind_speed_10m_max%2Cwind_gusts_10m_max%2Cwind_direction_10m_dominant%2Cshortwave_radiation_sum%2Cet0_fao_evapotranspiration&timezone=auto "HTTP/1.1 200 OK"
+2026-01-17 20:01:19,133 | INFO | httpx | HTTP Request: GET https://archive-api.open-meteo.com/v1/archive?latitude=-15.3875&longitude=28.3228&start_date=2025-10-04&end_date=2026-01-17&daily=temperature_2m_max%2Ctemperature_2m_min%2Ctemperature_2m_mean%2Cprecipitation_sum%2Crain_sum%2Csnowfall_sum%2Cprecipitation_hours%2Cwind_speed_10m_max%2Cwind_gusts_10m_max%2Cwind_direction_10m_dominant%2Cshortwave_radiation_sum%2Cet0_fao_evapotranspiration&timezone=auto "HTTP/1.1 200 OK"
+2026-01-17 20:01:19,466 | INFO | services.data_sources.noaa_fetcher |   Retrieved 2209 weather records
+2026-01-17 20:01:19,983 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Windhoek
+2026-01-17 20:01:19,983 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-22.5609, 17.0658) from 2020-01-01 to 2026-01-17
+2026-01-17 20:01:20,312 | INFO | httpx | HTTP Request: GET https://archive-api.open-meteo.com/v1/archive?latitude=-22.5609&longitude=17.0658&start_date=2020-01-01&end_date=2021-12-01&daily=temperature_2m_max%2Ctemperature_2m_min%2Ctemperature_2m_mean%2Cprecipitation_sum%2Crain_sum%2Csnowfall_sum%2Cprecipitation_hours%2Cwind_speed_10m_max%2Cwind_gusts_10m_max%2Cwind_direction_10m_dominant%2Cshortwave_radiation_sum%2Cet0_fao_evapotranspiration&timezone=auto "HTTP/1.1 200 OK"
+2026-01-17 20:01:21,062 | INFO | httpx | HTTP Request: GET https://archive-api.open-meteo.com/v1/archive?latitude=-22.5609&longitude=17.0658&start_date=2021-12-02&end_date=2023-11-02&daily=temperature_2m_max%2Ctemperature_2m_min%2Ctemperature_2m_mean%2Cprecipitation_sum%2Crain_sum%2Csnowfall_sum%2Cprecipitation_hours%2Cwind_speed_10m_max%2Cwind_gusts_10m_max%2Cwind_direction_10m_dominant%2Cshortwave_radiation_sum%2Cet0_fao_evapotranspiration&timezone=auto "HTTP/1.1 200 OK"
+2026-01-17 20:01:21,584 | INFO | httpx | HTTP Request: GET https://archive-api.open-meteo.com/v1/archive?latitude=-22.5609&longitude=17.0658&start_date=2023-11-03&end_date=2025-10-03&daily=temperature_2m_max%2Ctemperature_2m_min%2Ctemperature_2m_mean%2Cprecipitation_sum%2Crain_sum%2Csnowfall_sum%2Cprecipitation_hours%2Cwind_speed_10m_max%2Cwind_gusts_10m_max%2Cwind_direction_10m_dominant%2Cshortwave_radiation_sum%2Cet0_fao_evapotranspiration&timezone=auto "HTTP/1.1 429 Too Many Requests"
+2026-01-17 20:01:21,585 | WARNING | services.data_sources.noaa_fetcher | Rate limit hit, waiting...
+2026-01-17 20:01:32,499 | INFO | httpx | HTTP Request: GET https://archive-api.open-meteo.com/v1/archive?latitude=-22.5609&longitude=17.0658&start_date=2023-11-03&end_date=2025-10-03&daily=temperature_2m_max%2Ctemperature_2m_min%2Ctemperature_2m_mean%2Cprecipitation_sum%2Crain_sum%2Csnowfall_sum%2Cprecipitation_hours%2Cwind_speed_10m_max%2Cwind_gusts_10m_max%2Cwind_direction_10m_dominant%2Cshortwave_radiation_sum%2Cet0_fao_evapotranspiration&timezone=auto "HTTP/1.1 429 Too Many Requests"
+2026-01-17 20:01:32,501 | WARNING | services.data_sources.noaa_fetcher | HTTP error: 429
+2026-01-17 20:01:32,998 | INFO | httpx | HTTP Request: GET https://archive-api.open-meteo.com/v1/archive?latitude=-22.5609&longitude=17.0658&start_date=2025-10-04&end_date=2026-01-17&daily=temperature_2m_max%2Ctemperature_2m_min%2Ctemperature_2m_mean%2Cprecipitation_sum%2Crain_sum%2Csnowfall_sum%2Cprecipitation_hours%2Cwind_speed_10m_max%2Cwind_gusts_10m_max%2Cwind_direction_10m_dominant%2Cshortwave_radiation_sum%2Cet0_fao_evapotranspiration&timezone=auto "HTTP/1.1 429 Too Many Requests"
+2026-01-17 20:01:33,000 | WARNING | services.data_sources.noaa_fetcher | Rate limit hit, waiting...
+2026-01-17 20:01:43,860 | INFO | httpx | HTTP Request: GET https://archive-api.open-meteo.com/v1/archive?latitude=-22.5609&longitude=17.0658&start_date=2025-10-04&end_date=2026-01-17&daily=temperature_2m_max%2Ctemperature_2m_min%2Ctemperature_2m_mean%2Cprecipitation_sum%2Crain_sum%2Csnowfall_sum%2Cprecipitation_hours%2Cwind_speed_10m_max%2Cwind_gusts_10m_max%2Cwind_direction_10m_dominant%2Cshortwave_radiation_sum%2Cet0_fao_evapotranspiration&timezone=auto "HTTP/1.1 429 Too Many Requests"
+2026-01-17 20:01:43,861 | WARNING | services.data_sources.noaa_fetcher | HTTP error: 429
+2026-01-17 20:01:44,183 | INFO | services.data_sources.noaa_fetcher |   Retrieved 1402 weather records
+2026-01-17 20:01:44,692 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Lilongwe
+2026-01-17 20:01:44,692 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-13.9626, 33.7741) from 2020-01-01 to 2026-01-17
+2026-01-17 20:01:44,986 | INFO | httpx | HTTP Request: GET https://archive-api.open-meteo.com/v1/archive?latitude=-13.9626&longitude=33.7741&start_date=2020-01-01&end_date=2021-12-01&daily=temperature_2m_max%2Ctemperature_2m_min%2Ctemperature_2m_mean%2Cprecipitation_sum%2Crain_sum%2Csnowfall_sum%2Cprecipitation_hours%2Cwind_speed_10m_max%2Cwind_gusts_10m_max%2Cwind_direction_10m_dominant%2Cshortwave_radiation_sum%2Cet0_fao_evapotranspiration&timezone=auto "HTTP/1.1 429 Too Many Requests"
+2026-01-17 20:01:44,987 | WARNING | services.data_sources.noaa_fetcher | Rate limit hit, waiting...
+2026-01-17 20:01:55,943 | INFO | httpx | HTTP Request: GET https://archive-api.open-meteo.com/v1/archive?latitude=-13.9626&longitude=33.7741&start_date=2020-01-01&end_date=2021-12-01&daily=temperature_2m_max%2Ctemperature_2m_min%2Ctemperature_2m_mean%2Cprecipitation_sum%2Crain_sum%2Csnowfall_sum%2Cprecipitation_hours%2Cwind_speed_10m_max%2Cwind_gusts_10m_max%2Cwind_direction_10m_dominant%2Cshortwave_radiation_sum%2Cet0_fao_evapotranspiration&timezone=auto "HTTP/1.1 429 Too Many Requests"
+2026-01-17 20:01:55,944 | WARNING | services.data_sources.noaa_fetcher | HTTP error: 429
+2026-01-17 20:01:56,460 | INFO | httpx | HTTP Request: GET https://archive-api.open-meteo.com/v1/archive?latitude=-13.9626&longitude=33.7741&start_date=2021-12-02&end_date=2023-11-02&daily=temperature_2m_max%2Ctemperature_2m_min%2Ctemperature_2m_mean%2Cprecipitation_sum%2Crain_sum%2Csnowfall_sum%2Cprecipitation_hours%2Cwind_speed_10m_max%2Cwind_gusts_10m_max%2Cwind_direction_10m_dominant%2Cshortwave_radiation_sum%2Cet0_fao_evapotranspiration&timezone=auto "HTTP/1.1 429 Too Many Requests"
+2026-01-17 20:01:56,461 | WARNING | services.data_sources.noaa_fetcher | Rate limit hit, waiting...
+2026-01-17 20:02:08,440 | INFO | httpx | HTTP Request: GET https://archive-api.open-meteo.com/v1/archive?latitude=-13.9626&longitude=33.7741&start_date=2021-12-02&end_date=2023-11-02&daily=temperature_2m_max%2Ctemperature_2m_min%2Ctemperature_2m_mean%2Cprecipitation_sum%2Crain_sum%2Csnowfall_sum%2Cprecipitation_hours%2Cwind_speed_10m_max%2Cwind_gusts_10m_max%2Cwind_direction_10m_dominant%2Cshortwave_radiation_sum%2Cet0_fao_evapotranspiration&timezone=auto "HTTP/1.1 200 OK"
+2026-01-17 20:02:09,254 | INFO | httpx | HTTP Request: GET https://archive-api.open-meteo.com/v1/archive?latitude=-13.9626&longitude=33.7741&start_date=2023-11-03&end_date=2025-10-03&daily=temperature_2m_max%2Ctemperature_2m_min%2Ctemperature_2m_mean%2Cprecipitation_sum%2Crain_sum%2Csnowfall_sum%2Cprecipitation_hours%2Cwind_speed_10m_max%2Cwind_gusts_10m_max%2Cwind_direction_10m_dominant%2Cshortwave_radiation_sum%2Cet0_fao_evapotranspiration&timezone=auto "HTTP/1.1 200 OK"
+2026-01-17 20:02:09,942 | INFO | httpx | HTTP Request: GET https://archive-api.open-meteo.com/v1/archive?latitude=-13.9626&longitude=33.7741&start_date=2025-10-04&end_date=2026-01-17&daily=temperature_2m_max%2Ctemperature_2m_min%2Ctemperature_2m_mean%2Cprecipitation_sum%2Crain_sum%2Csnowfall_sum%2Cprecipitation_hours%2Cwind_speed_10m_max%2Cwind_gusts_10m_max%2Cwind_direction_10m_dominant%2Cshortwave_radiation_sum%2Cet0_fao_evapotranspiration&timezone=auto "HTTP/1.1 200 OK"
+2026-01-17 20:02:10,263 | INFO | services.data_sources.noaa_fetcher |   Retrieved 1508 weather records
+2026-01-17 20:02:10,770 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Luanda
+2026-01-17 20:02:10,770 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-8.8368, 13.2343) from 2020-01-01 to 2026-01-17
+2026-01-17 20:02:11,219 | INFO | httpx | HTTP Request: GET https://archive-api.open-meteo.com/v1/archive?latitude=-8.8368&longitude=13.2343&start_date=2020-01-01&end_date=2021-12-01&daily=temperature_2m_max%2Ctemperature_2m_min%2Ctemperature_2m_mean%2Cprecipitation_sum%2Crain_sum%2Csnowfall_sum%2Cprecipitation_hours%2Cwind_speed_10m_max%2Cwind_gusts_10m_max%2Cwind_direction_10m_dominant%2Cshortwave_radiation_sum%2Cet0_fao_evapotranspiration&timezone=auto "HTTP/1.1 200 OK"
+2026-01-17 20:02:12,165 | INFO | httpx | HTTP Request: GET https://archive-api.open-meteo.com/v1/archive?latitude=-8.8368&longitude=13.2343&start_date=2021-12-02&end_date=2023-11-02&daily=temperature_2m_max%2Ctemperature_2m_min%2Ctemperature_2m_mean%2Cprecipitation_sum%2Crain_sum%2Csnowfall_sum%2Cprecipitation_hours%2Cwind_speed_10m_max%2Cwind_gusts_10m_max%2Cwind_direction_10m_dominant%2Cshortwave_radiation_sum%2Cet0_fao_evapotranspiration&timezone=auto "HTTP/1.1 200 OK"
+2026-01-17 20:02:13,352 | INFO | httpx | HTTP Request: GET https://archive-api.open-meteo.com/v1/archive?latitude=-8.8368&longitude=13.2343&start_date=2023-11-03&end_date=2025-10-03&daily=temperature_2m_max%2Ctemperature_2m_min%2Ctemperature_2m_mean%2Cprecipitation_sum%2Crain_sum%2Csnowfall_sum%2Cprecipitation_hours%2Cwind_speed_10m_max%2Cwind_gusts_10m_max%2Cwind_direction_10m_dominant%2Cshortwave_radiation_sum%2Cet0_fao_evapotranspiration&timezone=auto "HTTP/1.1 200 OK"
+2026-01-17 20:02:14,010 | INFO | httpx | HTTP Request: GET https://archive-api.open-meteo.com/v1/archive?latitude=-8.8368&longitude=13.2343&start_date=2025-10-04&end_date=2026-01-17&daily=temperature_2m_max%2Ctemperature_2m_min%2Ctemperature_2m_mean%2Cprecipitation_sum%2Crain_sum%2Csnowfall_sum%2Cprecipitation_hours%2Cwind_speed_10m_max%2Cwind_gusts_10m_max%2Cwind_direction_10m_dominant%2Cshortwave_radiation_sum%2Cet0_fao_evapotranspiration&timezone=auto "HTTP/1.1 200 OK"
+2026-01-17 20:02:14,349 | INFO | services.data_sources.noaa_fetcher |   Retrieved 2209 weather records
+2026-01-17 20:02:15,075 | INFO | services.data_storage | Saved 18373 records to data\raw\weather_20260117_200214.csv
+2026-01-17 20:02:15,076 | INFO | __main__ | Step 3/6: Consolidating data sources...
+2026-01-17 20:02:15,121 | INFO | services.data_storage | Loaded 319 records from emdat
+2026-01-17 20:02:15,236 | INFO | services.data_storage | Loaded 89 records from local Excel
+2026-01-17 20:02:15,240 | INFO | services.data_storage | Combined data: 408 total records
+2026-01-17 20:02:15,251 | INFO | services.data_storage | Removed 126 duplicate records
+2026-01-17 20:02:15,252 | INFO | __main__ | Step 4/6: Cleaning data...
+2026-01-17 20:02:15,253 | INFO | services.data_cleaning | Starting cleaning with 282 records
+2026-01-17 20:02:15,273 | WARNING | services.data_cleaning |   1 records with invalid dates
+2026-01-17 20:21:34,198 | INFO | __main__ | Running single collection...
+2026-01-17 20:21:34,198 | INFO | __main__ | ============================================================
+2026-01-17 20:21:34,199 | INFO | __main__ | Starting daily data collection...
+2026-01-17 20:21:34,199 | INFO | __main__ | ============================================================
+2026-01-17 20:21:34,199 | INFO | __main__ | Step 1/6: Fetching EM-DAT disasters...
+2026-01-17 20:21:34,199 | INFO | __main__ |   No EM-DAT API key configured, trying file loader...
+2026-01-17 20:21:34,201 | INFO | __main__ |   Loading EM-DAT from file: emdat_.xlsx
+2026-01-17 20:21:34,202 | INFO | services.data_sources.emdat_file_loader | Loading EM-DAT Excel: data\emdat_.xlsx
+2026-01-17 20:21:37,009 | INFO | services.data_sources.emdat_file_loader |   Loaded 2226 raw records
+2026-01-17 20:21:37,055 | INFO | services.data_sources.emdat_file_loader |   Filtered to Southern Africa: 2226 -> 587 records
+2026-01-17 20:21:37,057 | INFO | services.data_sources.emdat_file_loader |   Filtered to year >= 2010: 587 -> 319 records
+2026-01-17 20:21:37,059 | INFO | services.data_sources.emdat_file_loader |   Final: 319 records with 50 columns
+2026-01-17 20:21:37,098 | INFO | services.data_storage | Saved 319 records to data\raw\emdat_file_20260117_202137.csv
+2026-01-17 20:21:37,098 | INFO | __main__ |   [OK] Loaded 319 EM-DAT records from file
+2026-01-17 20:21:37,098 | INFO | __main__ | Step 2/6: Fetching weather data...
+2026-01-17 20:21:37,099 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Johannesburg
+2026-01-17 20:21:37,099 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-26.2044, 28.0456) from 2020-01-01 to 2026-01-17
+2026-01-17 20:21:39,176 | INFO | services.data_sources.noaa_fetcher |   Using cached data (2209 records)
+2026-01-17 20:21:39,686 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Cape Town
+2026-01-17 20:21:39,687 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-33.9249, 18.4241) from 2020-01-01 to 2026-01-17
+2026-01-17 20:21:39,707 | INFO | services.data_sources.noaa_fetcher |   Using cached data (2209 records)
+2026-01-17 20:21:40,222 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Durban
+2026-01-17 20:21:40,222 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-29.8587, 31.0218) from 2020-01-01 to 2026-01-17
+2026-01-17 20:21:40,243 | INFO | services.data_sources.noaa_fetcher |   Using cached data (2209 records)
+2026-01-17 20:21:40,758 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Harare
+2026-01-17 20:21:40,758 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-17.8252, 31.0335) from 2020-01-01 to 2026-01-17
+2026-01-17 20:21:40,781 | INFO | services.data_sources.noaa_fetcher |   Using cached data (701 records)
+2026-01-17 20:21:41,289 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Gaborone
+2026-01-17 20:21:41,289 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-24.6282, 25.9231) from 2020-01-01 to 2026-01-17
+2026-01-17 20:21:41,316 | INFO | services.data_sources.noaa_fetcher |   Using cached data (1508 records)
+2026-01-17 20:21:41,823 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Maputo
+2026-01-17 20:21:41,823 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-25.9692, 32.5732) from 2020-01-01 to 2026-01-17
+2026-01-17 20:21:41,848 | INFO | services.data_sources.noaa_fetcher |   Using cached data (2209 records)
+2026-01-17 20:21:42,352 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Lusaka
+2026-01-17 20:21:42,353 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-15.3875, 28.3228) from 2020-01-01 to 2026-01-17
+2026-01-17 20:21:42,379 | INFO | services.data_sources.noaa_fetcher |   Using cached data (2209 records)
+2026-01-17 20:21:42,885 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Windhoek
+2026-01-17 20:21:42,886 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-22.5609, 17.0658) from 2020-01-01 to 2026-01-17
+2026-01-17 20:21:42,908 | INFO | services.data_sources.noaa_fetcher |   Using cached data (1402 records)
+2026-01-17 20:21:43,419 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Lilongwe
+2026-01-17 20:21:43,419 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-13.9626, 33.7741) from 2020-01-01 to 2026-01-17
+2026-01-17 20:21:43,456 | INFO | services.data_sources.noaa_fetcher |   Using cached data (1508 records)
+2026-01-17 20:21:43,971 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Luanda
+2026-01-17 20:21:43,972 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-8.8368, 13.2343) from 2020-01-01 to 2026-01-17
+2026-01-17 20:21:44,010 | INFO | services.data_sources.noaa_fetcher |   Using cached data (2209 records)
+2026-01-17 20:21:44,854 | INFO | services.data_storage | Saved 18373 records to data\raw\weather_20260117_202144.csv
+2026-01-17 20:21:44,854 | INFO | __main__ |   [OK] Fetched 18373 weather records
+2026-01-17 20:21:44,854 | INFO | __main__ | Step 3/6: Consolidating data sources...
+2026-01-17 20:21:44,931 | INFO | services.data_storage | Loaded 319 records from emdat
+2026-01-17 20:21:45,057 | INFO | services.data_storage | Loaded 89 records from local Excel
+2026-01-17 20:21:45,064 | INFO | services.data_storage | Combined data: 408 total records
+2026-01-17 20:21:45,077 | INFO | services.data_storage | Removed 126 duplicate records
+2026-01-17 20:21:45,078 | INFO | __main__ |   [OK] Consolidated 282 disaster records
+2026-01-17 20:21:45,078 | INFO | __main__ | Step 4/6: Cleaning data...
+2026-01-17 20:21:45,080 | INFO | services.data_cleaning | Starting cleaning with 282 records
+2026-01-17 20:21:45,109 | WARNING | services.data_cleaning |   1 records with invalid dates
+2026-01-17 20:23:12,305 | INFO | __main__ | Running single collection...
+2026-01-17 20:23:12,306 | INFO | __main__ | ============================================================
+2026-01-17 20:23:12,306 | INFO | __main__ | Starting daily data collection...
+2026-01-17 20:23:12,306 | INFO | __main__ | ============================================================
+2026-01-17 20:23:12,306 | INFO | __main__ | Step 1/6: Fetching EM-DAT disasters...
+2026-01-17 20:23:12,307 | INFO | __main__ |   No EM-DAT API key configured, trying file loader...
+2026-01-17 20:23:12,309 | INFO | __main__ |   Loading EM-DAT from file: emdat_.xlsx
+2026-01-17 20:23:12,309 | INFO | services.data_sources.emdat_file_loader | Loading EM-DAT Excel: data\emdat_.xlsx
+2026-01-17 20:23:15,547 | INFO | services.data_sources.emdat_file_loader |   Loaded 2226 raw records
+2026-01-17 20:23:15,566 | INFO | services.data_sources.emdat_file_loader |   Filtered to Southern Africa: 2226 -> 587 records
+2026-01-17 20:23:15,568 | INFO | services.data_sources.emdat_file_loader |   Filtered to year >= 2010: 587 -> 319 records
+2026-01-17 20:23:15,572 | INFO | services.data_sources.emdat_file_loader |   Final: 319 records with 50 columns
+2026-01-17 20:23:15,621 | INFO | services.data_storage | Saved 319 records to data\raw\emdat_file_20260117_202315.csv
+2026-01-17 20:23:15,621 | INFO | __main__ |   [OK] Loaded 319 EM-DAT records from file
+2026-01-17 20:23:15,621 | INFO | __main__ | Step 2/6: Fetching weather data...
+2026-01-17 20:23:15,622 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Johannesburg
+2026-01-17 20:23:15,622 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-26.2044, 28.0456) from 2020-01-01 to 2026-01-17
+2026-01-17 20:23:15,993 | INFO | services.data_sources.noaa_fetcher |   Using cached data (2209 records)
+2026-01-17 20:23:16,506 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Cape Town
+2026-01-17 20:23:16,506 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-33.9249, 18.4241) from 2020-01-01 to 2026-01-17
+2026-01-17 20:23:16,516 | INFO | services.data_sources.noaa_fetcher |   Using cached data (2209 records)
+2026-01-17 20:23:17,022 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Durban
+2026-01-17 20:23:17,023 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-29.8587, 31.0218) from 2020-01-01 to 2026-01-17
+2026-01-17 20:23:17,031 | INFO | services.data_sources.noaa_fetcher |   Using cached data (2209 records)
+2026-01-17 20:23:17,540 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Harare
+2026-01-17 20:23:17,540 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-17.8252, 31.0335) from 2020-01-01 to 2026-01-17
+2026-01-17 20:23:17,549 | INFO | services.data_sources.noaa_fetcher |   Using cached data (701 records)
+2026-01-17 20:23:18,058 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Gaborone
+2026-01-17 20:23:18,058 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-24.6282, 25.9231) from 2020-01-01 to 2026-01-17
+2026-01-17 20:23:18,067 | INFO | services.data_sources.noaa_fetcher |   Using cached data (1508 records)
+2026-01-17 20:23:18,577 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Maputo
+2026-01-17 20:23:18,578 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-25.9692, 32.5732) from 2020-01-01 to 2026-01-17
+2026-01-17 20:23:18,587 | INFO | services.data_sources.noaa_fetcher |   Using cached data (2209 records)
+2026-01-17 20:23:19,091 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Lusaka
+2026-01-17 20:23:19,092 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-15.3875, 28.3228) from 2020-01-01 to 2026-01-17
+2026-01-17 20:23:19,102 | INFO | services.data_sources.noaa_fetcher |   Using cached data (2209 records)
+2026-01-17 20:23:19,609 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Windhoek
+2026-01-17 20:23:19,609 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-22.5609, 17.0658) from 2020-01-01 to 2026-01-17
+2026-01-17 20:23:19,616 | INFO | services.data_sources.noaa_fetcher |   Using cached data (1402 records)
+2026-01-17 20:23:20,131 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Lilongwe
+2026-01-17 20:23:20,132 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-13.9626, 33.7741) from 2020-01-01 to 2026-01-17
+2026-01-17 20:23:20,137 | INFO | services.data_sources.noaa_fetcher |   Using cached data (1508 records)
+2026-01-17 20:23:20,653 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Luanda
+2026-01-17 20:23:20,653 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-8.8368, 13.2343) from 2020-01-01 to 2026-01-17
+2026-01-17 20:23:20,658 | INFO | services.data_sources.noaa_fetcher |   Using cached data (2209 records)
+2026-01-17 20:23:21,436 | INFO | services.data_storage | Saved 18373 records to data\raw\weather_20260117_202321.csv
+2026-01-17 20:23:21,436 | INFO | __main__ |   [OK] Fetched 18373 weather records
+2026-01-17 20:23:21,436 | INFO | __main__ | Step 3/6: Consolidating data sources...
+2026-01-17 20:23:21,500 | INFO | services.data_storage | Loaded 319 records from emdat
+2026-01-17 20:23:21,576 | INFO | services.data_storage | Loaded 89 records from local Excel
+2026-01-17 20:23:21,581 | INFO | services.data_storage | Combined data: 408 total records
+2026-01-17 20:23:21,584 | INFO | services.data_storage | Removed 126 duplicate records
+2026-01-17 20:23:21,584 | INFO | __main__ |   [OK] Consolidated 282 disaster records
+2026-01-17 20:23:21,584 | INFO | __main__ | Step 4/6: Cleaning data...
+2026-01-17 20:23:21,586 | INFO | services.data_cleaning | Starting cleaning with 282 records
+2026-01-17 20:23:21,597 | WARNING | services.data_cleaning |   1 records with invalid dates
+2026-01-17 20:23:21,599 | WARNING | services.data_cleaning | Error converting latitude: arg must be a list, tuple, 1-d array, or Series
+2026-01-17 20:24:14,388 | INFO | __main__ | Running single collection...
+2026-01-17 20:24:14,388 | INFO | __main__ | ============================================================
+2026-01-17 20:24:14,388 | INFO | __main__ | Starting daily data collection...
+2026-01-17 20:24:14,388 | INFO | __main__ | ============================================================
+2026-01-17 20:24:14,388 | INFO | __main__ | Step 1/6: Fetching EM-DAT disasters...
+2026-01-17 20:24:14,388 | INFO | __main__ |   No EM-DAT API key configured, trying file loader...
+2026-01-17 20:24:14,390 | INFO | __main__ |   Loading EM-DAT from file: emdat_.xlsx
+2026-01-17 20:24:14,390 | INFO | services.data_sources.emdat_file_loader | Loading EM-DAT Excel: data\emdat_.xlsx
+2026-01-17 20:24:16,980 | INFO | services.data_sources.emdat_file_loader |   Loaded 2226 raw records
+2026-01-17 20:24:17,004 | INFO | services.data_sources.emdat_file_loader |   Filtered to Southern Africa: 2226 -> 587 records
+2026-01-17 20:24:17,005 | INFO | services.data_sources.emdat_file_loader |   Filtered to year >= 2010: 587 -> 319 records
+2026-01-17 20:24:17,010 | INFO | services.data_sources.emdat_file_loader |   Final: 319 records with 50 columns
+2026-01-17 20:24:17,055 | INFO | services.data_storage | Saved 319 records to data\raw\emdat_file_20260117_202417.csv
+2026-01-17 20:24:17,055 | INFO | __main__ |   [OK] Loaded 319 EM-DAT records from file
+2026-01-17 20:24:17,055 | INFO | __main__ | Step 2/6: Fetching weather data...
+2026-01-17 20:24:17,056 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Johannesburg
+2026-01-17 20:24:17,056 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-26.2044, 28.0456) from 2020-01-01 to 2026-01-17
+2026-01-17 20:24:17,303 | INFO | services.data_sources.noaa_fetcher |   Using cached data (2209 records)
+2026-01-17 20:24:17,816 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Cape Town
+2026-01-17 20:24:17,816 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-33.9249, 18.4241) from 2020-01-01 to 2026-01-17
+2026-01-17 20:24:17,822 | INFO | services.data_sources.noaa_fetcher |   Using cached data (2209 records)
+2026-01-17 20:24:18,332 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Durban
+2026-01-17 20:24:18,332 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-29.8587, 31.0218) from 2020-01-01 to 2026-01-17
+2026-01-17 20:24:18,340 | INFO | services.data_sources.noaa_fetcher |   Using cached data (2209 records)
+2026-01-17 20:24:18,847 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Harare
+2026-01-17 20:24:18,847 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-17.8252, 31.0335) from 2020-01-01 to 2026-01-17
+2026-01-17 20:24:18,856 | INFO | services.data_sources.noaa_fetcher |   Using cached data (701 records)
+2026-01-17 20:24:19,362 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Gaborone
+2026-01-17 20:24:19,362 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-24.6282, 25.9231) from 2020-01-01 to 2026-01-17
+2026-01-17 20:24:19,370 | INFO | services.data_sources.noaa_fetcher |   Using cached data (1508 records)
+2026-01-17 20:24:19,888 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Maputo
+2026-01-17 20:24:19,889 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-25.9692, 32.5732) from 2020-01-01 to 2026-01-17
+2026-01-17 20:24:19,903 | INFO | services.data_sources.noaa_fetcher |   Using cached data (2209 records)
+2026-01-17 20:24:20,411 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Lusaka
+2026-01-17 20:24:20,411 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-15.3875, 28.3228) from 2020-01-01 to 2026-01-17
+2026-01-17 20:24:20,418 | INFO | services.data_sources.noaa_fetcher |   Using cached data (2209 records)
+2026-01-17 20:24:20,923 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Windhoek
+2026-01-17 20:24:20,924 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-22.5609, 17.0658) from 2020-01-01 to 2026-01-17
+2026-01-17 20:24:20,930 | INFO | services.data_sources.noaa_fetcher |   Using cached data (1402 records)
+2026-01-17 20:24:21,433 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Lilongwe
+2026-01-17 20:24:21,434 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-13.9626, 33.7741) from 2020-01-01 to 2026-01-17
+2026-01-17 20:24:21,440 | INFO | services.data_sources.noaa_fetcher |   Using cached data (1508 records)
+2026-01-17 20:24:21,944 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Luanda
+2026-01-17 20:24:21,945 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-8.8368, 13.2343) from 2020-01-01 to 2026-01-17
+2026-01-17 20:24:21,956 | INFO | services.data_sources.noaa_fetcher |   Using cached data (2209 records)
+2026-01-17 20:24:22,712 | INFO | services.data_storage | Saved 18373 records to data\raw\weather_20260117_202422.csv
+2026-01-17 20:24:22,712 | INFO | __main__ |   [OK] Fetched 18373 weather records
+2026-01-17 20:24:22,712 | INFO | __main__ | Step 3/6: Consolidating data sources...
+2026-01-17 20:24:22,771 | INFO | services.data_storage | Loaded 319 records from emdat
+2026-01-17 20:24:22,894 | INFO | services.data_storage | Loaded 89 records from local Excel
+2026-01-17 20:24:22,905 | INFO | services.data_storage | Combined data: 408 total records
+2026-01-17 20:24:22,919 | INFO | services.data_storage | Removed 126 duplicate records
+2026-01-17 20:24:22,920 | INFO | __main__ |   [OK] Consolidated 282 disaster records
+2026-01-17 20:24:22,920 | INFO | __main__ | Step 4/6: Cleaning data...
+2026-01-17 20:24:22,922 | INFO | services.data_cleaning | Starting cleaning with 282 records
+2026-01-17 20:24:22,955 | WARNING | services.data_cleaning |   1 records with invalid dates
+2026-01-17 20:25:03,268 | INFO | __main__ | Running single collection...
+2026-01-17 20:25:03,268 | INFO | __main__ | ============================================================
+2026-01-17 20:25:03,269 | INFO | __main__ | Starting daily data collection...
+2026-01-17 20:25:03,269 | INFO | __main__ | ============================================================
+2026-01-17 20:25:03,269 | INFO | __main__ | Step 1/6: Fetching EM-DAT disasters...
+2026-01-17 20:25:03,269 | INFO | __main__ |   No EM-DAT API key configured, trying file loader...
+2026-01-17 20:25:03,271 | INFO | __main__ |   Loading EM-DAT from file: emdat_.xlsx
+2026-01-17 20:25:03,272 | INFO | services.data_sources.emdat_file_loader | Loading EM-DAT Excel: data\emdat_.xlsx
+2026-01-17 20:25:07,010 | INFO | services.data_sources.emdat_file_loader |   Loaded 2226 raw records
+2026-01-17 20:25:07,043 | INFO | services.data_sources.emdat_file_loader |   Filtered to Southern Africa: 2226 -> 587 records
+2026-01-17 20:25:07,045 | INFO | services.data_sources.emdat_file_loader |   Filtered to year >= 2010: 587 -> 319 records
+2026-01-17 20:25:07,048 | INFO | services.data_sources.emdat_file_loader |   Final: 319 records with 50 columns
+2026-01-17 20:25:07,080 | INFO | services.data_storage | Saved 319 records to data\raw\emdat_file_20260117_202507.csv
+2026-01-17 20:25:07,080 | INFO | __main__ |   [OK] Loaded 319 EM-DAT records from file
+2026-01-17 20:25:07,081 | INFO | __main__ | Step 2/6: Fetching weather data...
+2026-01-17 20:25:07,081 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Johannesburg
+2026-01-17 20:25:07,081 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-26.2044, 28.0456) from 2020-01-01 to 2026-01-17
+2026-01-17 20:25:07,284 | INFO | services.data_sources.noaa_fetcher |   Using cached data (2209 records)
+2026-01-17 20:25:07,787 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Cape Town
+2026-01-17 20:25:07,788 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-33.9249, 18.4241) from 2020-01-01 to 2026-01-17
+2026-01-17 20:25:07,797 | INFO | services.data_sources.noaa_fetcher |   Using cached data (2209 records)
+2026-01-17 20:25:08,310 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Durban
+2026-01-17 20:25:08,310 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-29.8587, 31.0218) from 2020-01-01 to 2026-01-17
+2026-01-17 20:25:08,316 | INFO | services.data_sources.noaa_fetcher |   Using cached data (2209 records)
+2026-01-17 20:25:08,828 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Harare
+2026-01-17 20:25:08,828 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-17.8252, 31.0335) from 2020-01-01 to 2026-01-17
+2026-01-17 20:25:08,832 | INFO | services.data_sources.noaa_fetcher |   Using cached data (701 records)
+2026-01-17 20:25:09,335 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Gaborone
+2026-01-17 20:25:09,335 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-24.6282, 25.9231) from 2020-01-01 to 2026-01-17
+2026-01-17 20:25:09,342 | INFO | services.data_sources.noaa_fetcher |   Using cached data (1508 records)
+2026-01-17 20:25:09,853 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Maputo
+2026-01-17 20:25:09,854 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-25.9692, 32.5732) from 2020-01-01 to 2026-01-17
+2026-01-17 20:25:09,861 | INFO | services.data_sources.noaa_fetcher |   Using cached data (2209 records)
+2026-01-17 20:25:10,371 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Lusaka
+2026-01-17 20:25:10,371 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-15.3875, 28.3228) from 2020-01-01 to 2026-01-17
+2026-01-17 20:25:10,378 | INFO | services.data_sources.noaa_fetcher |   Using cached data (2209 records)
+2026-01-17 20:25:10,891 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Windhoek
+2026-01-17 20:25:10,891 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-22.5609, 17.0658) from 2020-01-01 to 2026-01-17
+2026-01-17 20:25:10,897 | INFO | services.data_sources.noaa_fetcher |   Using cached data (1402 records)
+2026-01-17 20:25:11,401 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Lilongwe
+2026-01-17 20:25:11,401 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-13.9626, 33.7741) from 2020-01-01 to 2026-01-17
+2026-01-17 20:25:11,405 | INFO | services.data_sources.noaa_fetcher |   Using cached data (1508 records)
+2026-01-17 20:25:11,919 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Luanda
+2026-01-17 20:25:11,919 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-8.8368, 13.2343) from 2020-01-01 to 2026-01-17
+2026-01-17 20:25:11,927 | INFO | services.data_sources.noaa_fetcher |   Using cached data (2209 records)
+2026-01-17 20:25:12,611 | INFO | services.data_storage | Saved 18373 records to data\raw\weather_20260117_202512.csv
+2026-01-17 20:25:12,611 | INFO | __main__ |   [OK] Fetched 18373 weather records
+2026-01-17 20:25:12,611 | INFO | __main__ | Step 3/6: Consolidating data sources...
+2026-01-17 20:25:12,652 | INFO | services.data_storage | Loaded 319 records from emdat
+2026-01-17 20:25:12,709 | INFO | services.data_storage | Loaded 89 records from local Excel
+2026-01-17 20:25:12,713 | INFO | services.data_storage | Combined data: 408 total records
+2026-01-17 20:25:12,719 | INFO | services.data_storage | Removed 126 duplicate records
+2026-01-17 20:25:12,719 | INFO | __main__ |   [OK] Consolidated 282 disaster records
+2026-01-17 20:25:12,719 | INFO | __main__ | Step 4/6: Cleaning data...
+2026-01-17 20:25:12,720 | INFO | services.data_cleaning | Starting cleaning with 282 records
+2026-01-17 20:25:12,733 | WARNING | services.data_cleaning |   1 records with invalid dates
+2026-01-17 20:25:12,740 | INFO | services.data_cleaning |   Flagged 248 records with invalid coordinates
+2026-01-17 20:25:12,747 | INFO | services.data_cleaning |   Filled 830 missing values
+2026-01-17 20:25:12,752 | INFO | services.data_cleaning | Cleaning complete: 281 records remaining
+2026-01-17 20:25:12,752 | INFO | __main__ |   [OK] After cleaning: 281 records
+2026-01-17 20:25:12,752 | INFO | __main__ |     Removed: 0 exact dupes, 0 near dupes
+2026-01-17 20:25:12,752 | INFO | __main__ | Step 5/6: Engineering features...
+2026-01-17 20:25:12,761 | INFO | services.feature_engineering | Engineering features for 281 records
+2026-01-17 20:25:13,475 | INFO | services.feature_engineering | Created 67 new features (126 total columns)
+2026-01-17 20:25:13,475 | INFO | __main__ |   [OK] Created 126 total features
+2026-01-17 20:25:13,475 | INFO | __main__ | Step 6/6: Assessing data quality...
+2026-01-17 20:25:13,480 | INFO | services.data_quality_monitor | Quality report saved: score=95.2, records=281
+2026-01-17 20:25:13,480 | INFO | __main__ |   [OK] Quality score: 95.2/100
+2026-01-17 20:25:13,529 | INFO | services.data_storage | Saved processed data: data\processed\disasters_master.csv (281 records)
+2026-01-17 20:25:13,529 | INFO | __main__ |   [OK] Master dataset saved
+2026-01-17 20:25:13,532 | INFO | __main__ | ============================================================
+2026-01-17 20:25:13,541 | INFO | __main__ |    Records: 281
+2026-01-17 20:25:13,542 | INFO | __main__ |    Features: 126
+2026-01-17 20:25:13,542 | INFO | __main__ |    Quality: 95.2/100
+2026-01-17 20:25:13,542 | INFO | __main__ | ============================================================
+2026-01-17 20:26:57,889 | INFO | __main__ | Running single collection...
+2026-01-17 20:26:57,890 | INFO | __main__ | ============================================================
+2026-01-17 20:26:57,890 | INFO | __main__ | Starting daily data collection...
+2026-01-17 20:26:57,890 | INFO | __main__ | ============================================================
+2026-01-17 20:26:57,890 | INFO | __main__ | Step 1/6: Fetching EM-DAT disasters...
+2026-01-17 20:26:57,890 | INFO | __main__ |   No EM-DAT API key configured, trying file loader...
+2026-01-17 20:26:57,891 | INFO | __main__ |   Loading EM-DAT from file: emdat_.xlsx
+2026-01-17 20:26:57,891 | INFO | services.data_sources.emdat_file_loader | Loading EM-DAT Excel: data\emdat_.xlsx
+2026-01-17 20:27:00,209 | INFO | services.data_sources.emdat_file_loader |   Loaded 2226 raw records
+2026-01-17 20:27:00,251 | INFO | services.data_sources.emdat_file_loader |   Filtered to year >= 2010: 2226 -> 1193 records
+2026-01-17 20:27:00,254 | INFO | services.data_sources.emdat_file_loader |   Final: 1193 records with 50 columns
+2026-01-17 20:27:00,318 | INFO | services.data_storage | Saved 1193 records to data\raw\emdat_file_20260117_202700.csv
+2026-01-17 20:27:00,318 | INFO | __main__ |   [OK] Loaded 1193 EM-DAT records from file
+2026-01-17 20:27:00,318 | INFO | __main__ | Step 2/6: Fetching weather data...
+2026-01-17 20:27:00,319 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Johannesburg
+2026-01-17 20:27:00,319 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-26.2044, 28.0456) from 2020-01-01 to 2026-01-17
+2026-01-17 20:27:00,501 | INFO | services.data_sources.noaa_fetcher |   Using cached data (2209 records)
+2026-01-17 20:27:01,010 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Cape Town
+2026-01-17 20:27:01,010 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-33.9249, 18.4241) from 2020-01-01 to 2026-01-17
+2026-01-17 20:27:01,016 | INFO | services.data_sources.noaa_fetcher |   Using cached data (2209 records)
+2026-01-17 20:27:01,532 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Durban
+2026-01-17 20:27:01,533 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-29.8587, 31.0218) from 2020-01-01 to 2026-01-17
+2026-01-17 20:27:01,539 | INFO | services.data_sources.noaa_fetcher |   Using cached data (2209 records)
+2026-01-17 20:27:02,043 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Harare
+2026-01-17 20:27:02,043 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-17.8252, 31.0335) from 2020-01-01 to 2026-01-17
+2026-01-17 20:27:02,050 | INFO | services.data_sources.noaa_fetcher |   Using cached data (701 records)
+2026-01-17 20:27:02,565 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Gaborone
+2026-01-17 20:27:02,565 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-24.6282, 25.9231) from 2020-01-01 to 2026-01-17
+2026-01-17 20:27:02,571 | INFO | services.data_sources.noaa_fetcher |   Using cached data (1508 records)
+2026-01-17 20:27:03,088 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Maputo
+2026-01-17 20:27:03,088 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-25.9692, 32.5732) from 2020-01-01 to 2026-01-17
+2026-01-17 20:27:03,109 | INFO | services.data_sources.noaa_fetcher |   Using cached data (2209 records)
+2026-01-17 20:27:03,612 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Lusaka
+2026-01-17 20:27:03,612 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-15.3875, 28.3228) from 2020-01-01 to 2026-01-17
+2026-01-17 20:27:03,619 | INFO | services.data_sources.noaa_fetcher |   Using cached data (2209 records)
+2026-01-17 20:27:04,131 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Windhoek
+2026-01-17 20:27:04,131 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-22.5609, 17.0658) from 2020-01-01 to 2026-01-17
+2026-01-17 20:27:04,137 | INFO | services.data_sources.noaa_fetcher |   Using cached data (1402 records)
+2026-01-17 20:27:04,641 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Lilongwe
+2026-01-17 20:27:04,641 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-13.9626, 33.7741) from 2020-01-01 to 2026-01-17
+2026-01-17 20:27:04,646 | INFO | services.data_sources.noaa_fetcher |   Using cached data (1508 records)
+2026-01-17 20:27:05,157 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Luanda
+2026-01-17 20:27:05,157 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-8.8368, 13.2343) from 2020-01-01 to 2026-01-17
+2026-01-17 20:27:05,162 | INFO | services.data_sources.noaa_fetcher |   Using cached data (2209 records)
+2026-01-17 20:27:05,867 | INFO | services.data_storage | Saved 18373 records to data\raw\weather_20260117_202705.csv
+2026-01-17 20:27:05,867 | INFO | __main__ |   [OK] Fetched 18373 weather records
+2026-01-17 20:27:05,867 | INFO | __main__ | Step 3/6: Consolidating data sources...
+2026-01-17 20:27:05,927 | INFO | services.data_storage | Loaded 1193 records from emdat
+2026-01-17 20:27:05,980 | INFO | services.data_storage | Loaded 89 records from local Excel
+2026-01-17 20:27:05,983 | INFO | services.data_storage | Combined data: 1282 total records
+2026-01-17 20:27:05,991 | INFO | services.data_storage | Removed 287 duplicate records
+2026-01-17 20:27:05,992 | INFO | __main__ |   [OK] Consolidated 995 disaster records
+2026-01-17 20:27:05,992 | INFO | __main__ | Step 4/6: Cleaning data...
+2026-01-17 20:27:05,992 | INFO | services.data_cleaning | Starting cleaning with 995 records
+2026-01-17 20:27:06,010 | WARNING | services.data_cleaning |   1 records with invalid dates
+2026-01-17 20:27:06,015 | INFO | services.data_cleaning |   Flagged 873 records with invalid coordinates
+2026-01-17 20:27:06,020 | INFO | services.data_cleaning |   Filled 2953 missing values
+2026-01-17 20:27:06,025 | INFO | services.data_cleaning | Cleaning complete: 994 records remaining
+2026-01-17 20:27:06,025 | INFO | __main__ |   [OK] After cleaning: 994 records
+2026-01-17 20:27:06,025 | INFO | __main__ |     Removed: 0 exact dupes, 0 near dupes
+2026-01-17 20:27:06,025 | INFO | __main__ | Step 5/6: Engineering features...
+2026-01-17 20:27:06,033 | INFO | services.feature_engineering | Engineering features for 994 records
+2026-01-17 20:27:09,186 | INFO | services.feature_engineering | Created 69 new features (128 total columns)
+2026-01-17 20:27:09,186 | INFO | __main__ |   [OK] Created 128 total features
+2026-01-17 20:27:09,186 | INFO | __main__ | Step 6/6: Assessing data quality...
+2026-01-17 20:27:09,193 | INFO | services.data_quality_monitor | Quality report saved: score=95.2, records=994
+2026-01-17 20:27:09,194 | INFO | __main__ |   [OK] Quality score: 95.2/100
+2026-01-17 20:27:09,377 | INFO | services.data_storage | Saved processed data: data\processed\disasters_master.csv (994 records)
+2026-01-17 20:27:09,377 | INFO | __main__ |   [OK] Master dataset saved
+2026-01-17 20:27:09,380 | INFO | services.data_storage | Removed old version: emdat_file_20260117_195958.csv
+2026-01-17 20:27:09,386 | INFO | services.data_storage | Removed old version: weather_20260117_200214.csv
+2026-01-17 20:27:09,388 | INFO | __main__ | ============================================================
+2026-01-17 20:27:09,388 | INFO | __main__ | [SUCCESS] Collection complete in 11.5s
+2026-01-17 20:27:09,388 | INFO | __main__ |    Records: 994
+2026-01-17 20:27:09,388 | INFO | __main__ |    Features: 128
+2026-01-17 20:27:09,388 | INFO | __main__ |    Quality: 95.2/100
+2026-01-17 20:27:09,388 | INFO | __main__ | ============================================================
+2026-01-17 20:27:53,997 | INFO | __main__ | Running single collection...
+2026-01-17 20:27:53,997 | INFO | __main__ | ============================================================
+2026-01-17 20:27:53,997 | INFO | __main__ | Starting daily data collection...
+2026-01-17 20:27:53,997 | INFO | __main__ | ============================================================
+2026-01-17 20:27:53,997 | INFO | __main__ | Step 1/6: Fetching EM-DAT disasters...
+2026-01-17 20:27:53,997 | INFO | __main__ |   No EM-DAT API key configured, trying file loader...
+2026-01-17 20:27:53,999 | INFO | __main__ |   Loading EM-DAT from file: emdat_.xlsx
+2026-01-17 20:27:53,999 | INFO | services.data_sources.emdat_file_loader | Loading EM-DAT Excel: data\emdat_.xlsx
+2026-01-17 20:27:55,606 | INFO | services.data_sources.emdat_file_loader |   Loaded 2226 raw records
+2026-01-17 20:27:55,619 | INFO | services.data_sources.emdat_file_loader |   Filtered to year >= 2009: 2226 -> 1288 records
+2026-01-17 20:27:55,622 | INFO | services.data_sources.emdat_file_loader |   Final: 1288 records with 50 columns
+2026-01-17 20:27:55,712 | INFO | services.data_storage | Saved 1288 records to data\raw\emdat_file_20260117_202755.csv
+2026-01-17 20:27:55,714 | INFO | __main__ |   [OK] Loaded 1288 EM-DAT records from file
+2026-01-17 20:27:55,714 | INFO | __main__ | Step 2/6: Fetching weather data...
+2026-01-17 20:27:55,715 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Johannesburg
+2026-01-17 20:27:55,716 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-26.2044, 28.0456) from 2020-01-01 to 2026-01-17
+2026-01-17 20:27:55,940 | INFO | services.data_sources.noaa_fetcher |   Using cached data (2209 records)
+2026-01-17 20:27:56,457 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Cape Town
+2026-01-17 20:27:56,458 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-33.9249, 18.4241) from 2020-01-01 to 2026-01-17
+2026-01-17 20:27:56,464 | INFO | services.data_sources.noaa_fetcher |   Using cached data (2209 records)
+2026-01-17 20:27:56,973 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Durban
+2026-01-17 20:27:56,973 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-29.8587, 31.0218) from 2020-01-01 to 2026-01-17
+2026-01-17 20:27:56,984 | INFO | services.data_sources.noaa_fetcher |   Using cached data (2209 records)
+2026-01-17 20:27:57,487 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Harare
+2026-01-17 20:27:57,487 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-17.8252, 31.0335) from 2020-01-01 to 2026-01-17
+2026-01-17 20:27:57,493 | INFO | services.data_sources.noaa_fetcher |   Using cached data (701 records)
+2026-01-17 20:27:58,006 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Gaborone
+2026-01-17 20:27:58,007 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-24.6282, 25.9231) from 2020-01-01 to 2026-01-17
+2026-01-17 20:27:58,018 | INFO | services.data_sources.noaa_fetcher |   Using cached data (1508 records)
+2026-01-17 20:27:58,524 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Maputo
+2026-01-17 20:27:58,524 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-25.9692, 32.5732) from 2020-01-01 to 2026-01-17
+2026-01-17 20:27:58,529 | INFO | services.data_sources.noaa_fetcher |   Using cached data (2209 records)
+2026-01-17 20:27:59,045 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Lusaka
+2026-01-17 20:27:59,045 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-15.3875, 28.3228) from 2020-01-01 to 2026-01-17
+2026-01-17 20:27:59,051 | INFO | services.data_sources.noaa_fetcher |   Using cached data (2209 records)
+2026-01-17 20:27:59,565 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Windhoek
+2026-01-17 20:27:59,565 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-22.5609, 17.0658) from 2020-01-01 to 2026-01-17
+2026-01-17 20:27:59,570 | INFO | services.data_sources.noaa_fetcher |   Using cached data (1402 records)
+2026-01-17 20:28:00,085 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Lilongwe
+2026-01-17 20:28:00,085 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-13.9626, 33.7741) from 2020-01-01 to 2026-01-17
+2026-01-17 20:28:00,089 | INFO | services.data_sources.noaa_fetcher |   Using cached data (1508 records)
+2026-01-17 20:28:00,604 | INFO | services.data_sources.noaa_fetcher | Fetching weather for Luanda
+2026-01-17 20:28:00,604 | INFO | services.data_sources.noaa_fetcher | Fetching weather: (-8.8368, 13.2343) from 2020-01-01 to 2026-01-17
+2026-01-17 20:28:00,609 | INFO | services.data_sources.noaa_fetcher |   Using cached data (2209 records)
+2026-01-17 20:28:01,292 | INFO | services.data_storage | Saved 18373 records to data\raw\weather_20260117_202801.csv
+2026-01-17 20:28:01,292 | INFO | __main__ |   [OK] Fetched 18373 weather records
+2026-01-17 20:28:01,292 | INFO | __main__ | Step 3/6: Consolidating data sources...
+2026-01-17 20:28:01,387 | INFO | services.data_storage | Loaded 1288 records from emdat
+2026-01-17 20:28:01,438 | INFO | services.data_storage | Loaded 89 records from local Excel
+2026-01-17 20:28:01,442 | INFO | services.data_storage | Combined data: 1377 total records
+2026-01-17 20:28:01,454 | INFO | services.data_storage | Removed 304 duplicate records
+2026-01-17 20:28:01,455 | INFO | __main__ |   [OK] Consolidated 1073 disaster records
+2026-01-17 20:28:01,455 | INFO | __main__ | Step 4/6: Cleaning data...
+2026-01-17 20:28:01,456 | INFO | services.data_cleaning | Starting cleaning with 1073 records
+2026-01-17 20:28:01,476 | WARNING | services.data_cleaning |   1 records with invalid dates
+2026-01-17 20:28:01,483 | INFO | services.data_cleaning |   Flagged 930 records with invalid coordinates
+2026-01-17 20:28:01,487 | INFO | services.data_cleaning |   Filled 3196 missing values
+2026-01-17 20:28:01,492 | INFO | services.data_cleaning | Cleaning complete: 1072 records remaining
+2026-01-17 20:28:01,492 | INFO | __main__ |   [OK] After cleaning: 1072 records
+2026-01-17 20:28:01,493 | INFO | __main__ |     Removed: 0 exact dupes, 0 near dupes
+2026-01-17 20:28:01,493 | INFO | __main__ | Step 5/6: Engineering features...
+2026-01-17 20:28:01,503 | INFO | services.feature_engineering | Engineering features for 1072 records
+2026-01-17 20:28:04,151 | INFO | services.feature_engineering | Created 69 new features (128 total columns)
+2026-01-17 20:28:04,151 | INFO | __main__ |   [OK] Created 128 total features
+2026-01-17 20:28:04,151 | INFO | __main__ | Step 6/6: Assessing data quality...
+2026-01-17 20:28:04,157 | INFO | services.data_quality_monitor | Quality report saved: score=95.2, records=1072
+2026-01-17 20:28:04,157 | INFO | __main__ |   [OK] Quality score: 95.2/100
+2026-01-17 20:28:04,445 | INFO | services.data_storage | Saved processed data: data\processed\disasters_master.csv (1072 records)
+2026-01-17 20:28:04,445 | INFO | __main__ |   [OK] Master dataset saved
+2026-01-17 20:28:04,448 | INFO | services.data_storage | Removed old version: emdat_file_20260117_202137.csv
+2026-01-17 20:28:04,453 | INFO | services.data_storage | Removed old version: weather_20260117_202144.csv
+2026-01-17 20:28:04,455 | INFO | __main__ | ============================================================
+2026-01-17 20:28:04,456 | INFO | __main__ | [SUCCESS] Collection complete in 10.5s
+2026-01-17 20:28:04,456 | INFO | __main__ |    Records: 1072
+2026-01-17 20:28:04,456 | INFO | __main__ |    Features: 128
+2026-01-17 20:28:04,456 | INFO | __main__ |    Quality: 95.2/100
+2026-01-17 20:28:04,456 | INFO | __main__ | ============================================================

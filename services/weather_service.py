@@ -9,7 +9,7 @@ import numpy as np
 from datetime import datetime
 import structlog
 
-from services.predict import collect_all_data, generate_risk_scores, calculate_household_resources
+from services.predict import collect_all_data, generate_risk_scores, calculate_household_resources, compare_with_historical_disasters
 from utils.db import get_db
 from models.model import WeatherEntry
 
@@ -226,7 +226,24 @@ class WeatherService:
                 df_new = collect_all_data(locations_to_collect)
                 if not df_new.empty:
                     df_new["scenario"] = "real-time"
+                    df_new["scenario"] = "real-time"
+                    
+                    # Apply historical disaster comparison
+                    disaster_risks = []
+                    for _, row in df_new.iterrows():
+                        weather_dict = row.to_dict()
+                        disaster_risk = compare_with_historical_disasters(weather_dict, row['location'])
+                        disaster_risks.append(disaster_risk)
+                    
                     df_scored = generate_risk_scores(df_new, model)
+                    
+                    # Override risk score if disaster match is high
+                    for i, risk in enumerate(disaster_risks):
+                        if risk > 0:
+                            # If disaster match found, force high risk score
+                            current_score = df_scored.at[i, 'composite_risk_score']
+                            df_scored.at[i, 'composite_risk_score'] = max(current_score, risk)
+                            logger.warning(f"Risk score boosted to {risk} due to historical disaster match for {df_scored.at[i, 'location']}")
                 else:
                     df_scored = pd.DataFrame()
             else:

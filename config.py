@@ -24,7 +24,7 @@ class Settings(BaseModel):
     redis_password: Optional[str] = None
     
     # Security Configuration
-    api_key: Optional[str] = None
+    api_key: Optional[str] = "mvp-secret-key-123"
     cors_origins: List[str] = ["http://localhost:3000", "http://localhost:5173"]
     trusted_hosts: List[str] = ["localhost", "127.0.0.1"]
     
@@ -49,6 +49,10 @@ class Settings(BaseModel):
     cache_ttl_seconds: int = 300
     weather_cache_ttl: int = 1800  # 30 minutes
     risk_cache_ttl: int = 300      # 5 minutes
+    
+    # EM-DAT API Configuration (Phase 1: Data Foundation)
+    emdat_api_key: Optional[str] = None
+    emdat_api_url: str = "https://public.emdat.be/api"
     
     @validator('cors_origins', pre=True)
     def parse_cors_origins(cls, v):

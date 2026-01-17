@@ -1,14 +1,17 @@
-from pydantic import BaseModel, model_validator, field_validator, constr, confloat,Field, ConfigDict
-from typing import List, Optional, Literal, Dict, An
+from pydantic import BaseModel, model_validator, field_validator, constr, confloat, Field, ConfigDict
+from typing import List, Optional, Literal, Dict, Any
 from datetime import datetime
 import uuid
+
+# Import shared base models
+from .base import RiskLevel, BaseLocation, BaseWeather
 
 class AlertModel(BaseModel):
     location: str = Field(
         ..., min_length=1, max_length=100, 
         description="Location name (e.g., eThekwini)"
     )
-    risk_level: Literal["LOW", "MODERATE", "HIGH", "SEVERE"] = Field(
+    risk_level: RiskLevel = Field(
         ..., description="Severity level"
     )
     message: str = Field(
@@ -38,11 +41,6 @@ class AlertModel(BaseModel):
         }
     )
 
-    @field_validator('risk_level')
-    @classmethod
-    def normalize_risk_level(cls, v):
-        return v.upper()
-
 class LocationRequest(BaseModel):
     place_name: Optional[constr(min_length=1, max_length=100, strip_whitespace=True)] = None
     district: Optional[constr(min_length=1, max_length=100, strip_whitespace=True)] = None
@@ -56,11 +54,9 @@ class LocationRequest(BaseModel):
             raise ValueError("At least one location identifier must be provided")
         return self
 
-class WeatherEntry(BaseModel):
-    temperature: Optional[confloat(ge=-100.0, le=100.0)] = None
-    humidity: Optional[confloat(ge=0.0, le=100.0)] = None
-    rainfall: Optional[confloat(ge=0.0, le=5000.0)] = None
-    wind_speed: Optional[confloat(ge=0.0, le=500.0)] = None
+class WeatherEntry(BaseWeather):
+    """Real-time weather entry extending base weather fields"""
+    # Additional fields not in BaseWeather
     wave_height: Optional[confloat(ge=0.0, le=50.0)] = None
     location: constr(min_length=1, max_length=100, strip_whitespace=True)
     timestamp: str
@@ -68,6 +64,7 @@ class WeatherEntry(BaseModel):
     longitude: Optional[confloat(ge=-180.0, le=180.0)] = None
     
     @field_validator('timestamp')
+    @classmethod
     def validate_timestamp(cls, v):
         try:
             datetime.strptime(v, "%Y-%m-%d %H:%M:%S")
@@ -88,34 +85,10 @@ class SimulateRequest(BaseModel):
 
 # --- Dynamic Location Management Models ---
 
-class LocationCreate(BaseModel):
-    """Model for creating new locations"""
-    name: constr(min_length=1, max_length=100, strip_whitespace=True) = Field(
-        ..., description="Location name"
-    )
+class LocationCreate(BaseLocation):
+    """Model for creating new locations - extends BaseLocation with operational fields"""
     display_name: Optional[constr(min_length=1, max_length=200, strip_whitespace=True)] = Field(
         None, description="Human-readable display name"
-    )
-    latitude: confloat(ge=-90.0, le=90.0) = Field(
-        ..., description="Latitude coordinate"
-    )
-    longitude: confloat(ge=-180.0, le=180.0) = Field(
-        ..., description="Longitude coordinate"
-    )
-    country: Optional[constr(min_length=2, max_length=50, strip_whitespace=True)] = Field(
-        "South Africa", description="Country name"
-    )
-    region: Optional[constr(min_length=1, max_length=100, strip_whitespace=True)] = Field(
-        None, description="Region or province"
-    )
-    district: Optional[constr(min_length=1, max_length=100, strip_whitespace=True)] = Field(
-        None, description="District or municipality"
-    )
-    is_coastal: bool = Field(
-        False, description="Whether location is coastal"
-    )
-    elevation_meters: Optional[confloat(ge=-500, le=9000)] = Field(
-        None, description="Elevation in meters"
     )
     population: Optional[int] = Field(
         None, ge=0, description="Approximate population"
@@ -149,8 +122,9 @@ class LocationCreate(BaseModel):
         }
     )
 
+
 class LocationUpdate(BaseModel):
-    """Model for updating locations"""
+    """Model for updating locations - all fields optional"""
     name: Optional[constr(min_length=1, max_length=100, strip_whitespace=True)] = None
     display_name: Optional[constr(min_length=1, max_length=200, strip_whitespace=True)] = None
     latitude: Optional[confloat(ge=-90.0, le=90.0)] = None
@@ -165,18 +139,10 @@ class LocationUpdate(BaseModel):
     metadata: Optional[Dict[str, Any]] = None
     is_active: Optional[bool] = True
 
-class Location(BaseModel):
-    """Full location model with database fields"""
+class Location(BaseLocation):
+    """Full location model with database fields - extends BaseLocation"""
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    name: str
     display_name: Optional[str] = None
-    latitude: float
-    longitude: float
-    country: str = "South Africa"
-    region: Optional[str] = None
-    district: Optional[str] = None
-    is_coastal: bool = False
-    elevation_meters: Optional[float] = None
     population: Optional[int] = None
     tags: List[str] = Field(default_factory=list)
     metadata: Dict[str, Any] = Field(default_factory=dict)

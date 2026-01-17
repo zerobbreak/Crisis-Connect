@@ -1,0 +1,47 @@
+[
+  {
+    "period_days": 30,
+    "predictions": {
+      "total_predictions": 0,
+      "avg_risk_score": 0,
+      "high_risk_count": 0,
+      "low_risk_count": 0
+    },
+    "alerts": {
+      "total_alerts": 0,
+      "by_severity": {}
+    },
+    "generated_at": "2025-11-23T13:34:07.249943",
+    "timestamp": "2025-11-23T13:34:07.249943"
+  },
+  {
+    "period_days": 1,
+    "predictions": {
+      "total_predictions": 0,
+      "avg_risk_score": 0,
+      "high_risk_count": 0,
+      "low_risk_count": 0
+    },
+    "alerts": {
+      "total_alerts": 0,
+      "by_severity": {}
+    },
+    "generated_at": "2025-11-23T14:36:21.201799",
+    "timestamp": "2025-11-23T14:36:21.203270"
+  },
+  {
+    "period_days": 1,
+    "predictions": {
+      "total_predictions": 0,
+      "avg_risk_score": 0,
+      "high_risk_count": 0,
+      "low_risk_count": 0
+    },
+    "alerts": {
+      "total_alerts": 0,
+      "by_severity": {}
+    },
+    "generated_at": "2025-11-23T14:37:16.692998",
+    "timestamp": "2025-11-23T14:37:16.693927"
+  }
+]

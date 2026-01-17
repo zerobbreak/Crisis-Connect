@@ -9,6 +9,7 @@ import structlog
 
 from utils.db import get_db
 from models.model import AlertModel
+from services.rl_agent import RLAlertAgent
 
 logger = structlog.get_logger(__name__)
 
@@ -19,6 +20,7 @@ class AlertService:
     def __init__(self, app):
         self.app = app
         self.db = get_db(app)
+        self.rl_agent = RLAlertAgent()
     
     async def create_alert(self, alert_data: AlertModel) -> Dict[str, Any]:
         """
@@ -150,12 +152,43 @@ class AlertService:
             from services.alert_generate import generate_alerts_from_db
 
             # Generate alerts using existing function with threshold
-            alerts = await generate_alerts_from_db(self.db, limit=limit, risk_threshold=risk_threshold)
+            # alerts = await generate_alerts_from_db(self.db, limit=limit, risk_threshold=risk_threshold)
+            
+            # Use RL Agent for decision making
+            # We need to fetch predictions first, then decide
+            cursor = self.db["predictions"].find().sort("timestamp", -1).limit(limit)
+            predictions = await cursor.to_list(length=limit)
+            
+            alerts = []
+            for pred in predictions:
+                risk_score = pred.get("composite_risk_score", 0)
+                location = pred.get("location", "Unknown")
+                
+                # Ask RL Agent for action
+                # 0: No Alert, 1: Low Alert, 2: High Alert
+                action = self.rl_agent.choose_action(risk_score)
+                
+                if action == 0:
+                    continue
+                    
+                risk_level = "HIGH" if action == 2 else "LOW"
+                
+                # Create alert object with both severity and risk_level fields
+                alert = {
+                    "location": location,
+                    "severity": risk_level,  # For performance tracking
+                    "risk_level": risk_level,  # For backward compatibility
+                    "message": f"Flood warning for {location}. Risk Level: {risk_level}",
+                    "timestamp": datetime.now().isoformat(),
+                    "source": "RL_Agent",
+                    "risk_score": risk_score
+                }
+                alerts.append(alert)
 
             duration = time.time() - start_time
             logger.info("Alert generation completed",
                        alerts_generated=len(alerts),
-                       risk_threshold=risk_threshold,
+                       risk_threshold="RL_Policy",
                        duration_seconds=round(duration, 2))
 
             return alerts
